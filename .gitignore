@@ -1,0 +1,25 @@
+bin/*
+!cmd/*.go
+
+/vendor/
+/test-results/
+/integration_results/
+
+/mocks/*
+!/mocks/stub.go
+mocks.go
+
+# IDEA
+.project
+.idea
+*.iml
+
+!.gitkeep
+!.gitignore
+
+fake_for_correct_coverage_test.go
+/_idea_vendor/
+.DS_Store
+
+# coverage reports
+*.out
