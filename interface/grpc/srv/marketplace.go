@@ -11,24 +11,27 @@ import (
 	"golang.org/x/net/context"
 )
 
-//const (
-//defaultResultsCount = 100
-//)
+const (
+	defaultResultsCount = 100
+)
 
 // read side
-type OrderByID interface {
+type QueryBus interface {
 	Handle(req intf.Query, result interface{}) error
 }
 
 type Marketplace struct {
 	commandBus intf.CommandHandler
-	orderByID  OrderByID
+	orderByID  QueryBus
+	ordersBySpec QueryBus
+
 }
 
-func NewMarketplace(c intf.CommandHandler, q OrderByID) *Marketplace {
+func NewMarketplace(c intf.CommandHandler, orderByID QueryBus, ordersBySpec QueryBus) *Marketplace {
 	return &Marketplace{
 		commandBus: c,
-		orderByID:  q,
+		orderByID:  orderByID,
+		ordersBySpec: ordersBySpec,
 	}
 }
 
@@ -80,15 +83,39 @@ func (m *Marketplace) CreateOrder(_ context.Context, req *pb.Order) (*pb.Order, 
 }
 
 func (m *Marketplace) GetOrders(_ context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersReply, error) {
-	//slot, err := structs.NewSlot(req.Slot)
-	//if err != nil {
-	//	return nil, err
+
+	limit := req.GetCount()
+	if limit == 0 {
+		limit = defaultResultsCount
+	}
+
+	slot := query.Slot{
+		BuyerRating:req.Slot.GetBuyerRating(),
+		SupplierRating:req.Slot.GetSupplierRating(),
+	}
+
+	q := query.GetOrders{
+		OrderType:int(req.OrderType),
+		Slot: slot,
+		Limit:limit,
+	}
+
+
+	orders := &query.GetOrderResult{}
+	if err := m.orderByID.Handle(q, orders); err != nil {
+		return nil, err
+	}
+
+	// build result
+	//resp := &pb.Order{
+	//	Id:         order.ID,
+	//	ByuerID:    order.BuyerID,
+	//	SupplierID: order.SupplierID,
+	//	Price:      order.Price,
+	//	//OrderType:
+	//	//Slot:
 	//}
-	//
-	//resultCount := req.GetCount()
-	//if resultCount == 0 {
-	//	resultCount = defaultResultsCount
-	//}
+
 	//
 	//searchParams := &searchParams{
 	//	slot:      slot,

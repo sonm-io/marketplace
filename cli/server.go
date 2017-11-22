@@ -48,6 +48,7 @@ func (l *App) Run() error {
 	repo := storage.NewOrderStorage(inmemory.NewStorage())
 
 	getOrderHandler := query.NewGetOrderHandler(repo)
+	getOrdersHandler := query.NewGetOrdersHandler(repo)
 	createOrderHandler := command.NewCreateOrderValidator(command.NewCreateOrderHandler(repo))
 	cancelOrderHandler := command.NewCancelOrderHandler(repo)
 
@@ -65,7 +66,7 @@ func (l *App) Run() error {
 		grpc.RPCDecompressor(grpc.NewGZIPDecompressor()),
 	)
 
-	pb.RegisterMarketServer(s, srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler))
+	pb.RegisterMarketServer(s, srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler))
 
 	return s.Serve(lis)
 }
