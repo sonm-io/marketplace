@@ -13,32 +13,32 @@ import (
 //	errSearchParamsIsNil = errors.New("search params cannot be nil")
 //)
 
-type Storage interface {
+type Engine interface {
 	ByID(ID string) (*entity.Order, error)
 	Store(o *entity.Order) error
 	Remove(ID string) error
 }
 
 type OrderStorage struct {
-	s Storage
+	e Engine
 }
 
-func NewOrderStorage(s Storage) *OrderStorage {
+func NewOrderStorage(e Engine) *OrderStorage {
 	return &OrderStorage{
-		s:s,
+		e:e,
 	}
 }
 
 func (s *OrderStorage) ByID(ID string) (*entity.Order, error) {
-	return s.ByID(ID)
+	return s.e.ByID(ID)
 }
 
 func (s *OrderStorage) Store(o *entity.Order) error {
-	return s.Store(o)
+	return s.e.Store(o)
 }
 
 func (s *OrderStorage) Remove(ID string) error {
-	return s.Remove(ID)
+	return s.e.Remove(ID)
 }
 
 // searchParams holds all fields that are used to search on the market.

@@ -59,7 +59,7 @@ LINT_SLOW := gometalinter $(LINT_EXCLUDE) \
 
 
 .PHONY: lint-dep
-lint-dep: generate
+lint-dep: #generate
 	${GO} get -u github.com/elgris/hint/gohint
 	${GO} get -u github.com/alecthomas/gometalinter
 	gometalinter --install

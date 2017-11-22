@@ -60,11 +60,10 @@ func (m *Marketplace) CancelOrder(_ context.Context, req *pb.Order) (*pb.Empty, 
 }
 
 func (m *Marketplace) CreateOrder(_ context.Context, req *pb.Order) (*pb.Order, error) {
-	var cmd command.CreateOrder
 
 	// map request to command
-	// TODO: (screwyprof) move to smth like cmd := model.Bind(req)
-	cmd = command.CreateOrder{
+	// TODO: (screwyprof) move to smth like cmd := model.Bind(req), or model.bind(&req, &cmd)
+	 cmd := command.CreateOrder{
 		ID:         uuid.New(),
 		SupplierID: req.SupplierID,
 		BuyerID:    req.ByuerID,
