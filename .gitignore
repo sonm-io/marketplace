@@ -6,6 +6,7 @@ bin/*
 /integration_results/
 
 /mocks/*
+interface/storage/mocks/*
 !/mocks/stub.go
 mocks.go
 

@@ -1,4 +1,4 @@
-ServiceInterfaces = $(shell egrep 'type\s+[a-zA-Z]+.*interface' ./*.go | cut -d" " -f 2 | xargs echo | sed 's/ /,/g' | sed -e "s/[[:space:]]//g")
+#ServiceInterfaces = $(shell egrep 'type\s+[a-zA-Z]+.*interface' ./*.go | cut -d" " -f 2 | xargs echo | sed 's/ /,/g' | sed -e "s/[[:space:]]//g")
 
 .PHONY: clean-mocks
 clean-mocks:
@@ -10,10 +10,11 @@ rm-mocks:
 	rm -rf mocks.go
 
 .PHONY: generate-mocks
-generate-mocks: generate-mocks-service clean-mocks
+generate-mocks: generate-mocks-intf-storage clean-mocks
 	@echo "Generating mocks"
 
-.PHONY: generate-mocks-service
-generate-mocks-service: tools
-	mockgen -package marketplace \
-            -source ./server.go marketplace > mocks.go
+.PHONY: generate-mocks-intf-storage
+generate-mocks-intf-storage: tools
+	@mkdir  -p ./interface/storage/mocks
+	mockgen -package mocks \
+            -source ./interface/storage/order.go Engine > ./interface/storage/mocks/order.go
