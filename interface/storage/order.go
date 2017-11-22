@@ -2,6 +2,8 @@ package storage
 
 import (
 	"github.com/sonm-io/marketplace/entity"
+	"github.com/sonm-io/marketplace/infra/storage/inmemory"
+	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
 //var (
@@ -14,9 +16,10 @@ import (
 //)
 
 type Engine interface {
-	ByID(ID string) (*entity.Order, error)
+	ByID(ID string, result interface{}) error
 	Store(o *entity.Order) error
 	Remove(ID string) error
+	Match(q inmemory.ConcreteCriteria, result interface{}) error
 }
 
 type OrderStorage struct {
@@ -30,7 +33,10 @@ func NewOrderStorage(e Engine) *OrderStorage {
 }
 
 func (s *OrderStorage) ByID(ID string) (*entity.Order, error) {
-	return s.e.ByID(ID)
+	var order entity.Order
+	err := s.e.ByID(ID, &order)
+
+	return &order, err
 }
 
 func (s *OrderStorage) Store(o *entity.Order) error {
@@ -41,52 +47,17 @@ func (s *OrderStorage) Remove(ID string) error {
 	return s.e.Remove(ID)
 }
 
-// searchParams holds all fields that are used to search on the market.
-// Extend this structure instead of increasing amount of params accepted
-// by OrderStorage.GetOrders() function.
-//type searchParams struct {
-//	slot      *entity.Slot
-//	orderType pb.OrderType
-//	count     uint64
-//}
+func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) ([]*entity.Order, error) {
 
-//func (s *OrderStorage) generateID() string {
-//	return uuid.New()
-//}
+	b := inmemory.NewBuilder()
+	b.WithLimit(limit)
+	b.WithSpec(spec)
 
-//
-//func (s *OrderStorage) GetOrders(c *searchParams) ([]*entity.Order, error) {
-//	if c == nil {
-//		return nil, errSearchParamsIsNil
-//	}
-//
-//	if c.slot == nil {
-//		return nil, errSlotIsNil
-//	}
-//
-//	s.RLock()
-//	defer s.RUnlock()
-//
-//	orders := []*entity.Order{}
-//	for _, order := range s.db {
-//		if uint64(len(orders)) >= c.count {
-//			break
-//		}
-//
-//		if compareOrderAndSlot(c.slot, order, c.orderType) {
-//			orders = append(orders, order)
-//		}
-//	}
-//
-//	sort.Sort(entity.ByPrice(orders))
-//	return orders, nil
-//}
 
-//func compareOrderAndSlot(slot *entity.Slot, order *entity.Order, typ pb.OrderType) bool {
-//	if typ != pb.OrderType_ANY && typ != order.GetType() {
-//		return false
-//	}
-//
-//	os, _ := entity.NewSlot(order.Unwrap().Slot)
-//	return slot.Compare(os, order.GetType())
-//}
+	var orders []*entity.Order
+	err := s.e.Match(b.Build(), &orders)
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
+}
