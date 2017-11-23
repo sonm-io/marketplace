@@ -26,7 +26,7 @@ var (
 var (
 	listenAddr    = flag.String("addr", ":9090", "SONM Marketplace service listen addr")
 	showVersion   = flag.Bool("version", false, "Show SONM Marketplace version and exit")
-	showBuildInfo = flag.Bool("build info", false, "Display build info and exit")
+	showBuildInfo = flag.Bool("build-info", false, "Display build info and exit")
 )
 
 func main() {
