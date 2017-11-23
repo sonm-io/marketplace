@@ -42,9 +42,3 @@ func TestCancelOrderHandlerHandle_IncorrectCommandGivenErrorReturned(t *testing.
 	// assert
 	assert.EqualError(t, err, fmt.Sprintf("invalid command %v given", cmd))
 }
-
-type unknownCommand struct{}
-
-func (c unknownCommand) CommandID() string {
-	return "UnknownCommand"
-}

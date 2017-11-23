@@ -49,7 +49,7 @@ func (l *App) Run() error {
 
 	getOrderHandler := query.NewGetOrderHandler(repo)
 	getOrdersHandler := query.NewGetOrdersHandler(repo)
-	createOrderHandler := command.NewCreateOrderValidator(command.NewCreateOrderHandler(repo))
+	createOrderHandler := command.NewCreateOrderHandler(repo)
 	cancelOrderHandler := command.NewCancelOrderHandler(repo)
 
 	commandBus := cqrs.NewCommandBus()
