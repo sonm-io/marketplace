@@ -7,17 +7,18 @@ import (
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
-type OrderByID interface {
+// OrderByIDStorage fetches an Order by the given ID.
+type OrderByIDStorage interface {
 	ByID(id string) (*entity.Order, error)
 }
 
 // GetOrderHandler returns an Order.
 type GetOrderHandler struct {
-	s OrderByID
+	s OrderByIDStorage
 }
 
-// NewGetOrderHandler creates a new instance of GetOrderHandler
-func NewGetOrderHandler(s OrderByID) *GetOrderHandler {
+// NewGetOrderHandler creates a new instance of GetOrderHandler.
+func NewGetOrderHandler(s OrderByIDStorage) *GetOrderHandler {
 	return &GetOrderHandler{s: s}
 }
 
@@ -27,12 +28,12 @@ func (h *GetOrderHandler) Handle(req intf.Query, result interface{}) error {
 
 	q, ok := req.(GetOrder)
 	if !ok {
-		return fmt.Errorf("invalid query given")
+		return fmt.Errorf("invalid query %v given", req)
 	}
 
 	r, ok := result.(*GetOrderResult)
 	if !ok {
-		return fmt.Errorf("invalid result given")
+		return fmt.Errorf("invalid result %v given", result)
 	}
 
 	order, err := h.s.ByID(q.ID)

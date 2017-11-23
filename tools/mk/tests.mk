@@ -15,7 +15,7 @@ INTEGRATION_TEST_COVERAGE_TARGETS      := $(foreach p,$(shell ${INTEGRATION_TEST
 	bash tools/generate-fake-tests.sh
 
 test-results:
-	mkdir integration-results
+	mkdir -p integration-results
 	mkdir -p test-results/cover
 	mkdir -p test-results/output
 

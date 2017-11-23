@@ -10,7 +10,7 @@ rm-mocks:
 	rm -rf mocks.go
 
 .PHONY: generate-mocks
-generate-mocks: generate-mocks-intf-storage generate-mocks-usecase-marketplace-command clean-mocks
+generate-mocks: generate-mocks-intf-storage generate-mocks-usecase-marketplace-command generate-mocks-usecase-marketplace-query clean-mocks
 	@echo "Generating mocks"
 
 .PHONY: generate-mocks-intf-storage
@@ -26,3 +26,11 @@ generate-mocks-usecase-marketplace-command: tools
             -source ./usecase/marketplace/command/cancel_order_handler.go CancelOrderStorage > ./usecase/marketplace/command/mocks/cancel_order_storage.go
 	mockgen -package mocks \
             -source ./usecase/marketplace/command/create_order_handler.go CreateOrderStorage > ./usecase/marketplace/command/mocks/create_order_storage.go
+
+ .PHONY: generate-mocks-usecase-marketplace-query
+generate-mocks-usecase-marketplace-query: tools
+	@mkdir  -p ./usecase/marketplace/query/mocks
+	mockgen -package mocks \
+             -source ./usecase/marketplace/query/get_order_handler.go OrderByIDStorage > ./usecase/marketplace/query/mocks/order_by_id_storage.go
+	#mockgen -package mocks \
+	#         -source ./usecase/marketplace/command/create_order_handler.go CreateOrderStorage > ./usecase/marketplace/command/mocks/create_order_storage.go

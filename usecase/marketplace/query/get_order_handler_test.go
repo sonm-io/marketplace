@@ -1,50 +1,82 @@
-package command
+package query
 
 import (
 	"testing"
 
 	"fmt"
-
 	"github.com/golang/mock/gomock"
-	"github.com/sonm-io/marketplace/usecase/marketplace/command/mocks"
+	"github.com/sonm-io/marketplace/entity"
+	"github.com/sonm-io/marketplace/usecase/marketplace/query/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCancelOrderHandlerHandle_ExistingIDGiven_OrderCanceled(t *testing.T) {
+func TestNewGetOrderHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 	// arrange
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	storage := mocks.NewMockCancelOrderStorage(ctrl)
-	storage.EXPECT().Remove("test_order").Times(1).Return(nil)
+	expected := GetOrderResult{
+		ID:        "test_order",
+		BuyerID:   "TestBuyer",
+		OrderType: int(entity.ASK),
+		Price:     555,
+	}
 
-	h := NewCancelOrderHandler(storage)
+	order := entity.Order{
+		ID:        "test_order",
+		BuyerID:   "TestBuyer",
+		OrderType: entity.ASK,
+		Price:     555,
+	}
+
+	storage := mocks.NewMockOrderByIDStorage(ctrl)
+	storage.EXPECT().ByID("test_order").Return(&order, nil)
+
+	h := NewGetOrderHandler(storage)
 
 	// act
-	err := h.Handle(CancelOrder{ID: "test_order"})
+	var obtained GetOrderResult
+	err := h.Handle(GetOrder{ID: "test_order"}, &obtained)
 
 	// assert
 	assert.NoError(t, err)
+	assert.Equal(t, expected, obtained)
 }
 
-func TestCancelOrderHandlerHandle_IncorrectCommandGivenErrorReturned(t *testing.T) {
+func TestCancelOrderHandlerHandle_IncorrectQueryResultGivenErrorReturned(t *testing.T) {
 	// arrange
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	storage := mocks.NewMockCancelOrderStorage(ctrl)
-	h := NewCancelOrderHandler(storage)
+	storage := mocks.NewMockOrderByIDStorage(ctrl)
+	h := NewGetOrderHandler(storage)
 
 	// act
-	cmd := unknownCommand{}
-	err := h.Handle(cmd)
+	result := &struct{}{}
+	err := h.Handle(GetOrder{}, result)
 
 	// assert
-	assert.EqualError(t, err, fmt.Sprintf("invalid command %v given", cmd))
+	assert.EqualError(t, err, fmt.Sprintf("invalid result %v given", result))
 }
 
-type unknownCommand struct{}
+func TestCancelOrderHandlerHandle_IncorrectQueryGivenErrorReturned(t *testing.T) {
+	// arrange
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-func (c unknownCommand) CommandID() string {
-	return "UnknownCommand"
+	storage := mocks.NewMockOrderByIDStorage(ctrl)
+	h := NewGetOrderHandler(storage)
+
+	// act
+	q := unknownQuery{}
+	err := h.Handle(q, &GetOrderResult{})
+
+	// assert
+	assert.EqualError(t, err, fmt.Sprintf("invalid query %v given", q))
+}
+
+type unknownQuery struct{}
+
+func (c unknownQuery) QueryID() string {
+	return "UnknownQuery"
 }
