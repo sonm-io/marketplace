@@ -104,8 +104,6 @@ func TestOrderStorageRemove_ExistingIDGiven_OrderRemoved(t *testing.T) {
 	assert.NoError(t, err, "non-error result expected")
 }
 
-
-
 type priceIsBetweenTestSpec struct {
 	From int64
 	To   int64
