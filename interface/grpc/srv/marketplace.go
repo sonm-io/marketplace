@@ -21,23 +21,22 @@ type QueryBus interface {
 }
 
 type Marketplace struct {
-	commandBus intf.CommandHandler
-	orderByID  QueryBus
+	commandBus   intf.CommandHandler
+	orderByID    QueryBus
 	ordersBySpec QueryBus
-
 }
 
 func NewMarketplace(c intf.CommandHandler, orderByID QueryBus, ordersBySpec QueryBus) *Marketplace {
 	return &Marketplace{
-		commandBus: c,
-		orderByID:  orderByID,
+		commandBus:   c,
+		orderByID:    orderByID,
 		ordersBySpec: ordersBySpec,
 	}
 }
 
 func (m *Marketplace) GetOrderByID(_ context.Context, req *pb.ID) (*pb.Order, error) {
 	order := &query.GetOrderResult{}
-	if err := m.orderByID.Handle(query.GetOrder{ID:req.Id}, order); err != nil {
+	if err := m.orderByID.Handle(query.GetOrder{ID: req.Id}, order); err != nil {
 		return nil, err
 	}
 
@@ -66,7 +65,7 @@ func (m *Marketplace) CreateOrder(_ context.Context, req *pb.Order) (*pb.Order, 
 
 	// map request to command
 	// TODO: (screwyprof) move to smth like cmd := model.Bind(req), or model.bind(&req, &cmd)
-	 cmd := command.CreateOrder{
+	cmd := command.CreateOrder{
 		ID:         uuid.New(),
 		SupplierID: req.SupplierID,
 		BuyerID:    req.ByuerID,
@@ -90,16 +89,15 @@ func (m *Marketplace) GetOrders(_ context.Context, req *pb.GetOrdersRequest) (*p
 	}
 
 	slot := query.Slot{
-		BuyerRating:req.Slot.GetBuyerRating(),
-		SupplierRating:req.Slot.GetSupplierRating(),
+		BuyerRating:    req.Slot.GetBuyerRating(),
+		SupplierRating: req.Slot.GetSupplierRating(),
 	}
 
 	q := query.GetOrders{
-		OrderType:int(req.OrderType),
-		Slot: slot,
-		Limit:limit,
+		OrderType: int(req.OrderType),
+		Slot:      slot,
+		Limit:     limit,
 	}
-
 
 	orders := &query.GetOrderResult{}
 	if err := m.orderByID.Handle(q, orders); err != nil {

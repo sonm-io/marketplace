@@ -1,11 +1,9 @@
 package query
 
-
 // GetOrders is a query to return order info.
-type GetOrders struct{
+type GetOrders struct {
 	OrderType int
 	Slot
-
 
 	// paging
 	Limit uint64
@@ -22,7 +20,6 @@ type Slot struct {
 	// Hardware resources requirements
 	//Resources *Resources `protobuf:"bytes,4,opt,name=resources" json:"resources,omitempty"`
 }
-
 
 // QueryID implements Query interface.
 func (q GetOrders) QueryID() string {

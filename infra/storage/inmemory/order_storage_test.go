@@ -31,8 +31,6 @@ func TestOrderStorageByID_ExistentIDGiven_ValidResultReturned(t *testing.T) {
 	s := NewStorage()
 	s.Store(expected)
 
-
-
 	// act
 	obtained := &entity.Order{}
 	err := s.ByID("test_obj", obtained)
@@ -84,38 +82,37 @@ func TestOrderStorageMatch_SpecCriteriaGiven_CollectionReturned(t *testing.T) {
 	// arrange
 	s := NewStorage()
 	s.Store(&entity.Order{
-		ID: "test_obj_100",
+		ID:    "test_obj_100",
 		Price: 100,
 	})
 	s.Store(&entity.Order{
-		ID: "test_obj_101",
+		ID:    "test_obj_101",
 		Price: 101,
 	})
 	s.Store(&entity.Order{
-		ID: "test_obj_105",
+		ID:    "test_obj_105",
 		Price: 105,
 	})
 	s.Store(&entity.Order{
-		ID: "test_obj_110",
+		ID:    "test_obj_110",
 		Price: 110,
 	})
 
 	expected := []*entity.Order{
 		{
-			ID: "test_obj_101",
+			ID:    "test_obj_101",
 			Price: 101,
 		},
 		{
-			ID: "test_obj_105",
+			ID:    "test_obj_105",
 			Price: 105,
 		},
 	}
 
-
 	// act
 	q := ConcreteCriteria{
-		Limit:100,
-		Spec:PriceIsBetweenTestSpec{From:101, To:106},
+		Limit: 100,
+		Spec:  PriceIsBetweenTestSpec{From: 101, To: 106},
 	}
 
 	var obtained []*entity.Order
@@ -128,7 +125,7 @@ func TestOrderStorageMatch_SpecCriteriaGiven_CollectionReturned(t *testing.T) {
 
 type PriceIsBetweenTestSpec struct {
 	From int64
-	To int64
+	To   int64
 }
 
 func (s PriceIsBetweenTestSpec) IsSatisfiedBy(object interface{}) bool {

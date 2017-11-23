@@ -1,7 +1,7 @@
 package query
 
 // GetOrder is a query to return order info.
-type GetOrder struct{
+type GetOrder struct {
 	ID string
 }
 

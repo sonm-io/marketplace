@@ -7,19 +7,20 @@ import (
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
-type createOrderStorage interface {
+type CreateOrderStorage interface {
 	Store(o *entity.Order) error
 }
 
-// CreateOrderHandler stores orders.
+// CreateOrderHandler creates new orders.
 type CreateOrderHandler struct {
-	s createOrderStorage
+	s CreateOrderStorage
 }
 
 // NewCreateOrderHandler creates a new instance of CreateOrderHandler.
-func NewCreateOrderHandler(r createOrderStorage) CreateOrderHandler {
-	return CreateOrderHandler{s: r}
+func NewCreateOrderHandler(s CreateOrderStorage) CreateOrderHandler {
+	return CreateOrderHandler{s: s}
 }
+
 // Handle handles the given command.
 // Stores the given order.
 func (h CreateOrderHandler) Handle(cmd intf.Command) error {
@@ -37,10 +38,10 @@ func (h CreateOrderHandler) Handle(cmd intf.Command) error {
 	return h.s.Store(order)
 }
 
-func  (h CreateOrderHandler) createNewOrder(c CreateOrder) (*entity.Order, error) {
+func (h CreateOrderHandler) createNewOrder(c CreateOrder) (*entity.Order, error) {
 	var (
 		order *entity.Order
-		err error
+		err   error
 	)
 	switch entity.OrderType(c.OrderType) {
 	case entity.ASK:

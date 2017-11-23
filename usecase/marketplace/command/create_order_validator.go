@@ -7,21 +7,22 @@ import (
 )
 
 var (
-	errPriceIsZero       = fmt.Errorf("order price cannot be negative or zero")
+	errPriceIsZero = fmt.Errorf("order price cannot be negative or zero")
 )
 
 // CreateOrderValidator validates CreateOrder command.
-// acts as a command handler decorator.
+// Acts as a command handler decorator.
 type CreateOrderValidator struct {
 	h intf.CommandHandler
 }
 
 // NewCreateOrderValidator creates a new instance of CreateOrderValidator.
 func NewCreateOrderValidator(h intf.CommandHandler) CreateOrderValidator {
-	return CreateOrderValidator{h:h}
+	return CreateOrderValidator{h: h}
 }
+
 // Handle handles the given command.
-// Stores the given order.
+// Validates the given create order command.
 func (h CreateOrderValidator) Handle(cmd intf.Command) error {
 
 	c, ok := cmd.(CreateOrder)
@@ -33,7 +34,5 @@ func (h CreateOrderValidator) Handle(cmd intf.Command) error {
 		return errPriceIsZero
 	}
 
-
 	return h.Handle(cmd)
 }
-

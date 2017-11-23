@@ -39,7 +39,6 @@ func (s *OrderStorage) ByID(ID string, result interface{}) error {
 	r := result.(*entity.Order)
 	*r = *item
 
-
 	return nil
 }
 
@@ -70,7 +69,6 @@ func (s *OrderStorage) Match(q ConcreteCriteria, result interface{}) error {
 	s.RLock()
 	defer s.RUnlock()
 
-
 	// the order maters, so sort the items in the db.
 	// otherwise the order is not guaranteed and may lead to errors.
 	keys := make([]string, 0)
@@ -78,7 +76,6 @@ func (s *OrderStorage) Match(q ConcreteCriteria, result interface{}) error {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
-
 
 	var collection []*entity.Order
 	for _, idx := range keys {

@@ -3,10 +3,11 @@ package command
 import (
 	"testing"
 
+	"fmt"
+
 	"github.com/golang/mock/gomock"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command/mocks"
 	"github.com/stretchr/testify/assert"
-	"fmt"
 )
 
 func TestCancelOrderHandlerHandle_ExistingIDGiven_OrderCanceled(t *testing.T) {
@@ -42,7 +43,8 @@ func TestCancelOrderHandlerHandle_IncorrectCommandGivenErrorReturned(t *testing.
 	assert.EqualError(t, err, fmt.Sprintf("invalid command %v given", cmd))
 }
 
-type unknownCommand struct {}
+type unknownCommand struct{}
+
 func (c unknownCommand) CommandID() string {
 	return "UnknownCommand"
 }

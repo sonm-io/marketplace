@@ -13,7 +13,6 @@ type CompositeSpecification interface {
 	Not() CompositeSpecification
 }
 
-
 // -----------------------------------------------------------------------------
 
 // AbstractSpecification implements CompositeSpecification interface
@@ -23,18 +22,19 @@ type AbstractSpecification struct {
 
 // And returns a specification composition with AND operator
 func (c *AbstractSpecification) And(other Specification) CompositeSpecification {
-	return &andSpecification{one:c, two:other}
+	return &andSpecification{one: c, two: other}
 }
 
 // Or returns a specification composition with OR operator
 func (c *AbstractSpecification) Or(other Specification) CompositeSpecification {
-	return &orSpecification{one:c, two:other}
+	return &orSpecification{one: c, two: other}
 }
 
 // Not returns a specification composition with NOT operator
 func (c *AbstractSpecification) Not() CompositeSpecification {
-	return &notSpecification{one:c}
+	return &notSpecification{one: c}
 }
+
 // -----------------------------------------------------------------------------
 
 type andSpecification struct {

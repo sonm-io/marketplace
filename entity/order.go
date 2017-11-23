@@ -27,7 +27,7 @@ const (
 )
 
 var (
-	errPriceIsZero = errors.New("order price cannot be less or equal than zero")
+	errPriceIsZero = errors.New("order price cannot be negative")
 )
 
 func NewAskOrder(ID, buyerID string, price int64) (*Order, error) {

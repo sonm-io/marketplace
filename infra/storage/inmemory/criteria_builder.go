@@ -1,8 +1,8 @@
 package inmemory
 
 type CriteriaBuilder struct {
-	limit   uint64
-	spec Specification
+	limit uint64
+	spec  Specification
 }
 
 func NewBuilder() *CriteriaBuilder {

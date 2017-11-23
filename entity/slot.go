@@ -10,4 +10,3 @@ type Slot struct {
 	// Hardware resources requirements
 	//Resources *Resources `protobuf:"bytes,4,opt,name=resources" json:"resources,omitempty"`
 }
-
