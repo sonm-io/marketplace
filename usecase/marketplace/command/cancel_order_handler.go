@@ -6,21 +6,23 @@ import (
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
-type cancelOrderStorage interface {
+// CancelOrderStorage order storage.
+type CancelOrderStorage interface {
 	Remove(ID string) error
 }
 
-// CancelOrderHandler stores orders.
+// CancelOrderHandler cancels orders.
 type CancelOrderHandler struct {
-	s cancelOrderStorage
+	s CancelOrderStorage
 }
 
 // NewCancelOrderHandler creates a new instance of CancelOrderHandler.
-func NewCancelOrderHandler(r cancelOrderStorage) CancelOrderHandler {
-	return CancelOrderHandler{s: r}
+func NewCancelOrderHandler(s CancelOrderStorage) CancelOrderHandler {
+	return CancelOrderHandler{s: s}
 }
+
 // Handle handles the given command.
-// Stores the given order.
+// Cancels the given order.
 func (h CancelOrderHandler) Handle(cmd intf.Command) error {
 	c, ok := cmd.(CancelOrder)
 	if !ok {
