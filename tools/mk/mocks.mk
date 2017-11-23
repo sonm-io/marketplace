@@ -31,6 +31,6 @@ generate-mocks-usecase-marketplace-command: tools
 generate-mocks-usecase-marketplace-query: tools
 	@mkdir  -p ./usecase/marketplace/query/mocks
 	mockgen -package mocks \
-             -source ./usecase/marketplace/query/get_order_handler.go OrderByIDStorage > ./usecase/marketplace/query/mocks/order_by_id_storage.go
-	#mockgen -package mocks \
-	#         -source ./usecase/marketplace/command/create_order_handler.go CreateOrderStorage > ./usecase/marketplace/command/mocks/create_order_storage.go
+            -source ./usecase/marketplace/query/get_order_handler.go OrderByIDStorage > ./usecase/marketplace/query/mocks/order_by_id_storage.go
+	mockgen -package mocks \
+            -source ./usecase/marketplace/query/get_orders_handler.go OrderBySpecStorage > ./usecase/marketplace/query/mocks/order_by_spec_storage.go

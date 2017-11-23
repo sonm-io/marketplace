@@ -8,6 +8,7 @@ import (
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	"github.com/sonm-io/marketplace/report"
 	"golang.org/x/net/context"
 )
 
@@ -35,7 +36,7 @@ func NewMarketplace(c intf.CommandHandler, orderByID QueryBus, ordersBySpec Quer
 }
 
 func (m *Marketplace) GetOrderByID(_ context.Context, req *pb.ID) (*pb.Order, error) {
-	order := &query.GetOrderResult{}
+	order := &report.Order{}
 	if err := m.orderByID.Handle(query.GetOrder{ID: req.Id}, order); err != nil {
 		return nil, err
 	}
@@ -99,7 +100,7 @@ func (m *Marketplace) GetOrders(_ context.Context, req *pb.GetOrdersRequest) (*p
 		Limit:     limit,
 	}
 
-	orders := &query.GetOrderResult{}
+	orders := &report.Order{}
 	if err := m.orderByID.Handle(q, orders); err != nil {
 		return nil, err
 	}

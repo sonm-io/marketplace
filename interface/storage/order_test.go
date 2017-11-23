@@ -9,6 +9,7 @@ import (
 	"github.com/sonm-io/marketplace/entity"
 	"github.com/sonm-io/marketplace/infra/storage/inmemory"
 	"github.com/sonm-io/marketplace/interface/storage/mocks"
+	"github.com/sonm-io/marketplace/report"
 )
 
 func TestOrderStorageByID_ExistingIDGiven_OrderReturned(t *testing.T) {
@@ -16,10 +17,10 @@ func TestOrderStorageByID_ExistingIDGiven_OrderReturned(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	expected := entity.Order{ID: "test_order"}
+	expected := report.GetOrderReport{ID: "test_order"}
 
 	engineMock := mocks.NewMockEngine(ctrl)
-	engineMock.EXPECT().ByID("test_order", &entity.Order{}).SetArg(1, expected).Return(nil)
+	engineMock.EXPECT().ByID("test_order", &report.GetOrderReport{}).SetArg(1, expected).Return(nil)
 
 	s := NewOrderStorage(engineMock)
 
@@ -28,7 +29,7 @@ func TestOrderStorageByID_ExistingIDGiven_OrderReturned(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err, "non-error result expected")
-	assert.Equal(t, expected, *obtained)
+	assert.Equal(t, expected, obtained)
 }
 
 func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T) {
@@ -36,7 +37,7 @@ func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	expected := []*entity.Order{
+	expected := report.GetOrdersReport{
 		{
 			ID:    "test_obj_101",
 			Price: 101,
@@ -47,7 +48,7 @@ func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T)
 		},
 	}
 
-	var orders []*entity.Order
+	var orders report.GetOrdersReport
 	spec := priceIsBetweenTestSpec{From: 101, To: 106}
 	q := inmemory.ConcreteCriteria{
 		Limit: 10,

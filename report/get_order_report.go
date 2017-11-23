@@ -1,7 +1,7 @@
-package query
+package report
 
-// GetOrderResult is query result DTO.
-type GetOrderResult struct {
+// GetOrderReport is query result DTO.
+type GetOrderReport struct {
 	ID         string
 	Price      int64
 	SupplierID string

@@ -3,13 +3,13 @@ package query
 import (
 	"fmt"
 
-	"github.com/sonm-io/marketplace/entity"
+	"github.com/sonm-io/marketplace/report"
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
 // OrderByIDStorage fetches an Order by the given ID.
 type OrderByIDStorage interface {
-	ByID(id string) (*entity.Order, error)
+	ByID(id string) (report.GetOrderReport, error)
 }
 
 // GetOrderHandler returns an Order.
@@ -31,7 +31,7 @@ func (h *GetOrderHandler) Handle(req intf.Query, result interface{}) error {
 		return fmt.Errorf("invalid query %v given", req)
 	}
 
-	r, ok := result.(*GetOrderResult)
+	r, ok := result.(*report.GetOrderReport)
 	if !ok {
 		return fmt.Errorf("invalid result %v given", result)
 	}
@@ -41,11 +41,7 @@ func (h *GetOrderHandler) Handle(req intf.Query, result interface{}) error {
 		return err
 	}
 
-	r.ID = order.ID
-	r.Price = order.Price
-	r.SupplierID = order.SupplierID
-	r.BuyerID = order.BuyerID
-	r.OrderType = int(order.OrderType)
+	*r = order
 
 	return nil
 }
