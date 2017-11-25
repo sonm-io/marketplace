@@ -13,34 +13,52 @@ import (
 
 func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order, error) {
 
-	ID := uuid.New()
-	if err := m.createBidOrder(ID, req); err != nil {
-		return nil, fmt.Errorf("cannot create bid order: %v", err)
+	var cmd command.CreateBidOrder
+	if err := m.bind(req, &cmd); err != nil {
+		return nil, fmt.Errorf("cannot map request to command: %v", err)
 	}
 
-	// return response
-	return m.GetOrderByID(ctx, &pb.ID{Id: ID})
+	log.Printf("Creating bid order %+v", cmd)
+
+	if err := m.commandBus.Handle(cmd); err != nil {
+		log.Printf("cannot create bid order: %v\n", err)
+		return nil, fmt.Errorf("cannot create bid order: %v\n", err)
+	}
+
+	log.Printf("bid order %s created\n", cmd.ID)
+
+	return m.GetOrderByID(ctx, &pb.ID{Id: cmd.ID})
 }
 
-func (m *Marketplace) createBidOrder(ID string, req *pb.Order) error {
+func (m *Marketplace) bind(req *pb.Order, cmd *command.CreateBidOrder) error {
 
-	// map request to command
-	// TODO: (screwyprof) move to smth like cmd := model.Bind(req), or model.bind(&req, &cmd)
-	cmd := command.CreateBidOrder{
+	// get id from request or generate new
+	ID := req.GetId()
+	if ID == "" {
+		ID = uuid.New()
+	}
+
+	c := &command.CreateBidOrder{
 		ID:        ID,
 		Price:     req.GetPrice(),
 		OrderType: int(req.GetOrderType()),
 		BuyerID:   req.GetByuerID(),
 	}
 
-	log.Printf("Creating bid order %+v", cmd)
+	*cmd = *c
 
-	// handle command
-	if err := m.commandBus.Handle(cmd); err != nil {
-		log.Printf("cannot create bid order: %v\n", err)
-		return err
+	if req.Slot != nil {
+		cmd.Slot.SupplierRating = req.GetSlot().GetSupplierRating()
+		cmd.Slot.BuyerRating = req.GetSlot().GetBuyerRating()
+		if req.Slot.Resources != nil {
+			res := req.GetSlot().GetResources()
+			cmd.Slot.Resources = command.Resources{
+				CpuCores: res.GetCpuCores(),
+				RamBytes: res.GetRamBytes(),
+				Storage:  res.GetStorage(),
+			}
+		}
 	}
 
-	log.Printf("bid order %s created\n", cmd.ID)
 	return nil
 }

@@ -16,7 +16,6 @@ type Order struct {
 	Slot *Slot
 }
 
-// OrderType order's type.
 type OrderType int32
 
 const (

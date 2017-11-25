@@ -8,5 +8,5 @@ type Slot struct {
 	// Geo represent Worker's position
 	//Geo *Geo `protobuf:"bytes,3,opt,name=geo" json:"geo,omitempty"`
 	// Hardware resources requirements
-	//Resources *Resources `protobuf:"bytes,4,opt,name=resources" json:"resources,omitempty"`
+	Resources *Resources
 }

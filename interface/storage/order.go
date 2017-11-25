@@ -50,7 +50,13 @@ func (s *OrderStorage) ByID(ID string) (report.GetOrderReport, error) {
 
 	slot := report.Slot{}
 	if order.Slot != nil {
-		slot = report.Slot(*order.Slot)
+		slot = report.Slot{}
+		slot.BuyerRating = order.Slot.BuyerRating
+		slot.SupplierRating = order.Slot.SupplierRating
+		if order.Slot.Resources != nil {
+			res := report.Resources(*order.Slot.Resources)
+			slot.Resources = &res
+		}
 	}
 
 	rep := report.GetOrderReport{

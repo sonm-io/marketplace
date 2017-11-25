@@ -14,7 +14,23 @@ func TestCreateAskOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	expectedOrder, _ := entity.NewAskOrder("TestAskOrder", "TestSupplier", 555, entity.Slot{})
+	cmd := CreateAskOrder{
+		ID:         "TestAdkOrder",
+		SupplierID: "TestSupplier",
+		OrderType:  int(entity.BID),
+		Price:      555,
+		Slot: Slot{
+			SupplierRating: 0,
+			BuyerRating:    0,
+			Resources: Resources{
+				CpuCores: 4,
+				RamBytes: 100000000,
+				Storage:  1000000000,
+			},
+		},
+	}
+
+	expectedOrder, _ := newAskOrder(cmd)
 
 	storage := mocks.NewMockCreateAskOrderStorage(ctrl)
 	storage.EXPECT().Store(expectedOrder).Times(1).Return(nil)
@@ -22,12 +38,7 @@ func TestCreateAskOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 	h := NewCreateAskOrderHandler(storage)
 
 	// act
-	err := h.Handle(CreateAskOrder{
-		ID:         "TestAskOrder",
-		SupplierID: "TestSupplier",
-		OrderType:  int(entity.BID),
-		Price:      555,
-	})
+	err := h.Handle(cmd)
 
 	// assert
 	assert.NoError(t, err)
