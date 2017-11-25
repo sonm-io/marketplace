@@ -1,20 +1,27 @@
 package cli
 
 import (
+	"log"
 	"net"
 
 	"github.com/sonm-io/marketplace/infra/cqrs"
+	"github.com/sonm-io/marketplace/infra/errors"
+	"github.com/sonm-io/marketplace/infra/storage/inmemory"
+
+	"github.com/sonm-io/marketplace/interface/adaptor"
+	"github.com/sonm-io/marketplace/interface/grpc/srv"
 	"github.com/sonm-io/marketplace/interface/storage"
+
+	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
-	"github.com/sonm-io/marketplace/infra/storage/inmemory"
-	"github.com/sonm-io/marketplace/interface/adaptor"
-	"github.com/sonm-io/marketplace/interface/grpc/srv"
-
-	"github.com/sonm-io/marketplace/usecase/marketplace/command"
+	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 )
 
 type Config struct {
@@ -61,7 +68,21 @@ func (l *App) Run() error {
 		return err
 	}
 
+	panicHandler := grpc_recovery.RecoveryHandlerFunc(func(p interface{}) (err error) {
+		log.Printf("%+v", errors.Callers())
+
+		err = status.Errorf(codes.Internal, "%s", p)
+		return
+	})
+
+	opts := []grpc_recovery.Option{
+		grpc_recovery.WithRecoveryHandler(panicHandler),
+	}
+
 	s := grpc.NewServer(
+		grpc_middleware.WithUnaryServerChain(grpc_recovery.UnaryServerInterceptor(opts...)),
+		grpc_middleware.WithStreamServerChain(grpc_recovery.StreamServerInterceptor(opts...)),
+
 		grpc.RPCCompressor(grpc.NewGZIPCompressor()),
 		grpc.RPCDecompressor(grpc.NewGZIPDecompressor()),
 	)
