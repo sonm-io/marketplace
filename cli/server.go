@@ -49,11 +49,11 @@ func (l *App) Run() error {
 
 	getOrderHandler := query.NewGetOrderHandler(repo)
 	getOrdersHandler := query.NewGetOrdersHandler(repo)
-	createOrderHandler := command.NewCreateOrderHandler(repo)
+	createOrderHandler := command.NewCreateBidOrderHandler(repo)
 	cancelOrderHandler := command.NewCancelOrderHandler(repo)
 
 	commandBus := cqrs.NewCommandBus()
-	commandBus.RegisterHandler("CreateOrder", adaptor.FromDomain(createOrderHandler))
+	commandBus.RegisterHandler("CreateBidOrder", adaptor.FromDomain(createOrderHandler))
 	commandBus.RegisterHandler("CancelOrder", adaptor.FromDomain(cancelOrderHandler))
 
 	lis, err := net.Listen("tcp", l.conf.ListenAddr)
