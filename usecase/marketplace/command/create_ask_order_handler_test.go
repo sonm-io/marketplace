@@ -9,40 +9,40 @@ import (
 	"testing"
 )
 
-func TestCreateBidOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testing.T) {
+func TestCreateAskOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testing.T) {
 	// arrange
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	expectedOrder, _ := entity.NewBidOrder("TestBidOrder", "TestBuyer", 555, entity.Slot{})
+	expectedOrder, _ := entity.NewAskOrder("TestAskOrder", "TestSupplier", 555, entity.Slot{})
 
-	storage := mocks.NewMockCreateBidOrderStorage(ctrl)
+	storage := mocks.NewMockCreateAskOrderStorage(ctrl)
 	storage.EXPECT().Store(expectedOrder).Times(1).Return(nil)
 
-	h := NewCreateBidOrderHandler(storage)
+	h := NewCreateAskOrderHandler(storage)
 
 	// act
-	err := h.Handle(CreateBidOrder{
-		ID:        "TestBidOrder",
-		BuyerID:   "TestBuyer",
-		OrderType: int(entity.BID),
-		Price:     555,
+	err := h.Handle(CreateAskOrder{
+		ID:         "TestAskOrder",
+		SupplierID: "TestSupplier",
+		OrderType:  int(entity.BID),
+		Price:      555,
 	})
 
 	// assert
 	assert.NoError(t, err)
 }
 
-func TestCreateBidOrderHandlerHandle_InValidOrderTypeGiven_ErrorReturned(t *testing.T) {
+func TestCreateAskOrderHandlerHandle_InValidOrderTypeGiven_ErrorReturned(t *testing.T) {
 	// arrange
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	storage := mocks.NewMockCreateBidOrderStorage(ctrl)
-	h := NewCreateBidOrderHandler(storage)
+	storage := mocks.NewMockCreateAskOrderStorage(ctrl)
+	h := NewCreateAskOrderHandler(storage)
 
 	// act
-	err := h.Handle(CreateBidOrder{
+	err := h.Handle(CreateAskOrder{
 		ID:    "TestOrder",
 		Price: 555,
 	})
@@ -51,13 +51,13 @@ func TestCreateBidOrderHandlerHandle_InValidOrderTypeGiven_ErrorReturned(t *test
 	assert.EqualError(t, err, fmt.Sprintf("invalid order type given: expected bid order, but got %v", 0))
 }
 
-func TestCreateBidOrderHandlerHandle_IncorrectCommandGivenErrorReturned(t *testing.T) {
+func TestCreateAskOrderHandlerHandle_IncorrectCommandGivenErrorReturned(t *testing.T) {
 	// arrange
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	storage := mocks.NewMockCreateBidOrderStorage(ctrl)
-	h := NewCreateBidOrderHandler(storage)
+	storage := mocks.NewMockCreateAskOrderStorage(ctrl)
+	h := NewCreateAskOrderHandler(storage)
 
 	// act
 	cmd := unknownCommand{}

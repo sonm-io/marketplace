@@ -45,10 +45,24 @@ func (s *OrderStorage) Remove(ID string) error {
 // ByID Fetches an Order by its ID.
 // If ID is not found, an error is returned.
 func (s *OrderStorage) ByID(ID string) (report.GetOrderReport, error) {
-	var order report.GetOrderReport
+	var order entity.Order
 	err := s.e.ByID(ID, &order)
 
-	return order, err
+	slot := report.Slot{}
+	if order.Slot != nil {
+		slot = report.Slot(*order.Slot)
+	}
+
+	rep := report.GetOrderReport{
+		ID:         order.ID,
+		Price:      order.Price,
+		OrderType:  int(order.OrderType),
+		SupplierID: order.SupplierID,
+		BuyerID:    order.BuyerID,
+		Slot:       slot,
+	}
+
+	return rep, err
 }
 
 // BySpecWithLimit fetches Orders that satisfy the given Spec.

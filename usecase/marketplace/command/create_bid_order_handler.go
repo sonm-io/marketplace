@@ -35,7 +35,7 @@ func (h CreateBidOrderHandler) Handle(cmd intf.Command) error {
 		return fmt.Errorf("invalid order type given: expected bid order, but got %v", c.OrderType)
 	}
 
-	order, err := entity.NewBidOrder(c.ID, c.BuyerID, c.Price)
+	order, err := entity.NewBidOrder(c.ID, c.BuyerID, c.Price, entity.Slot(c.Slot))
 	if err != nil {
 		return err
 	}

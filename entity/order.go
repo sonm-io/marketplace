@@ -30,12 +30,13 @@ var (
 	errPriceIsZero = errors.New("order price cannot be negative")
 )
 
-func NewAskOrder(ID, supplierID string, price int64) (*Order, error) {
+func NewAskOrder(ID, supplierID string, price int64, slot Slot) (*Order, error) {
 	o := &Order{
 		ID:         ID,
 		SupplierID: supplierID,
 		Price:      price,
 		OrderType:  ASK,
+		Slot:       &slot,
 	}
 
 	if o.Price <= 0 {
@@ -45,12 +46,13 @@ func NewAskOrder(ID, supplierID string, price int64) (*Order, error) {
 	return o, nil
 }
 
-func NewBidOrder(ID, buyerID string, price int64) (*Order, error) {
+func NewBidOrder(ID, buyerID string, price int64, slot Slot) (*Order, error) {
 	o := &Order{
 		ID:        ID,
 		BuyerID:   buyerID,
 		Price:     price,
 		OrderType: BID,
+		Slot:      &slot,
 	}
 
 	if o.Price <= 0 {

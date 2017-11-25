@@ -20,17 +20,14 @@ func TestGetOrderHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 		BuyerID:   "TestBuyer",
 		OrderType: int(report.ASK),
 		Price:     555,
-	}
-
-	order := report.GetOrderReport{
-		ID:        "test_order",
-		BuyerID:   "TestBuyer",
-		OrderType: int(report.ASK),
-		Price:     555,
+		Slot: report.Slot{
+			BuyerRating:    0,
+			SupplierRating: 0,
+		},
 	}
 
 	storage := mocks.NewMockOrderByIDStorage(ctrl)
-	storage.EXPECT().ByID("test_order").Return(order, nil)
+	storage.EXPECT().ByID("test_order").Return(expected, nil)
 
 	h := NewGetOrderHandler(storage)
 

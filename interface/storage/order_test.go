@@ -18,9 +18,10 @@ func TestOrderStorageByID_ExistingIDGiven_OrderReturned(t *testing.T) {
 	defer ctrl.Finish()
 
 	expected := report.GetOrderReport{ID: "test_order"}
+	order := entity.Order{ID: "test_order"}
 
 	engineMock := mocks.NewMockEngine(ctrl)
-	engineMock.EXPECT().ByID("test_order", &report.GetOrderReport{}).SetArg(1, expected).Return(nil)
+	engineMock.EXPECT().ByID("test_order", &entity.Order{}).SetArg(1, order).Return(nil)
 
 	s := NewOrderStorage(engineMock)
 

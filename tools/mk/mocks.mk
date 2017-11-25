@@ -26,6 +26,8 @@ generate-mocks-usecase-marketplace-command: tools
             -source ./usecase/marketplace/command/cancel_order_handler.go CancelOrderStorage > ./usecase/marketplace/command/mocks/cancel_order_storage.go
 	mockgen -package mocks \
             -source ./usecase/marketplace/command/create_bid_order_handler.go CreateBidOrderStorage > ./usecase/marketplace/command/mocks/create_bid_order_storage.go
+	mockgen -package mocks \
+            -source ./usecase/marketplace/command/create_ask_order_handler.go CreateAskOrderStorage > ./usecase/marketplace/command/mocks/create_ask_order_storage.go
 
  .PHONY: generate-mocks-usecase-marketplace-query
 generate-mocks-usecase-marketplace-query: tools

@@ -1,20 +1,20 @@
 package command
 
-// CreateOrder is a command to create an order.
-type CreateOrder struct {
+// CreateOrder is a command to create an ask order.
+type CreateAskOrder struct {
 	// Order ID, UUIDv4
 	ID string
-	// Buyer's Ethereum ID
-	BuyerID string
 	// Supplier's Ethereum ID
 	SupplierID string
 	// Order price
 	Price int64
 	// Order type
 	OrderType int
+	// Slot a slot
+	Slot Slot
 }
 
 // CommandID implements Command interface.
-func (c CreateOrder) CommandID() string {
+func (c CreateAskOrder) CommandID() string {
 	return "CreateOrder"
 }
