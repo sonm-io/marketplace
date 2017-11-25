@@ -9,7 +9,7 @@ import (
 
 // CreateAskOrderStorage adds an order to the storage.
 type CreateAskOrderStorage interface {
-	Store(o *entity.Order) error
+	Add(o *entity.Order) error
 }
 
 // CreateAskOrderHandler creates new ask orders.
@@ -40,7 +40,7 @@ func (h CreateAskOrderHandler) Handle(cmd intf.Command) error {
 		return err
 	}
 
-	return h.s.Store(order)
+	return h.s.Add(order)
 }
 
 func newAskOrder(c CreateAskOrder) (*entity.Order, error) {

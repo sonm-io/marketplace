@@ -33,7 +33,7 @@ func TestCreateBidOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 	expectedOrder, _ := newBidOrder(cmd)
 
 	storage := mocks.NewMockCreateBidOrderStorage(ctrl)
-	storage.EXPECT().Store(expectedOrder).Times(1).Return(nil)
+	storage.EXPECT().Add(expectedOrder).Times(1).Return(nil)
 
 	h := NewCreateBidOrderHandler(storage)
 

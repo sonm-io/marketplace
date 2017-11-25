@@ -70,7 +70,7 @@ func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T)
 
 }
 
-func TestOrderStorageStore_ValidOrderGiven_OrderStored(t *testing.T) {
+func TestOrderStorageAdd_ValidOrderGiven_OrderStored(t *testing.T) {
 	// arrange
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -83,7 +83,7 @@ func TestOrderStorageStore_ValidOrderGiven_OrderStored(t *testing.T) {
 	s := NewOrderStorage(engineMock)
 
 	// act
-	err := s.Store(&expected)
+	err := s.Add(&expected)
 
 	// assert
 	assert.NoError(t, err, "non-error result expected")

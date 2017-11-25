@@ -9,7 +9,7 @@ import (
 
 // CreateBidOrderStorage adds an order to the storage.
 type CreateBidOrderStorage interface {
-	Store(o *entity.Order) error
+	Add(o *entity.Order) error
 }
 
 // CreateBidOrderHandler creates new bid orders.
@@ -40,7 +40,7 @@ func (h CreateBidOrderHandler) Handle(cmd intf.Command) error {
 		return err
 	}
 
-	return h.s.Store(order)
+	return h.s.Add(order)
 }
 
 // TODO: (screwyprof) move to factory

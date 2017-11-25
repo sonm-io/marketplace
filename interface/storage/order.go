@@ -28,7 +28,7 @@ func NewOrderStorage(e Engine) *OrderStorage {
 }
 
 // Store saves the given Order.
-func (s *OrderStorage) Store(o *entity.Order) error {
+func (s *OrderStorage) Add(o *entity.Order) error {
 	return s.e.Store(o)
 }
 
