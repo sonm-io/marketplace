@@ -9,18 +9,18 @@ import (
 
 // Engine represents Storage Engine.
 type Engine interface {
-	ByID(ID string, result interface{}) error
-	Store(o *entity.Order) error
+	Get(ID string) (interface{}, error)
+	Add(el interface{}, ID string) error
 	Remove(ID string) error
-	Match(q inmemory.ConcreteCriteria, result interface{}) error
+	Match(q inmemory.ConcreteCriteria) ([]interface{}, error)
 }
 
-// OrderStorage stores and retrieves Orders.
+// Storage stores and retrieves Orders.
 type OrderStorage struct {
 	e Engine
 }
 
-// NewOrderStorage create an new instance of OrderStorage.
+// NewOrderStorage create an new instance of Storage.
 func NewOrderStorage(e Engine) *OrderStorage {
 	return &OrderStorage{
 		e: e,
@@ -29,7 +29,7 @@ func NewOrderStorage(e Engine) *OrderStorage {
 
 // Store saves the given Order.
 func (s *OrderStorage) Add(o *entity.Order) error {
-	return s.e.Store(o)
+	return s.e.Add(o, o.ID)
 }
 
 // Remove deletes an Order with the given ID from Storage.
@@ -45,8 +45,9 @@ func (s *OrderStorage) Remove(ID string) error {
 // ByID Fetches an Order by its ID.
 // If ID is not found, an error is returned.
 func (s *OrderStorage) ByID(ID string) (report.GetOrderReport, error) {
-	var order entity.Order
-	err := s.e.ByID(ID, &order)
+
+	el, err := s.e.Get(ID)
+	order := el.(*entity.Order)
 
 	slot := report.Slot{}
 	if order.Slot != nil {
@@ -79,10 +80,39 @@ func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) (r
 	b.WithLimit(limit)
 	b.WithSpec(spec)
 
-	var orders report.GetOrdersReport
-	err := s.e.Match(b.Build(), &orders)
+	elements, err := s.e.Match(b.Build())
 	if err != nil {
 		return nil, err
 	}
+
+	var orders report.GetOrdersReport
+	var rep report.Order
+	for _, el := range elements {
+		order := el.(*entity.Order)
+		entityToReport(order, &rep)
+		orders = append(orders, rep)
+	}
+
 	return orders, nil
+}
+
+func entityToReport(entityOrder *entity.Order, reportOrder *report.Order) {
+
+	var slot *report.Slot
+	if entityOrder.Slot != nil {
+		slot = &report.Slot{}
+		slot.BuyerRating = entityOrder.Slot.BuyerRating
+		slot.SupplierRating = entityOrder.Slot.SupplierRating
+		if entityOrder.Slot.Resources != nil {
+			res := report.Resources(*entityOrder.Slot.Resources)
+			slot.Resources = &res
+		}
+	}
+
+	reportOrder.ID = entityOrder.ID
+	reportOrder.Price = entityOrder.Price
+	reportOrder.OrderType = report.OrderType(entityOrder.OrderType)
+	reportOrder.SupplierID = entityOrder.SupplierID
+	reportOrder.BuyerID = entityOrder.BuyerID
+	reportOrder.Slot = slot
 }

@@ -18,10 +18,10 @@ func TestOrderStorageByID_ExistingIDGiven_OrderReturned(t *testing.T) {
 	defer ctrl.Finish()
 
 	expected := report.GetOrderReport{ID: "test_order"}
-	order := entity.Order{ID: "test_order"}
+	order := &entity.Order{ID: "test_order"}
 
 	engineMock := mocks.NewMockEngine(ctrl)
-	engineMock.EXPECT().ByID("test_order", &entity.Order{}).SetArg(1, order).Return(nil)
+	engineMock.EXPECT().Get("test_order").Return(order, nil)
 
 	s := NewOrderStorage(engineMock)
 
@@ -38,6 +38,17 @@ func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	orders := []*entity.Order{
+		{
+			ID:    "test_obj_101",
+			Price: 101,
+		},
+		{
+			ID:    "test_obj_105",
+			Price: 105,
+		},
+	}
+
 	expected := report.GetOrdersReport{
 		{
 			ID:    "test_obj_101",
@@ -49,7 +60,12 @@ func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T)
 		},
 	}
 
-	var orders report.GetOrdersReport
+	var ordersIntf []interface{}
+	for _, order := range orders {
+		ordersIntf = append(ordersIntf, order)
+	}
+
+	//var orders report.GetOrdersReport
 	spec := priceIsBetweenTestSpec{From: 101, To: 106}
 	q := inmemory.ConcreteCriteria{
 		Limit: 10,
@@ -57,7 +73,7 @@ func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T)
 	}
 
 	engineMock := mocks.NewMockEngine(ctrl)
-	engineMock.EXPECT().Match(q, &orders).SetArg(1, expected).Return(nil)
+	engineMock.EXPECT().Match(q).Return(ordersIntf, nil)
 
 	s := NewOrderStorage(engineMock)
 
@@ -78,7 +94,7 @@ func TestOrderStorageAdd_ValidOrderGiven_OrderStored(t *testing.T) {
 	expected := entity.Order{ID: "test_order"}
 
 	engineMock := mocks.NewMockEngine(ctrl)
-	engineMock.EXPECT().Store(&expected).Return(nil)
+	engineMock.EXPECT().Add(&expected, "test_order").Return(nil)
 
 	s := NewOrderStorage(engineMock)
 

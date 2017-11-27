@@ -3,71 +3,71 @@ package inmemory
 import (
 	"testing"
 
-	"github.com/sonm-io/marketplace/entity"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestOrderStorageStore_ValidObjectGiven_ObjectStored(t *testing.T) {
+type testElement struct {
+	ID    string
+	Price int64
+}
+
+func TestStorageAdd_ValidElementGiven_ElementAddedToTheStorage(t *testing.T) {
 	// arrange
 	s := NewStorage()
 
 	// act
-	err := s.Store(&entity.Order{
-		ID: "test_obj",
-	})
+	err := s.Add(&testElement{ID: "test_obj"}, "test_obj")
 
 	// assert
 	assert.NoError(t, err, "non-error result expected")
-	assert.Equal(t, 1, len(s.db))
+	assert.Equal(t, 1, len(s.elements))
 }
 
-func TestOrderStorageByID_ExistentIDGiven_ValidResultReturned(t *testing.T) {
+func TestStorageGet_ExistentIDGiven_ValidResultReturned(t *testing.T) {
 	// arrange
 
-	expected := &entity.Order{
+	expected := &testElement{
 		ID: "test_obj",
 	}
 
 	s := NewStorage()
-	s.Store(expected)
+	s.Add(expected, "test_obj")
 
 	// act
-	obtained := &entity.Order{}
-	err := s.ByID("test_obj", obtained)
+	obtained, err := s.Get("test_obj")
 
 	// assert
 	assert.NoError(t, err, "non-error result expected")
 	assert.Equal(t, expected, obtained)
 }
 
-func TestOrderStorageByID_InExistentIDGiven_ErrorReturned(t *testing.T) {
+func TestStorageGet_InExistentIDGiven_ErrorReturned(t *testing.T) {
 	// arrange
 	s := NewStorage()
 
 	// act
-	obtained := &entity.Order{}
-	err := s.ByID("n/a", obtained)
+	_, err := s.Get("n/a")
 
 	// assert
-	assert.EqualError(t, err, errOrderNotFound.Error())
+	assert.EqualError(t, err, errNotFound.Error())
 }
 
-func TestOrderStorageRemove_ValidIDGiven_ObjectRemoved(t *testing.T) {
+func TestStorageRemove_ValidIDGiven_ElementRemoved(t *testing.T) {
 	// arrange
 	s := NewStorage()
-	s.Store(&entity.Order{
+	s.Add(&testElement{
 		ID: "test_obj",
-	})
+	}, "test_obj")
 
 	// act
 	err := s.Remove("test_obj")
 
 	// assert
 	assert.NoError(t, err, "non-error result expected")
-	assert.Equal(t, 0, len(s.db))
+	assert.Equal(t, 0, len(s.elements))
 }
 
-func TestOrderStorageRemove_InExistentIDGiven_ErrorReturned(t *testing.T) {
+func TestStorageRemove_InExistentIDGiven_ErrorReturned(t *testing.T) {
 	// arrange
 	s := NewStorage()
 
@@ -75,30 +75,30 @@ func TestOrderStorageRemove_InExistentIDGiven_ErrorReturned(t *testing.T) {
 	err := s.Remove("n/a")
 
 	// assert
-	assert.EqualError(t, err, errOrderNotFound.Error())
+	assert.EqualError(t, err, errNotFound.Error())
 }
 
-func TestOrderStorageMatch_SpecCriteriaGiven_CollectionReturned(t *testing.T) {
+func TestStorageMatch_CriteriaGiven_CollectionReturned(t *testing.T) {
 	// arrange
 	s := NewStorage()
-	s.Store(&entity.Order{
+	s.Add(&testElement{
 		ID:    "test_obj_100",
 		Price: 100,
-	})
-	s.Store(&entity.Order{
+	}, "test_obj_100")
+	s.Add(&testElement{
 		ID:    "test_obj_101",
 		Price: 101,
-	})
-	s.Store(&entity.Order{
+	}, "test_obj_101")
+	s.Add(&testElement{
 		ID:    "test_obj_105",
 		Price: 105,
-	})
-	s.Store(&entity.Order{
+	}, "test_obj_105")
+	s.Add(&testElement{
 		ID:    "test_obj_110",
 		Price: 110,
-	})
+	}, "test_obj_110")
 
-	expected := []*entity.Order{
+	elements := []*testElement{
 		{
 			ID:    "test_obj_101",
 			Price: 101,
@@ -109,14 +109,18 @@ func TestOrderStorageMatch_SpecCriteriaGiven_CollectionReturned(t *testing.T) {
 		},
 	}
 
+	var expected []interface{}
+	for _, el := range elements {
+		expected = append(expected, el)
+	}
+
 	// act
 	q := ConcreteCriteria{
 		Limit: 100,
 		Spec:  PriceIsBetweenTestSpec{From: 101, To: 106},
 	}
 
-	var obtained []*entity.Order
-	err := s.Match(q, &obtained)
+	obtained, err := s.Match(q)
 
 	// assert
 	assert.NoError(t, err, "non-error result expected")
@@ -129,6 +133,6 @@ type PriceIsBetweenTestSpec struct {
 }
 
 func (s PriceIsBetweenTestSpec) IsSatisfiedBy(object interface{}) bool {
-	order := object.(*entity.Order)
+	order := object.(*testElement)
 	return order.Price >= s.From && order.Price < s.To
 }
