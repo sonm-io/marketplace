@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/sonm-io/marketplace/entity"
-	"github.com/sonm-io/marketplace/report"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/mocks"
+	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/spec"
 	"github.com/stretchr/testify/assert"
 )

@@ -1,8 +1,8 @@
 package srv
 
 import (
-	"github.com/sonm-io/marketplace/report"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
+	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	"golang.org/x/net/context"

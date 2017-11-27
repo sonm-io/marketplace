@@ -1,8 +1,8 @@
 package spec
 
 import (
-	"github.com/sonm-io/marketplace/report"
 	"github.com/sonm-io/marketplace/usecase/intf"
+	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 )
 
 // GetOrdersSpec is a factory method that creates a spec for GetOrder query.
@@ -12,9 +12,14 @@ func GetOrdersSpec(orderType report.OrderType, slot report.Slot) intf.Specificat
 	case report.ASK:
 		s = NewSupplierRatingGreaterOrEqualSpec(slot.SupplierRating).
 			And(IsAskOrderSpec{})
+		s = IsAskOrderSpec{}
 	case report.BID:
 		s = NewBuyerRatingGreaterOrEqualSpec(slot.BuyerRating).
 			And(IsBidOrderSpec{})
+		s = IsBidOrderSpec{}
+	default:
+		panic("unknown order type given")
+
 	}
 
 	/*

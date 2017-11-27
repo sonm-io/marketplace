@@ -3,8 +3,8 @@ package storage
 import (
 	"github.com/sonm-io/marketplace/entity"
 	"github.com/sonm-io/marketplace/infra/storage/inmemory"
-	"github.com/sonm-io/marketplace/report"
 	"github.com/sonm-io/marketplace/usecase/intf"
+	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 )
 
 // Engine represents Storage Engine.

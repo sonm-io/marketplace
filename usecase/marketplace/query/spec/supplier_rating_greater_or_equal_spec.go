@@ -1,7 +1,7 @@
 package spec
 
 import (
-	"github.com/sonm-io/marketplace/report"
+	"github.com/sonm-io/marketplace/entity"
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
@@ -19,6 +19,6 @@ func NewSupplierRatingGreaterOrEqualSpec(supplierRating int64) *SupplierRatingGr
 
 // IsSatisfiedBy implements Specification interface.
 func (s *SupplierRatingGreaterOrEqualSpec) IsSatisfiedBy(object interface{}) bool {
-	order := object.(report.Order)
+	order := object.(*entity.Order)
 	return order.Slot.SupplierRating >= s.supplierRating
 }

@@ -1,11 +1,12 @@
 package srv
 
 import (
-	"github.com/sonm-io/marketplace/report"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
+	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	"golang.org/x/net/context"
+	"log"
 )
 
 const (
@@ -13,6 +14,8 @@ const (
 )
 
 func (m *Marketplace) GetOrders(_ context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersReply, error) {
+
+	log.Printf("Getting orders %+v", req)
 
 	limit := req.GetCount()
 	if limit == 0 {
@@ -30,10 +33,14 @@ func (m *Marketplace) GetOrders(_ context.Context, req *pb.GetOrdersRequest) (*p
 		Limit:     limit,
 	}
 
-	orders := &report.Order{}
-	if err := m.orderByID.Handle(q, orders); err != nil {
+	orders := report.GetOrdersReport{}
+	if err := m.ordersBySpec.Handle(q, &orders); err != nil {
+		log.Printf("cannot retreive orders: %v\n", err)
 		return nil, err
 	}
 
-	return &pb.GetOrdersReply{}, nil
+	log.Printf("orders %#+v retreived\n", orders)
+
+	var resp []*pb.Order
+	return &pb.GetOrdersReply{Orders: resp}, nil
 }

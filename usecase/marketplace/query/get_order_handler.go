@@ -3,8 +3,8 @@ package query
 import (
 	"fmt"
 
-	"github.com/sonm-io/marketplace/report"
 	"github.com/sonm-io/marketplace/usecase/intf"
+	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 )
 
 // OrderByIDStorage fetches an Order by the given ID.

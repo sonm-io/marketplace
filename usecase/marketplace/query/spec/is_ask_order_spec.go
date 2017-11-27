@@ -1,7 +1,7 @@
 package spec
 
 import (
-	"github.com/sonm-io/marketplace/report"
+	"github.com/sonm-io/marketplace/entity"
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
@@ -12,6 +12,6 @@ type IsAskOrderSpec struct {
 
 // IsSatisfiedBy implements Specification interface.
 func (s IsAskOrderSpec) IsSatisfiedBy(object interface{}) bool {
-	order := object.(report.Order)
-	return order.OrderType == report.ASK
+	order := object.(*entity.Order)
+	return order.OrderType == entity.ASK
 }
