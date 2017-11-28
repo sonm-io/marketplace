@@ -1,8 +1,8 @@
 package spec
 
 import (
+	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/usecase/intf"
-	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 )
 
 // SupplierRatingGreaterOrEqualSpec specifies whether the supplier's rating is greater than or equal to the given value.
@@ -19,6 +19,6 @@ func NewSupplierRatingGreaterOrEqualSpec(supplierRating int64) *SupplierRatingGr
 
 // IsSatisfiedBy implements Specification interface.
 func (s *SupplierRatingGreaterOrEqualSpec) IsSatisfiedBy(object interface{}) bool {
-	order := object.(*report.GetOrderReport)
+	order := object.(*ds.Order)
 	return order.Slot.SupplierRating >= s.supplierRating
 }

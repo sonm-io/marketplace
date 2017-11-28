@@ -1,8 +1,8 @@
 package spec
 
 import (
+	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/usecase/intf"
-	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 )
 
 // IsAskOrderSpec specifies whether the given value is an ask order.
@@ -12,6 +12,6 @@ type IsAskOrderSpec struct {
 
 // IsSatisfiedBy implements Specification interface.
 func (s IsAskOrderSpec) IsSatisfiedBy(object interface{}) bool {
-	order := object.(*report.GetOrderReport)
-	return order.OrderType == report.ASK
+	order := object.(*ds.Order)
+	return order.OrderType == ds.ASK
 }

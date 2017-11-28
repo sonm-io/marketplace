@@ -8,6 +8,7 @@ import (
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	"golang.org/x/net/context"
 
+	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 )
 
@@ -51,7 +52,7 @@ func (m *Marketplace) bind(req *pb.Order, cmd *command.CreateBidOrder) error {
 		cmd.Slot.BuyerRating = req.GetSlot().GetBuyerRating()
 		if req.Slot.Resources != nil {
 			res := req.GetSlot().GetResources()
-			cmd.Slot.Resources = command.Resources{
+			cmd.Slot.Resources = ds.Resources{
 				CpuCores: res.GetCpuCores(),
 				RamBytes: res.GetRamBytes(),
 				Storage:  res.GetStorage(),

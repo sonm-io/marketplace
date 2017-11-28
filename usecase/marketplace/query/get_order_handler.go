@@ -3,13 +3,14 @@ package query
 import (
 	"fmt"
 
+	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/usecase/intf"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 )
 
 // OrderByIDStorage fetches an Order by the given ID.
 type OrderByIDStorage interface {
-	ByID(id string) (report.GetOrderReport, error)
+	ByID(id string) (ds.Order, error)
 }
 
 // GetOrderHandler returns an Order.
@@ -41,7 +42,7 @@ func (h *GetOrderHandler) Handle(req intf.Query, result interface{}) error {
 		return err
 	}
 
-	*r = order
+	(*r).Order = order
 
 	return nil
 }

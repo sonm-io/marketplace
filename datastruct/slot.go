@@ -1,4 +1,4 @@
-package entity
+package datastruct
 
 type Slot struct {
 	// Buyer’s rating. Got from Buyer’s profile for BID orders rating_supplier.
@@ -8,5 +8,5 @@ type Slot struct {
 	// Geo represent Worker's position
 	//Geo *Geo `protobuf:"bytes,3,opt,name=geo" json:"geo,omitempty"`
 	// Hardware resources requirements
-	Resources *Resources
+	Resources Resources
 }

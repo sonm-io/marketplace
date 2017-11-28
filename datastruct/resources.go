@@ -1,4 +1,4 @@
-package event
+package datastruct
 
 type Resources struct {
 	// CPU core count

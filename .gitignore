@@ -4,6 +4,7 @@ bin/*
 /vendor/
 /test-results/
 /integration_results/
+/.cover/
 
 /mocks/*
 interface/storage/mocks/*

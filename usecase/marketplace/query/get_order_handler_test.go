@@ -5,6 +5,7 @@ import (
 
 	"fmt"
 	"github.com/golang/mock/gomock"
+	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/mocks"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 	"github.com/stretchr/testify/assert"
@@ -16,18 +17,20 @@ func TestGetOrderHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 	defer ctrl.Finish()
 
 	expected := report.GetOrderReport{
-		ID:        "test_order",
-		BuyerID:   "TestBuyer",
-		OrderType: int(report.ASK),
-		Price:     555,
-		Slot: &report.Slot{
-			BuyerRating:    0,
-			SupplierRating: 0,
+		Order: ds.Order{
+			ID:        "test_order",
+			BuyerID:   "TestBuyer",
+			OrderType: ds.ASK,
+			Price:     555,
+			Slot: &ds.Slot{
+				BuyerRating:    0,
+				SupplierRating: 0,
+			},
 		},
 	}
 
 	storage := mocks.NewMockOrderByIDStorage(ctrl)
-	storage.EXPECT().ByID("test_order").Return(expected, nil)
+	storage.EXPECT().ByID("test_order").Return(expected.Order, nil)
 
 	h := NewGetOrderHandler(storage)
 

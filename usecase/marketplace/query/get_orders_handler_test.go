@@ -5,7 +5,7 @@ import (
 
 	"fmt"
 	"github.com/golang/mock/gomock"
-	"github.com/sonm-io/marketplace/entity"
+	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/mocks"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/spec"
@@ -17,27 +17,36 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	expected := report.GetOrdersReport{
+	orders := []ds.Order{
 		{
 			ID:        "test_order_101",
-			OrderType: report.ASK,
+			OrderType: ds.ASK,
 			Price:     101,
 			BuyerID:   "TestBuyer",
 		},
 		{
 			ID:        "test_order_105",
-			OrderType: report.ASK,
+			OrderType: ds.ASK,
 			Price:     105,
 			BuyerID:   "TestBuyer",
 		},
 	}
 
+	expected := report.GetOrdersReport{
+		{
+			Order: orders[0],
+		},
+		{
+			Order: orders[1],
+		},
+	}
+
 	q := GetOrders{
-		OrderType: int(entity.ASK),
+		OrderType: int(ds.ASK),
 		Limit:     10,
 	}
 
-	s := spec.GetOrdersSpec(q.OrderType, report.Slot{
+	s := spec.GetOrdersSpec(ds.OrderType(q.OrderType), ds.Slot{
 		BuyerRating:    q.Slot.BuyerRating,
 		SupplierRating: q.Slot.SupplierRating,
 	})
@@ -45,7 +54,7 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 	storage := mocks.NewMockOrderBySpecStorage(ctrl)
 	storage.EXPECT().
 		BySpecWithLimit(s, uint64(10)).
-		Return(expected, nil)
+		Return(orders, nil)
 
 	h := NewGetOrdersHandler(storage)
 

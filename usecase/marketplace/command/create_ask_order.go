@@ -1,5 +1,7 @@
 package command
 
+import ds "github.com/sonm-io/marketplace/datastruct"
+
 // CreateOrder is a command to create an ask order.
 type CreateAskOrder struct {
 	// Order ID, UUIDv4
@@ -9,7 +11,7 @@ type CreateAskOrder struct {
 	// Order price
 	Price int64
 	// Slot a slot
-	Slot Slot
+	Slot ds.Slot
 }
 
 // CommandID implements Command interface.

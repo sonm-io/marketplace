@@ -31,22 +31,10 @@ func (h CreateAskOrderHandler) Handle(cmd intf.Command) error {
 		return fmt.Errorf("invalid command %v given", cmd)
 	}
 
-	order, err := newAskOrder(c)
+	order, err := entity.NewAskOrder(c.ID, c.SupplierID, c.Price, c.Slot)
 	if err != nil {
 		return err
 	}
 
 	return h.s.Add(order)
-}
-
-func newAskOrder(c CreateAskOrder) (*entity.Order, error) {
-
-	res := entity.Resources(c.Slot.Resources)
-	slot := entity.Slot{
-		BuyerRating:    c.Slot.BuyerRating,
-		SupplierRating: c.Slot.SupplierRating,
-		Resources:      &res,
-	}
-
-	return entity.NewAskOrder(c.ID, c.SupplierID, c.Price, slot)
 }

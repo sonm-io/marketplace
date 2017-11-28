@@ -1,17 +1,8 @@
 package report
 
+import ds "github.com/sonm-io/marketplace/datastruct"
+
 // GetOrderReport is query result DTO.
 type GetOrderReport struct {
-	ID         string
-	Price      int64
-	SupplierID string
-	BuyerID    string
-	OrderType  int
-	Slot       *Slot
+	ds.Order
 }
-
-const (
-	ANY = 0
-	BID = 1
-	ASK = 2
-)

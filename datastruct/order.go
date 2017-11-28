@@ -1,4 +1,4 @@
-package event
+package datastruct
 
 // Order represents an order.
 type Order struct {
@@ -11,7 +11,15 @@ type Order struct {
 	// Order price
 	Price int64
 	// Order type (Bid or Ask)
-	OrderType int
+	OrderType OrderType
 	// Slot describes resource requirements
 	Slot *Slot
 }
+
+type OrderType int32
+
+const (
+	ANY OrderType = 0
+	BID OrderType = 1
+	ASK OrderType = 2
+)

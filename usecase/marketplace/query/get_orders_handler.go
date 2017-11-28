@@ -3,6 +3,7 @@ package query
 import (
 	"fmt"
 
+	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/usecase/intf"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/spec"
@@ -10,7 +11,7 @@ import (
 
 // OrderBySpecStorage fetches reports by the given criteria
 type OrderBySpecStorage interface {
-	BySpecWithLimit(spec intf.Specification, limit uint64) (report.GetOrdersReport, error)
+	BySpecWithLimit(spec intf.Specification, limit uint64) ([]ds.Order, error)
 }
 
 // GetOrdersHandler returns Orders by the given Specification.
@@ -37,7 +38,7 @@ func (h *GetOrdersHandler) Handle(req intf.Query, result interface{}) error {
 		return fmt.Errorf("invalid result %v given", result)
 	}
 
-	s := spec.GetOrdersSpec(q.OrderType, report.Slot{
+	s := spec.GetOrdersSpec(ds.OrderType(q.OrderType), ds.Slot{
 		BuyerRating:    q.Slot.BuyerRating,
 		SupplierRating: q.Slot.SupplierRating,
 	})
@@ -47,7 +48,9 @@ func (h *GetOrdersHandler) Handle(req intf.Query, result interface{}) error {
 		return err
 	}
 
-	*r = orders
+	for _, order := range orders {
+		*r = append(*r, report.GetOrderReport{Order: order})
+	}
 
 	return err
 }

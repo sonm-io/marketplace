@@ -6,6 +6,9 @@ import (
 	"github.com/sonm-io/marketplace/usecase/marketplace/command/mocks"
 	"github.com/stretchr/testify/assert"
 	"testing"
+
+	ds "github.com/sonm-io/marketplace/datastruct"
+	"github.com/sonm-io/marketplace/entity"
 )
 
 func TestCreateAskOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testing.T) {
@@ -17,10 +20,10 @@ func TestCreateAskOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 		ID:         "TestAdkOrder",
 		SupplierID: "TestSupplier",
 		Price:      555,
-		Slot: Slot{
+		Slot: ds.Slot{
 			SupplierRating: 0,
 			BuyerRating:    0,
-			Resources: Resources{
+			Resources: ds.Resources{
 				CpuCores: 4,
 				RamBytes: 100000000,
 				Storage:  1000000000,
@@ -28,7 +31,7 @@ func TestCreateAskOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 		},
 	}
 
-	expectedOrder, _ := newAskOrder(cmd)
+	expectedOrder, _ := entity.NewAskOrder(cmd.ID, cmd.SupplierID, cmd.Price, cmd.Slot)
 
 	storage := mocks.NewMockCreateAskOrderStorage(ctrl)
 	storage.EXPECT().Add(expectedOrder).Times(1).Return(nil)

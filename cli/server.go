@@ -22,7 +22,6 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	"github.com/sonm-io/marketplace/usecase/marketplace/event"
 )
 
 type Config struct {
@@ -54,14 +53,11 @@ func NewApp(opts ...Option) *App {
 func (l *App) Run() error {
 
 	repo := storage.NewOrderStorage(inmemory.NewStorage())
-	readStorage := storage.NewOrderReadStorage(inmemory.NewStorage())
 
-	getOrderHandler := query.NewGetOrderHandler(readStorage)
-	getOrdersHandler := query.NewGetOrdersHandler(readStorage)
+	getOrderHandler := query.NewGetOrderHandler(repo)
+	getOrdersHandler := query.NewGetOrdersHandler(repo)
 
 	createOrderHandler := command.NewCreateBidOrderHandler(repo)
-	createOrderHandler.AddObserver(event.NewBidOrderCreatedHandler(readStorage))
-
 	cancelOrderHandler := command.NewCancelOrderHandler(repo)
 
 	commandBus := cqrs.NewCommandBus()

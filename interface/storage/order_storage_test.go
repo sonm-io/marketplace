@@ -6,7 +6,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sonm-io/marketplace/entity"
+	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/interface/storage/mocks"
 )
 
@@ -15,7 +15,8 @@ func TestOrderStorageByID_ExistingIDGiven_OrderReturned(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	order := &entity.Order{ID: "test_order"}
+	order := &ds.Order{}
+	order.ID = "test_order"
 
 	engineMock := mocks.NewMockEngine(ctrl)
 	engineMock.EXPECT().Get("test_order").Return(order, nil)
@@ -27,7 +28,7 @@ func TestOrderStorageByID_ExistingIDGiven_OrderReturned(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err, "non-error result expected")
-	assert.Equal(t, order, obtained)
+	assert.Equal(t, order, &obtained)
 }
 
 func TestOrderStorageAdd_ValidOrderGiven_OrderStored(t *testing.T) {
@@ -35,7 +36,8 @@ func TestOrderStorageAdd_ValidOrderGiven_OrderStored(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	expected := entity.Order{ID: "test_order"}
+	expected := ds.Order{}
+	expected.ID = "test_order"
 
 	engineMock := mocks.NewMockEngine(ctrl)
 	engineMock.EXPECT().Add(&expected, "test_order").Return(nil)
