@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
+	"github.com/sonm-io/marketplace/infra/storage/inmemory"
 	"github.com/sonm-io/marketplace/interface/storage/mocks"
 )
 
@@ -66,4 +67,56 @@ func TestOrderStorageRemove_ExistingIDGiven_OrderRemoved(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err, "non-error result expected")
+}
+
+func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T) {
+	// arrange
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	expected := []ds.Order{
+		{
+			ID:    "test_obj_101",
+			Price: 101,
+		},
+		{
+			ID:    "test_obj_105",
+			Price: 105,
+		},
+	}
+
+	var ordersIntf []interface{}
+	for idx := range expected {
+		ordersIntf = append(ordersIntf, &expected[idx])
+	}
+
+	//var orders report.GetOrdersReport
+	spec := priceIsBetweenTestSpec{From: 101, To: 106}
+	q := inmemory.ConcreteCriteria{
+		Limit: 10,
+		Spec:  spec,
+	}
+
+	engineMock := mocks.NewMockEngine(ctrl)
+	engineMock.EXPECT().Match(q).Return(ordersIntf, nil)
+
+	s := NewOrderStorage(engineMock)
+
+	// act
+	obtained, err := s.BySpecWithLimit(spec, 10)
+
+	// assert
+	assert.NoError(t, err, "non-error result expected")
+	assert.Equal(t, expected, obtained)
+
+}
+
+type priceIsBetweenTestSpec struct {
+	From int64
+	To   int64
+}
+
+func (s priceIsBetweenTestSpec) IsSatisfiedBy(object interface{}) bool {
+	order := object.(*ds.Order)
+	return order.Price >= s.From && order.Price < s.To
 }

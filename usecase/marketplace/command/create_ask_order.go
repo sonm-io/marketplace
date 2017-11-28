@@ -16,5 +16,5 @@ type CreateAskOrder struct {
 
 // CommandID implements Command interface.
 func (c CreateAskOrder) CommandID() string {
-	return "CreateOrder"
+	return "CreateAskOrder"
 }

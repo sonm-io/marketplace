@@ -18,3 +18,7 @@ func TestCancelOrder_CommandID(t *testing.T) {
 func TestCreateBidOrder_CommandID(t *testing.T) {
 	assert.Equal(t, "CreateBidOrder", CreateBidOrder{}.CommandID())
 }
+
+func TestCreateAskOrder_CommandID(t *testing.T) {
+	assert.Equal(t, "CreateAskOrder", CreateAskOrder{}.CommandID())
+}
