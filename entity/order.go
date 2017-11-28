@@ -27,7 +27,9 @@ const (
 )
 
 var (
-	errPriceIsZero = errors.New("order price cannot be negative")
+	errPriceIsZero        = errors.New("order price cannot be negative")
+	errSupplierIsRequired = errors.New("supplier is required")
+	errBuyerIsRequired    = errors.New("buyer is required")
 )
 
 func NewAskOrder(ID, supplierID string, price int64, slot Slot) (*Order, error) {
@@ -37,6 +39,10 @@ func NewAskOrder(ID, supplierID string, price int64, slot Slot) (*Order, error) 
 		Price:      price,
 		OrderType:  ASK,
 		Slot:       &slot,
+	}
+
+	if supplierID == "" {
+		return nil, errSupplierIsRequired
 	}
 
 	if o.Price <= 0 {
@@ -57,6 +63,10 @@ func NewBidOrder(ID, buyerID string, price int64, slot Slot) (*Order, error) {
 
 	if o.Price <= 0 {
 		return nil, errPriceIsZero
+	}
+
+	if buyerID == "" {
+		return nil, errBuyerIsRequired
 	}
 
 	return o, nil
