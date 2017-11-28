@@ -39,10 +39,9 @@ func (m *Marketplace) bind(req *pb.Order, cmd *command.CreateBidOrder) error {
 	}
 
 	c := &command.CreateBidOrder{
-		ID:        ID,
-		Price:     req.GetPrice(),
-		OrderType: int(req.GetOrderType()),
-		BuyerID:   req.GetByuerID(),
+		ID:      ID,
+		Price:   req.GetPrice(),
+		BuyerID: req.GetByuerID(),
 	}
 
 	*cmd = *c

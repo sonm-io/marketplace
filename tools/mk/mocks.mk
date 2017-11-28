@@ -17,7 +17,7 @@ generate-mocks: generate-mocks-intf-storage generate-mocks-usecase-marketplace-c
 generate-mocks-intf-storage: tools
 	@mkdir  -p ./interface/storage/mocks
 	mockgen -package mocks \
-            -source ./interface/storage/order.go Engine > ./interface/storage/mocks/order.go
+            -source ./interface/storage/inmemory_engine.go Engine > ./interface/storage/mocks/engine.go
 
 .PHONY: generate-mocks-usecase-marketplace-command
 generate-mocks-usecase-marketplace-command: tools

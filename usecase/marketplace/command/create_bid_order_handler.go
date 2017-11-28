@@ -5,6 +5,7 @@ import (
 
 	"github.com/sonm-io/marketplace/entity"
 	"github.com/sonm-io/marketplace/usecase/intf"
+	"github.com/sonm-io/marketplace/usecase/marketplace/event"
 )
 
 // CreateBidOrderStorage adds an order to the storage.
@@ -14,17 +15,19 @@ type CreateBidOrderStorage interface {
 
 // CreateBidOrderHandler creates new bid orders.
 type CreateBidOrderHandler struct {
+	intf.Observable
+
 	s CreateBidOrderStorage
 }
 
 // NewCreateBidOrderHandler creates a new instance of CreateBidOrderHandler.
-func NewCreateBidOrderHandler(s CreateBidOrderStorage) CreateBidOrderHandler {
-	return CreateBidOrderHandler{s: s}
+func NewCreateBidOrderHandler(s CreateBidOrderStorage) *CreateBidOrderHandler {
+	return &CreateBidOrderHandler{s: s}
 }
 
 // Handle handles the given command.
 // Creates the given bid order.
-func (h CreateBidOrderHandler) Handle(cmd intf.Command) error {
+func (h *CreateBidOrderHandler) Handle(cmd intf.Command) error {
 
 	c, ok := cmd.(CreateBidOrder)
 	if !ok {
@@ -36,7 +39,13 @@ func (h CreateBidOrderHandler) Handle(cmd intf.Command) error {
 		return err
 	}
 
-	return h.s.Add(order)
+	if err := h.s.Add(order); err != nil {
+		return err
+	}
+
+	h.Publish(newBidOrderCreatedEvent(order))
+
+	return nil
 }
 
 func newBidOrder(c CreateBidOrder) (*entity.Order, error) {
@@ -49,4 +58,42 @@ func newBidOrder(c CreateBidOrder) (*entity.Order, error) {
 	}
 
 	return entity.NewBidOrder(c.ID, c.BuyerID, c.Price, slot)
+}
+
+func newBidOrderCreatedEvent(order *entity.Order) event.BidOrderCreated {
+
+	var eventOrder event.Order
+	bindOrder(order, &eventOrder)
+
+	return event.NewBidOrderCreated(eventOrder)
+}
+
+func bindOrder(entityOrder *entity.Order, eventOrder *event.Order) {
+	if entityOrder == nil {
+		return
+	}
+
+	var eventSlot event.Slot
+	bindSlot(entityOrder.Slot, &eventSlot)
+
+	eventOrder.ID = entityOrder.ID
+	eventOrder.BuyerID = entityOrder.BuyerID
+	eventOrder.Price = entityOrder.Price
+	eventOrder.Slot = &eventSlot
+}
+
+func bindSlot(entitySlot *entity.Slot, eventSlot *event.Slot) {
+	if entitySlot == nil {
+		return
+	}
+
+	eventSlot.BuyerRating = entitySlot.BuyerRating
+	eventSlot.SupplierRating = entitySlot.SupplierRating
+
+	if entitySlot.Resources == nil {
+		return
+	}
+
+	res := event.Resources(*entitySlot.Resources)
+	eventSlot.Resources = &res
 }
