@@ -31,10 +31,6 @@ func (h CreateAskOrderHandler) Handle(cmd intf.Command) error {
 		return fmt.Errorf("invalid command %v given", cmd)
 	}
 
-	if entity.OrderType(c.OrderType) != entity.BID {
-		return fmt.Errorf("invalid order type given: expected bid order, but got %v", c.OrderType)
-	}
-
 	order, err := newAskOrder(c)
 	if err != nil {
 		return err

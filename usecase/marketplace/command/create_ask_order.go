@@ -8,8 +8,6 @@ type CreateAskOrder struct {
 	SupplierID string
 	// Order price
 	Price int64
-	// Order type
-	OrderType int
 	// Slot a slot
 	Slot Slot
 }

@@ -3,7 +3,6 @@ package command
 import (
 	"fmt"
 	"github.com/golang/mock/gomock"
-	"github.com/sonm-io/marketplace/entity"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command/mocks"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -15,10 +14,9 @@ func TestCreateBidOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 	defer ctrl.Finish()
 
 	cmd := CreateBidOrder{
-		ID:        "TestBidOrder",
-		BuyerID:   "TestBuyer",
-		OrderType: int(entity.BID),
-		Price:     555,
+		ID:      "TestBidOrder",
+		BuyerID: "TestBuyer",
+		Price:   555,
 		Slot: Slot{
 			SupplierRating: 0,
 			BuyerRating:    0,
@@ -42,24 +40,6 @@ func TestCreateBidOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 
 	// assert
 	assert.NoError(t, err)
-}
-
-func TestCreateBidOrderHandlerHandle_InValidOrderTypeGiven_ErrorReturned(t *testing.T) {
-	// arrange
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	storage := mocks.NewMockCreateBidOrderStorage(ctrl)
-	h := NewCreateBidOrderHandler(storage)
-
-	// act
-	err := h.Handle(CreateBidOrder{
-		ID:    "TestOrder",
-		Price: 555,
-	})
-
-	// assert
-	assert.EqualError(t, err, fmt.Sprintf("invalid order type given: expected bid order, but got %v", 0))
 }
 
 func TestCreateBidOrderHandlerHandle_IncorrectCommandGivenErrorReturned(t *testing.T) {

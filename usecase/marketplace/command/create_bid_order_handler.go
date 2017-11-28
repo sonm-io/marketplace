@@ -31,10 +31,6 @@ func (h CreateBidOrderHandler) Handle(cmd intf.Command) error {
 		return fmt.Errorf("invalid command %v given", cmd)
 	}
 
-	if entity.OrderType(c.OrderType) != entity.BID {
-		return fmt.Errorf("invalid order type given: expected bid order, but got %v", c.OrderType)
-	}
-
 	order, err := newBidOrder(c)
 	if err != nil {
 		return err
@@ -43,7 +39,6 @@ func (h CreateBidOrderHandler) Handle(cmd intf.Command) error {
 	return h.s.Add(order)
 }
 
-// TODO: (screwyprof) move to factory
 func newBidOrder(c CreateBidOrder) (*entity.Order, error) {
 
 	res := entity.Resources(c.Slot.Resources)
