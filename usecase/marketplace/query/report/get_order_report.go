@@ -7,5 +7,11 @@ type GetOrderReport struct {
 	SupplierID string
 	BuyerID    string
 	OrderType  int
-	Slot       Slot
+	Slot       *Slot
 }
+
+const (
+	ANY = 0
+	BID = 1
+	ASK = 2
+)

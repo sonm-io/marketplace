@@ -1,8 +1,8 @@
 package spec
 
 import (
-	"github.com/sonm-io/marketplace/entity"
 	"github.com/sonm-io/marketplace/usecase/intf"
+	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
 )
 
 // IsBidOrderSpec specifies whether the given value is a bid order.
@@ -12,6 +12,6 @@ type IsBidOrderSpec struct {
 
 // IsSatisfiedBy implements Specification interface.
 func (s IsBidOrderSpec) IsSatisfiedBy(object interface{}) bool {
-	order := object.(*entity.Order)
-	return order.OrderType == entity.BID
+	order := object.(*report.GetOrderReport)
+	return order.OrderType == report.BID
 }

@@ -20,7 +20,7 @@ func TestGetOrderHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 		BuyerID:   "TestBuyer",
 		OrderType: int(report.ASK),
 		Price:     555,
-		Slot: report.Slot{
+		Slot: &report.Slot{
 			BuyerRating:    0,
 			SupplierRating: 0,
 		},

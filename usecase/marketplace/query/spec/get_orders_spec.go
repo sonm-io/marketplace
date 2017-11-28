@@ -6,7 +6,7 @@ import (
 )
 
 // GetOrdersSpec is a factory method that creates a spec for GetOrder query.
-func GetOrdersSpec(orderType report.OrderType, slot report.Slot) intf.Specification {
+func GetOrdersSpec(orderType int, slot report.Slot) intf.Specification {
 	var s intf.Specification
 	switch orderType {
 	case report.ASK:
@@ -19,7 +19,6 @@ func GetOrdersSpec(orderType report.OrderType, slot report.Slot) intf.Specificat
 		s = IsBidOrderSpec{}
 	default:
 		panic("unknown order type given")
-
 	}
 
 	/*
