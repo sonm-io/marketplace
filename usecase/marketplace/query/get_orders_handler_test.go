@@ -46,7 +46,7 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 		Limit:     10,
 	}
 
-	s := spec.GetOrdersSpec(ds.OrderType(q.OrderType), ds.Slot{
+	s, _ := spec.OrdersBySlot(ds.OrderType(q.OrderType), ds.Slot{
 		BuyerRating:    q.Slot.BuyerRating,
 		SupplierRating: q.Slot.SupplierRating,
 	})

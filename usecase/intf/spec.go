@@ -1,6 +1,5 @@
 package intf
 
-// Specification contract
 type Specification interface {
 	IsSatisfiedBy(object interface{}) bool
 }
@@ -8,64 +7,91 @@ type Specification interface {
 type CompositeSpecification interface {
 	Specification
 
-	And(Specification) CompositeSpecification
-	Or(Specification) CompositeSpecification
+	And(CompositeSpecification) CompositeSpecification
+	Or(CompositeSpecification) CompositeSpecification
 	Not() CompositeSpecification
+	Relate(CompositeSpecification)
 }
 
 // -----------------------------------------------------------------------------
-
-// AbstractSpecification implements CompositeSpecification interface
-type AbstractSpecification struct {
-	Specification
+type BaseSpecification struct {
+	CompositeSpecification
 }
 
-// And returns a specification composition with AND operator
-func (c *AbstractSpecification) And(other Specification) CompositeSpecification {
-	return &andSpecification{one: c, two: other}
+// Check specification
+//func (s *BaseSpecification) IsSatisfiedBy(object interface{}) bool {
+//	return false
+//}
+
+// Condition AND
+func (s *BaseSpecification) And(spec CompositeSpecification) CompositeSpecification {
+	a := &AndSpecification{
+		s.CompositeSpecification, spec,
+	}
+
+	a.Relate(a)
+	return a
 }
 
-// Or returns a specification composition with OR operator
-func (c *AbstractSpecification) Or(other Specification) CompositeSpecification {
-	return &orSpecification{one: c, two: other}
+// Condition OR
+func (s *BaseSpecification) Or(spec CompositeSpecification) CompositeSpecification {
+	a := &OrSpecification{
+		s.CompositeSpecification, spec,
+	}
+	//a.Relate(a)
+	return a
 }
 
-// Not returns a specification composition with NOT operator
-func (c *AbstractSpecification) Not() CompositeSpecification {
-	return &notSpecification{one: c}
+// Condition NOT
+func (s *BaseSpecification) Not() CompositeSpecification {
+	a := &NotSpecification{
+		s.CompositeSpecification,
+	}
+	//a.Relate(a)
+	return a
 }
 
-// -----------------------------------------------------------------------------
-
-type andSpecification struct {
-	AbstractSpecification
-	one Specification
-	two Specification
+// Relate to specification
+func (s *BaseSpecification) Relate(spec CompositeSpecification) {
+	s.CompositeSpecification = spec
 }
 
-func (a *andSpecification) IsSatisfiedBy(object interface{}) bool {
-	return a.one.IsSatisfiedBy(object) && a.two.IsSatisfiedBy(object)
+/////
+
+// AndSpecification
+type AndSpecification struct {
+	CompositeSpecification
+	other CompositeSpecification
 }
 
-// -----------------------------------------------------------------------------
-
-type orSpecification struct {
-	AbstractSpecification
-	one Specification
-	two Specification
+// Check specification
+func (s *AndSpecification) IsSatisfiedBy(object interface{}) bool {
+	return s.CompositeSpecification.IsSatisfiedBy(object) && s.other.IsSatisfiedBy(object)
 }
 
-func (a *orSpecification) IsSatisfiedBy(object interface{}) bool {
-	return a.one.IsSatisfiedBy(object) || a.two.IsSatisfiedBy(object)
+/////
+
+// OrSpecification
+type OrSpecification struct {
+	CompositeSpecification
+	other CompositeSpecification
 }
 
-// -----------------------------------------------------------------------------
-
-type notSpecification struct {
-	AbstractSpecification
-	one Specification
+// Check specification
+func (s *OrSpecification) IsSatisfiedBy(object interface{}) bool {
+	return s.CompositeSpecification.IsSatisfiedBy(object) || s.other.IsSatisfiedBy(object)
 }
 
-func (a *notSpecification) IsSatisfiedBy(object interface{}) bool {
-	return !a.one.IsSatisfiedBy(object)
+/////
+
+// NotSpecification
+type NotSpecification struct {
+	CompositeSpecification
 }
+
+// Check specification
+func (s *NotSpecification) IsSatisfiedBy(object interface{}) bool {
+	return s.CompositeSpecification.IsSatisfiedBy(object)
+}
+
+/////

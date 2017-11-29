@@ -14,7 +14,7 @@ type OrderBySpecStorage interface {
 	BySpecWithLimit(spec intf.Specification, limit uint64) ([]ds.Order, error)
 }
 
-// GetOrdersHandler returns Orders by the given Specification.
+// GetOrdersHandler returns Orders by the given CompositeSpecification.
 type GetOrdersHandler struct {
 	s OrderBySpecStorage
 }
@@ -38,10 +38,14 @@ func (h *GetOrdersHandler) Handle(req intf.Query, result interface{}) error {
 		return fmt.Errorf("invalid result %v given", result)
 	}
 
-	s := spec.GetOrdersSpec(ds.OrderType(q.OrderType), ds.Slot{
+	s, err := spec.OrdersBySlot(ds.OrderType(q.OrderType), ds.Slot{
 		BuyerRating:    q.Slot.BuyerRating,
 		SupplierRating: q.Slot.SupplierRating,
 	})
+
+	if err != nil {
+		return err
+	}
 
 	orders, err := h.s.BySpecWithLimit(s, q.Limit)
 	if err != nil {
