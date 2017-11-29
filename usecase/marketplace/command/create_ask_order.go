@@ -2,7 +2,7 @@ package command
 
 import ds "github.com/sonm-io/marketplace/datastruct"
 
-// CreateOrder is a command to create an ask order.
+// CreateAskOrder is a command to create an ask order.
 type CreateAskOrder struct {
 	// Order ID, UUIDv4
 	ID string

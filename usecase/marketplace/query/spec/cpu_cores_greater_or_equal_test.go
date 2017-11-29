@@ -17,7 +17,7 @@ func TestCpuCoresGreaterOrEqualIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t
 	}
 
 	// act
-	s := NewCpuCoresGreaterOrEqual(4)
+	s := NewCPUCoresGreaterOrEqual(4)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert
@@ -35,7 +35,7 @@ func TestCpuCoresGreaterOrEqualIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturne
 	}
 
 	// act
-	s := NewCpuCoresGreaterOrEqual(2)
+	s := NewCPUCoresGreaterOrEqual(2)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert

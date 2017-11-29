@@ -32,8 +32,8 @@ func OrdersBySlot(orderType ds.OrderType, slot ds.Slot) (intf.CompositeSpecifica
 func forBid(slot ds.Slot) intf.CompositeSpecification {
 	s := NewIsBidOrder().
 		And(NewBuyerRatingGreaterOrEqual(slot.BuyerRating)).
-		And(NewCpuCoresGreaterOrEqual(slot.Resources.CpuCores)).
-		And(NewRamBytesGreaterOrEqual(slot.Resources.RamBytes))
+		And(NewCPUCoresGreaterOrEqual(slot.Resources.CpuCores)).
+		And(NewRAMBytesGreaterOrEqual(slot.Resources.RamBytes))
 
 	return s
 }
@@ -41,8 +41,8 @@ func forBid(slot ds.Slot) intf.CompositeSpecification {
 func forAsk(slot ds.Slot) intf.CompositeSpecification {
 	s := NewIsAskOrder().
 		And(NewSupplierRatingGreaterOrEqual(slot.SupplierRating)).
-		And((NewCpuCoresGreaterOrEqual(slot.Resources.CpuCores)).Not()).
-		And((NewRamBytesGreaterOrEqual(slot.Resources.RamBytes)).Not())
+		And((NewCPUCoresGreaterOrEqual(slot.Resources.CpuCores)).Not()).
+		And((NewRAMBytesGreaterOrEqual(slot.Resources.RamBytes)).Not())
 
 	return s
 }

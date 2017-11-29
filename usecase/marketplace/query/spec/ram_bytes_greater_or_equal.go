@@ -5,21 +5,21 @@ import (
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
-// RamBytesGreaterOrEqual specifies whether the memory size in bytes greater than or equal to the given value.
-type RamBytesGreaterOrEqual struct {
+// RAMBytesGreaterOrEqual specifies whether the memory size in bytes greater than or equal to the given value.
+type RAMBytesGreaterOrEqual struct {
 	intf.CompositeSpecification
 	ramBytes uint64
 }
 
-// NewRamBytesGreaterOrEqual creates a new instance of RamBytesGreaterOrEqual.
-func NewRamBytesGreaterOrEqual(ramBytes uint64) intf.CompositeSpecification {
-	s := &RamBytesGreaterOrEqual{CompositeSpecification: &intf.BaseSpecification{}, ramBytes: ramBytes}
+// NewRAMBytesGreaterOrEqual creates a new instance of RAMBytesGreaterOrEqual.
+func NewRAMBytesGreaterOrEqual(ramBytes uint64) intf.CompositeSpecification {
+	s := &RAMBytesGreaterOrEqual{CompositeSpecification: &intf.BaseSpecification{}, ramBytes: ramBytes}
 	s.Relate(s)
 	return s
 }
 
 // IsSatisfiedBy implements CompositeSpecification interface.
-func (s *RamBytesGreaterOrEqual) IsSatisfiedBy(object interface{}) bool {
+func (s *RAMBytesGreaterOrEqual) IsSatisfiedBy(object interface{}) bool {
 	order := object.(*ds.Order)
 	return order.Slot.Resources.RamBytes >= s.ramBytes
 }

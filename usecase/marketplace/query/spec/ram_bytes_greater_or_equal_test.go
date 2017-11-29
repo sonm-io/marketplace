@@ -17,7 +17,7 @@ func TestRamBytesGreaterOrEqualIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t
 	}
 
 	// act
-	s := NewRamBytesGreaterOrEqual(10000)
+	s := NewRAMBytesGreaterOrEqual(10000)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert
@@ -35,7 +35,7 @@ func TestRamBytesGreaterOrEqualIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturne
 	}
 
 	// act
-	s := NewRamBytesGreaterOrEqual(10000)
+	s := NewRAMBytesGreaterOrEqual(10000)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert
