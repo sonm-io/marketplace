@@ -13,6 +13,7 @@ const (
 	defaultResultsCount = 100
 )
 
+// GetOrders retrieves orders by matching the given order options against the storage.
 func (m *Marketplace) GetOrders(_ context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersReply, error) {
 
 	log.Printf("Getting orders %+v", req)

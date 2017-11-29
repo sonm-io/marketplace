@@ -7,6 +7,7 @@ import (
 	"golang.org/x/net/context"
 )
 
+// CancelOrder removes the given order from the storage.
 func (m *Marketplace) CancelOrder(_ context.Context, req *pb.Order) (*pb.Empty, error) {
 	if err := m.commandBus.Handle(command.CancelOrder{ID: req.Id}); err != nil {
 		return nil, err

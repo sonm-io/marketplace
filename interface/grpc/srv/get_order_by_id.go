@@ -9,6 +9,7 @@ import (
 	"log"
 )
 
+// GetOrderByID retrieves order information by order id.
 func (m *Marketplace) GetOrderByID(_ context.Context, req *pb.ID) (*pb.Order, error) {
 
 	log.Printf("Getting order %+v", req.GetId())

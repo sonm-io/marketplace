@@ -12,6 +12,7 @@ import (
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 )
 
+// CreateOrder creates a bid order.
 func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order, error) {
 
 	var cmd command.CreateBidOrder
@@ -23,7 +24,7 @@ func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order
 
 	if err := m.commandBus.Handle(cmd); err != nil {
 		log.Printf("cannot create bid order: %v\n", err)
-		return nil, fmt.Errorf("cannot create bid order: %v\n", err)
+		return nil, fmt.Errorf("cannot create bid order: %v", err)
 	}
 
 	log.Printf("bid order %s created\n", cmd.ID)

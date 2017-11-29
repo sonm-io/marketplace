@@ -19,7 +19,7 @@ func NewOrderStorage(e Engine) *OrderStorage {
 	}
 }
 
-// Adds the given Order to the storage.
+// Add adds the given Order to the storage.
 func (s *OrderStorage) Add(o *ds.Order) error {
 	return s.e.Add(o, o.ID)
 }
