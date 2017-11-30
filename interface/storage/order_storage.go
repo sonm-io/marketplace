@@ -5,6 +5,7 @@ import (
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/usecase/intf"
+	"sort"
 )
 
 // OrderStorage stores and retrieves Orders (Read side).
@@ -61,5 +62,14 @@ func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) ([
 		orders = append(orders, *order)
 	}
 
+	sort.Sort(ByPrice(orders))
+
 	return orders, nil
 }
+
+// ByPrice implements sort.Interface; it allows for sorting Orders by Price field.
+type ByPrice []ds.Order
+
+func (a ByPrice) Len() int           { return len(a) }
+func (a ByPrice) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByPrice) Less(i, j int) bool { return a[i].Price < a[j].Price }
