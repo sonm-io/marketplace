@@ -21,5 +21,5 @@ func NewRAMBytesGreaterOrEqual(ramBytes uint64) intf.CompositeSpecification {
 // IsSatisfiedBy implements CompositeSpecification interface.
 func (s *RAMBytesGreaterOrEqual) IsSatisfiedBy(object interface{}) bool {
 	order := object.(*ds.Order)
-	return order.Slot.Resources.RamBytes >= s.ramBytes
+	return order.Slot.Resources.RAMBytes >= s.ramBytes
 }

@@ -24,8 +24,8 @@ func TestCreateBidOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 			SupplierRating: 0,
 			BuyerRating:    0,
 			Resources: ds.Resources{
-				CpuCores: 4,
-				RamBytes: 100000000,
+				CPUCores: 4,
+				RAMBytes: 100000000,
 				Storage:  1000000000,
 			},
 		},

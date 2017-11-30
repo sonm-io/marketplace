@@ -11,7 +11,7 @@ func TestCpuCoresGreaterOrEqualIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t
 	order := &ds.Order{
 		Slot: &ds.Slot{
 			Resources: ds.Resources{
-				CpuCores: 4,
+				CPUCores: 4,
 			},
 		},
 	}
@@ -29,7 +29,7 @@ func TestCpuCoresGreaterOrEqualIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturne
 	order := &ds.Order{
 		Slot: &ds.Slot{
 			Resources: ds.Resources{
-				CpuCores: 1,
+				CPUCores: 1,
 			},
 		},
 	}

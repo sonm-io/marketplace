@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// Frame represents a program counter inside a stack frame.
+// Frame represents a program counter inside a Stack frame.
 type Frame uintptr
 
 // pc returns the program counter for this frame;
@@ -48,6 +48,7 @@ func (f Frame) line() int {
 //
 //    %+s   path of source file relative to the compile time GOPATH
 //    %+v   equivalent to %+s:%d
+// nolint
 func (f Frame) Format(s fmt.State, verb rune) {
 	switch verb {
 	case 's':
@@ -76,17 +77,18 @@ func (f Frame) Format(s fmt.State, verb rune) {
 	}
 }
 
-// StackTrace is stack of Frames from innermost (newest) to outermost (oldest).
+// StackTrace is Stack of Frames from innermost (newest) to outermost (oldest).
 type StackTrace []Frame
 
-// Format formats the stack of Frames according to the fmt.Formatter interface.
+// Format formats the Stack of Frames according to the fmt.Formatter interface.
 //
-//    %s	lists source files for each Frame in the stack
-//    %v	lists the source file and line number for each Frame in the stack
+//    %s	lists source files for each Frame in the Stack
+//    %v	lists the source file and line number for each Frame in the Stack
 //
 // Format accepts flags that alter the printing of some verbs, as follows:
 //
-//    %+v   Prints filename, function, and line number for each Frame in the stack.
+//    %+v   Prints filename, function, and line number for each Frame in the Stack.
+// nolint
 func (st StackTrace) Format(s fmt.State, verb rune) {
 	switch verb {
 	case 'v':
@@ -105,35 +107,37 @@ func (st StackTrace) Format(s fmt.State, verb rune) {
 	}
 }
 
-// stack represents a stack of program counters.
-type stack []uintptr
+// Stack represents a Stack of program counters.
+type Stack []uintptr
 
-func (s *stack) Format(st fmt.State, verb rune) {
+// Format formats the stacktrace.
+func (s *Stack) Format(st fmt.State, verb rune) {
 	switch verb {
 	case 'v':
 		switch {
 		case st.Flag('+'):
 			for _, pc := range *s {
 				f := Frame(pc)
-				fmt.Fprintf(st, "\n%+v", f)
+				fmt.Fprintf(st, "\n%+v", f) // nolint
 			}
 		}
 	}
 }
 
-func (s *stack) StackTrace() StackTrace {
-	f := make([]Frame, len(*s))
-	for i := 0; i < len(f); i++ {
-		f[i] = Frame((*s)[i])
-	}
-	return f
-}
+//func (s *Stack) StackTrace() StackTrace {
+//	f := make([]Frame, len(*s))
+//	for i := 0; i < len(f); i++ {
+//		f[i] = Frame((*s)[i])
+//	}
+//	return f
+//}
 
-func Callers() *stack {
+// Callers returns the Stacktrace.
+func Callers() *Stack {
 	const depth = 32
 	var pcs [depth]uintptr
 	n := runtime.Callers(3, pcs[:])
-	var st stack = pcs[0:n]
+	var st Stack = pcs[0:n]
 	return &st
 }
 
@@ -145,6 +149,7 @@ func funcname(name string) string {
 	return name[i+1:]
 }
 
+// nolint
 func trimGOPATH(name, file string) string {
 	// Here we want to get the source file path relative to the compile time
 	// GOPATH. As of Go 1.6.x there is no direct way to know the compiled

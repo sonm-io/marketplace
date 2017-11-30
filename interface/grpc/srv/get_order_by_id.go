@@ -31,8 +31,8 @@ func (m *Marketplace) GetOrderByID(_ context.Context, req *pb.ID) (*pb.Order, er
 			SupplierRating: order.Slot.SupplierRating,
 			BuyerRating:    order.Slot.BuyerRating,
 			Resources: &pb.Resources{
-				CpuCores: order.Slot.Resources.CpuCores,
-				RamBytes: order.Slot.Resources.RamBytes,
+				CpuCores: order.Slot.Resources.CPUCores,
+				RamBytes: order.Slot.Resources.RAMBytes,
 				Storage:  order.Slot.Resources.Storage,
 			},
 		},

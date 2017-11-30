@@ -18,28 +18,34 @@ import (
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	_ "google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/status"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 )
 
+// Config application configuration object.
 type Config struct {
 	ListenAddr string
 }
 
+// Option is a configuration parameter.
 type Option func(f *Config)
 
+// WithListenAddr sets listen address.
 func WithListenAddr(addr string) Option {
 	return func(c *Config) {
 		c.ListenAddr = addr
 	}
 }
 
+// App application root.
 type App struct {
 	conf *Config
 }
 
+// NewApp creates a new App instance.
 func NewApp(opts ...Option) *App {
 
 	conf := &Config{ListenAddr: ":9090"}
@@ -50,6 +56,7 @@ func NewApp(opts ...Option) *App {
 	return &App{conf: conf}
 }
 
+// Run runs the application.
 func (l *App) Run() error {
 
 	repo := storage.NewOrderStorage(inmemory.NewStorage())
@@ -83,9 +90,6 @@ func (l *App) Run() error {
 	s := grpc.NewServer(
 		grpc_middleware.WithUnaryServerChain(grpc_recovery.UnaryServerInterceptor(opts...)),
 		grpc_middleware.WithStreamServerChain(grpc_recovery.StreamServerInterceptor(opts...)),
-
-		grpc.RPCCompressor(grpc.NewGZIPCompressor()),
-		grpc.RPCDecompressor(grpc.NewGZIPDecompressor()),
 	)
 
 	pb.RegisterMarketServer(s, srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler))

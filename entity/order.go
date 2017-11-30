@@ -16,6 +16,7 @@ var (
 	errBuyerIsRequired    = errors.New("buyer is required")
 )
 
+// NewAskOrder creates a new ask order.
 func NewAskOrder(ID, supplierID string, price int64, slot ds.Slot) (*Order, error) {
 	o := &Order{
 		Order: ds.Order{
@@ -38,6 +39,7 @@ func NewAskOrder(ID, supplierID string, price int64, slot ds.Slot) (*Order, erro
 	return o, nil
 }
 
+// NewBidOrder creates a new bid order.
 func NewBidOrder(ID, buyerID string, price int64, slot ds.Slot) (*Order, error) {
 	o := &Order{
 		Order: ds.Order{

@@ -54,8 +54,8 @@ func (m *Marketplace) bind(req *pb.Order, cmd *command.CreateBidOrder) error {
 		if req.Slot.Resources != nil {
 			res := req.GetSlot().GetResources()
 			cmd.Slot.Resources = ds.Resources{
-				CpuCores: res.GetCpuCores(),
-				RamBytes: res.GetRamBytes(),
+				CPUCores: res.GetCpuCores(),
+				RAMBytes: res.GetRamBytes(),
 				Storage:  res.GetStorage(),
 			}
 		}

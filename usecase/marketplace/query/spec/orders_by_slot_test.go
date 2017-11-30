@@ -13,8 +13,8 @@ func TestOrdersBySlotIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.
 		Slot: &ds.Slot{
 			BuyerRating: 500,
 			Resources: ds.Resources{
-				CpuCores: 4,
-				RamBytes: 12000,
+				CPUCores: 4,
+				RAMBytes: 12000,
 			},
 		},
 	}
@@ -22,8 +22,8 @@ func TestOrdersBySlotIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.
 	slot := &ds.Slot{
 		BuyerRating: 300,
 		Resources: ds.Resources{
-			CpuCores: 2,
-			RamBytes: 12000,
+			CPUCores: 2,
+			RAMBytes: 12000,
 		},
 	}
 
@@ -47,8 +47,8 @@ func TestOrdersBySlotIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturned(t *testi
 	slot := ds.Slot{
 		BuyerRating: 300,
 		Resources: ds.Resources{
-			CpuCores: 2,
-			RamBytes: 12000,
+			CPUCores: 2,
+			RAMBytes: 12000,
 		},
 	}
 

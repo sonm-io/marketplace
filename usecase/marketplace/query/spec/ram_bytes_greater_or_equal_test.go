@@ -11,7 +11,7 @@ func TestRamBytesGreaterOrEqualIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t
 	order := &ds.Order{
 		Slot: &ds.Slot{
 			Resources: ds.Resources{
-				RamBytes: 12000,
+				RAMBytes: 12000,
 			},
 		},
 	}
@@ -29,7 +29,7 @@ func TestRamBytesGreaterOrEqualIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturne
 	order := &ds.Order{
 		Slot: &ds.Slot{
 			Resources: ds.Resources{
-				RamBytes: 6000,
+				RAMBytes: 6000,
 			},
 		},
 	}

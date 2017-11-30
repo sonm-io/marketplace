@@ -16,8 +16,10 @@ type Order struct {
 	Slot *Slot
 }
 
+// OrderType defines an order type.
 type OrderType int32
 
+// List of available order types.
 const (
 	ANY OrderType = 0
 	BID OrderType = 1

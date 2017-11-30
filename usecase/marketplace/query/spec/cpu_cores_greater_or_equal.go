@@ -22,5 +22,5 @@ func NewCPUCoresGreaterOrEqual(num uint64) intf.CompositeSpecification {
 // IsSatisfiedBy implements CompositeSpecification interface.
 func (s *CPUCoresGreaterOrEqual) IsSatisfiedBy(object interface{}) bool {
 	order := object.(*ds.Order)
-	return order.Slot.Resources.CpuCores >= s.cpuCores
+	return order.Slot.Resources.CPUCores >= s.cpuCores
 }

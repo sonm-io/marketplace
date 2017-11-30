@@ -1,10 +1,11 @@
 package datastruct
 
+// Resources are a set of computational units.
 type Resources struct {
 	// CPU core count
-	CpuCores uint64
+	CPUCores uint64
 	// RAM, in bytes
-	RamBytes uint64
+	RAMBytes uint64
 	// GPU devices count
 	////GpuCount GPUCount
 	// todo: discuss
