@@ -6,16 +6,11 @@ import (
 )
 
 // IsAskOrder specifies whether the given value is an ask order.
-type IsAskOrder struct {
-	intf.CompositeSpecification
-}
+type IsAskOrder struct{}
 
 // NewIsAskOrder creates a new instance of IsAskOrder.
 func NewIsAskOrder() intf.CompositeSpecification {
-	s := &IsAskOrder{CompositeSpecification: &intf.BaseSpecification{}}
-	s.Relate(s)
-
-	return s
+	return intf.BaseSpecification{Specification: &IsAskOrder{}}
 }
 
 // IsSatisfiedBy implements CompositeSpecification interface.

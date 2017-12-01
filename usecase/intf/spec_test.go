@@ -31,9 +31,7 @@ type ratingGreaterThanSpec struct {
 }
 
 func NewRatingGreaterThanSpec(rating int) CompositeSpecification {
-	s := ratingGreaterThanSpec{CompositeSpecification: &BaseSpecification{}, rating: rating}
-	s.Relate(s)
-	return s
+	return BaseSpecification{ratingGreaterThanSpec{rating: rating}}
 }
 
 func (s ratingGreaterThanSpec) IsSatisfiedBy(object interface{}) bool {
@@ -51,9 +49,7 @@ type categoryEqualsSpec struct {
 }
 
 func NewCategoryEqualsSpec(category string) CompositeSpecification {
-	s := categoryEqualsSpec{CompositeSpecification: &BaseSpecification{}, category: category}
-	s.Relate(s)
-	return s
+	return BaseSpecification{categoryEqualsSpec{category: category}}
 }
 
 func (s categoryEqualsSpec) IsSatisfiedBy(object interface{}) bool {

@@ -6,16 +6,11 @@ import (
 )
 
 // IsBidOrder specifies whether the given value is a bid order.
-type IsBidOrder struct {
-	intf.CompositeSpecification
-}
+type IsBidOrder struct{}
 
 // NewIsBidOrder creates a new instance of IsBidOrder.
 func NewIsBidOrder() intf.CompositeSpecification {
-	s := &IsBidOrder{CompositeSpecification: &intf.BaseSpecification{}}
-	s.Relate(s)
-
-	return s
+	return intf.BaseSpecification{Specification: &IsBidOrder{}}
 }
 
 // IsSatisfiedBy implements CompositeSpecification interface.
