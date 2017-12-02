@@ -8,6 +8,7 @@ bin/*
 
 /mocks/*
 interface/storage/mocks/*
+/usecase/intf/mocks/*
 usecase/marketplace/query/mocks/*
 usecase/marketplace/command/mocks/*
 !/mocks/stub.go
