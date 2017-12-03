@@ -1,17 +1,18 @@
 package srv_test
 
 import (
-	"github.com/stretchr/testify/suite"
+	"fmt"
 	"testing"
 
-	"github.com/sonm-io/marketplace/test/cli"
-
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	"google.golang.org/grpc"
-
 	// registers grpc gzip encoder/decoder
-	"fmt"
 	_ "google.golang.org/grpc/encoding/gzip"
+
+	"github.com/stretchr/testify/suite"
+	"github.com/stretchr/testify/require"
+
+	"github.com/sonm-io/marketplace/test/cli"
+	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 )
 
 // TestMarketplaceTestSuite initialize test suit.
@@ -32,7 +33,7 @@ func (s *MarketplaceTestSuite) SetupTest() {
 	s.AppTestSuite.SetupTest()
 
 	conn, err := GrpcClient()
-	s.NoError(err, "cannot get grpc client")
+	require.NoError(s.T(), err, "cannot get grpc client")
 
 	//defer conn.Close()
 	s.conn = conn

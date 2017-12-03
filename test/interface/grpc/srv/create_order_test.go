@@ -2,6 +2,7 @@ package srv_test
 
 import (
 	"context"
+	"github.com/stretchr/testify/require"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 )
 
@@ -25,6 +26,6 @@ func (s *MarketplaceTestSuite) createOrder() {
 	obtained, err := s.client.CreateOrder(context.Background(), order)
 
 	// assert
-	s.NoError(err)
+	require.NoError(s.T(), err)
 	s.Equal(order.Id, obtained.Id)
 }

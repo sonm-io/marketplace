@@ -1,14 +1,17 @@
 package cli
 
 import (
-	"github.com/stretchr/testify/suite"
-
-	"github.com/sonm-io/marketplace/cli"
-	"gopkg.in/tomb.v2"
 	"net"
+	"time"
 	"sync"
 	"sync/atomic"
-	"time"
+
+	"gopkg.in/tomb.v2"
+
+	"github.com/stretchr/testify/suite"
+	"github.com/stretchr/testify/require"
+
+	"github.com/sonm-io/marketplace/cli"
 )
 
 var (
@@ -39,15 +42,10 @@ func (s *AppTestSuite) SetupTest() {
 
 // StartApp starts the application.
 func (s *AppTestSuite) StartApp() {
-	if s.App == nil {
-		s.FailNow("application must be initialized")
-	}
-
+	require.NotNil(s.T(), "application must be initialized")
 	s.False(s.IsAppRunning(), "application must not be running before starting")
 
-	s.T().Log("Starting application")
 	s.t.Go(s.App.Run)
-	s.T().Log("Application started")
 
 	s.True(s.t.Alive())
 	s.True(s.IsAppRunning(), "application must be running after starting")
@@ -56,24 +54,22 @@ func (s *AppTestSuite) StartApp() {
 // StopApp gracefully stops the application.
 func (s *AppTestSuite) StopApp() error {
 
-	s.T().Log("Stopping application")
 	// Do nothing if StopApp is already been called.
 	// if s.shutdownCounter == 0 then set to 1, return true otherwise false
 	if !atomic.CompareAndSwapUint32(&s.shutdownCounter, 0, 1) {
 		return nil
 	}
 
+	// stop the server goroutine
 	s.t.Kill(nil)
 
 	// wait for application to stop
 	s.waitShutdown()
 
-	s.T().Log("Application stopped")
 	return s.t.Wait()
 }
 
 func (s *AppTestSuite) waitShutdown() {
-	s.T().Log("Waiting for graceful stop")
 	<-s.t.Dying()
 	s.App.Stop()
 }
