@@ -1,11 +1,18 @@
 package cli
 
 import (
+	"os"
 	"fmt"
 	"net"
 	"sync"
 
+	"go.uber.org/zap"
+
+	gRPC "google.golang.org/grpc"
+	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+
 	"github.com/sonm-io/marketplace/infra/grpc"
+	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
 	"github.com/sonm-io/marketplace/infra/cqrs"
 	"github.com/sonm-io/marketplace/infra/storage/inmemory"
 
@@ -15,9 +22,7 @@ import (
 
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
-
-	gRPC "google.golang.org/grpc"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	"go.uber.org/zap/zapcore"
 )
 
 // Config application configuration object.
@@ -37,9 +42,10 @@ func WithListenAddr(addr string) Option {
 
 // App application root.
 type App struct {
-	conf *Config
-
 	sync.RWMutex
+
+	conf *Config
+	logger *zap.Logger
 	server *gRPC.Server
 }
 
@@ -55,6 +61,10 @@ func NewApp(opts ...Option) *App {
 
 // Init initialize the application.
 func (a *App) Init() error {
+	if err := a.initLogger(); err != nil {
+		return err
+	}
+
 	repo := storage.NewOrderStorage(inmemory.NewStorage())
 
 	getOrderHandler := query.NewGetOrderHandler(repo)
@@ -71,9 +81,56 @@ func (a *App) Init() error {
 	return nil
 }
 
-func (a *App) initServer(mp *srv.Marketplace) {
+func (a *App) initLogger() error {
 	a.Lock()
-	a.server = grpc.NewServer()
+	defer a.Unlock()
+
+	// a fallback/root logger for events without context
+	//logger, err := zap.NewProduction(
+	//	zap.Fields(zap.Int("pid", os.Getpid()), zap.String("exe", path.Base(os.Args[0]))),
+	//)
+	//defer l.Sync()
+	//
+	//if err != nil {
+	//	return fmt.Errorf("cannot init logger: %v", err)
+	//}
+
+	//gRPC log level is set via env. Possible values (INFO, ERROR, WARNING)
+	//see also gRPC_GO_LOG_VERBOSITY_LEVEL
+	//os.Setenv("GRPC_GO_LOG_SEVERITY_LEVEL", "ERROR")
+
+	atom := zap.NewAtomicLevel()
+	encoderCfg := zap.NewProductionEncoderConfig()
+	encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
+
+	logger := zap.New(zapcore.NewCore(
+		zapcore.NewJSONEncoder(encoderCfg),
+		zapcore.Lock(os.Stdout),
+		atom,
+	))
+	defer logger.Sync()
+
+	atom.SetLevel(zap.WarnLevel)
+
+
+	a.logger = logger
+	return nil
+}
+
+func (a *App) initServer(mp *srv.Marketplace) {
+
+	a.RLock()
+	opts := []grpc.ServerOption{
+		grpc.WithUnaryInterceptor(interceptor.NewUnaryZapLogger(a.logger)),
+		grpc.WithUnaryInterceptor(interceptor.NewUnaryPanic()),
+
+		grpc.WithStreamInterceptor(interceptor.NewStreamZapLogger(a.logger)),
+		grpc.WithStreamInterceptor(interceptor.NewStreamPanic()),
+	}
+	a.RUnlock()
+
+	a.Lock()
+	a.server = grpc.NewServer(opts...)
 	a.Unlock()
 
 	pb.RegisterMarketServer(a.server, mp)
