@@ -1,32 +1,23 @@
 package cli
 
 import (
-	"log"
+	"fmt"
 	"net"
+	"sync"
 
+	"github.com/sonm-io/marketplace/infra/grpc"
 	"github.com/sonm-io/marketplace/infra/cqrs"
-	"github.com/sonm-io/marketplace/infra/errors"
 	"github.com/sonm-io/marketplace/infra/storage/inmemory"
 
 	"github.com/sonm-io/marketplace/interface/adaptor"
-	"github.com/sonm-io/marketplace/interface/grpc/srv"
 	"github.com/sonm-io/marketplace/interface/storage"
+	"github.com/sonm-io/marketplace/interface/grpc/srv"
 
-	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
+	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 
+	gRPC "google.golang.org/grpc"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-
-	// registers grpc gzip encoder/decoder
-	_ "google.golang.org/grpc/encoding/gzip"
-	"google.golang.org/grpc/status"
-
-	"fmt"
-	"github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	"sync"
 )
 
 // Config application configuration object.
@@ -49,7 +40,7 @@ type App struct {
 	conf *Config
 
 	sync.RWMutex
-	server *grpc.Server
+	server *gRPC.Server
 }
 
 // NewApp creates a new App instance.
@@ -76,32 +67,20 @@ func (a *App) Init() error {
 	commandBus.RegisterHandler("CreateBidOrder", adaptor.FromDomain(createOrderHandler))
 	commandBus.RegisterHandler("CancelOrder", adaptor.FromDomain(cancelOrderHandler))
 
-	panicHandler := grpc_recovery.RecoveryHandlerFunc(func(p interface{}) (err error) {
-		log.Printf("%+v", errors.Callers())
+	a.initServer(srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler))
+	return nil
+}
 
-		err = status.Errorf(codes.Internal, "%s", p)
-		return
-	})
-
-	opts := []grpc_recovery.Option{
-		grpc_recovery.WithRecoveryHandler(panicHandler),
-	}
-
+func (a *App) initServer(mp *srv.Marketplace) {
 	a.Lock()
-	a.server = grpc.NewServer(
-		grpc_middleware.WithUnaryServerChain(grpc_recovery.UnaryServerInterceptor(opts...)),
-		grpc_middleware.WithStreamServerChain(grpc_recovery.StreamServerInterceptor(opts...)),
-	)
+	a.server = grpc.NewServer()
 	a.Unlock()
 
-	pb.RegisterMarketServer(a.server, srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler))
-
-	return nil
+	pb.RegisterMarketServer(a.server, mp)
 }
 
 // Run runs the application.
 func (a *App) Run() error {
-
 	a.RLock()
 	if a.server == nil {
 		a.RUnlock()
@@ -113,7 +92,6 @@ func (a *App) Run() error {
 	if err != nil {
 		return fmt.Errorf("failed to listen: %v", err)
 	}
-
 	return a.server.Serve(lis)
 }
 
@@ -125,6 +103,5 @@ func (a *App) Stop() {
 	if a.server == nil {
 		return
 	}
-
 	a.server.GracefulStop()
 }
