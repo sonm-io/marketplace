@@ -104,13 +104,14 @@ func (a *App) initLogger() error {
 	encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
 
 	logger := zap.New(zapcore.NewCore(
-		zapcore.NewJSONEncoder(encoderCfg),
+		zapcore.NewConsoleEncoder(encoderCfg),
+		//zapcore.NewJSONEncoder(encoderCfg),
 		zapcore.Lock(os.Stdout),
 		atom,
 	))
 	defer logger.Sync()
 
-	atom.SetLevel(zap.WarnLevel)
+	atom.SetLevel(zap.InfoLevel)
 
 	a.logger = logger
 	return nil

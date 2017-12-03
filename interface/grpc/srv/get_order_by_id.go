@@ -1,40 +1,34 @@
 package srv
 
 import (
+	"golang.org/x/net/context"
+
+	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
+	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
-
-	//"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
-	//"go.uber.org/zap"
-	"golang.org/x/net/context"
-	"log"
 )
 
 // GetOrderByID retrieves order information by order id.
 func (m *Marketplace) GetOrderByID(ctx context.Context, req *pb.ID) (*pb.Order, error) {
-	// this.loggerFactory.FromCtx(ctx)
-	//l := ctx_zap.Extract(ctx)
-	//l.Info("Getting order", zap.Any("req", req))
-	log.Printf("Getting order %+v", req.GetId())
+	logger := ctx_zap.Extract(ctx)
+	logger.Sugar().Infof("Getting order", req.GetId())
 
 	order := &report.GetOrderReport{}
 	if err := m.orderByID.Handle(query.GetOrder{ID: req.GetId()}, order); err != nil {
-		log.Printf("cannot retreive order: %v\n", err)
+		logger.Sugar().Infof("cannot retreive order: %v\n", err)
 		return nil, err
 	}
 
 	resp := &pb.Order{}
 	bindGetOrderReport(order, resp)
 
-	log.Printf("order %#+v retrieved\n", resp)
-	//l.Info("Order retrieved", zap.Any("order", resp))
-
+	logger.Sugar().Infof("order %#+v retrieved\n", resp)
 	return resp, nil
 }
 
 func bindGetOrderReport(r *report.GetOrderReport, pbOrder *pb.Order) {
-	// build result
 	if r == nil {
 		return
 	}

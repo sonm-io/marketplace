@@ -2,11 +2,12 @@ package srv
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/pborman/uuid"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	"golang.org/x/net/context"
+
+	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
+	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
@@ -14,20 +15,20 @@ import (
 
 // CreateOrder creates a bid order.
 func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order, error) {
-
 	var cmd command.CreateBidOrder
 	if err := m.bind(req, &cmd); err != nil {
 		return nil, fmt.Errorf("cannot map request to command: %v", err)
 	}
 
-	log.Printf("Creating bid order %+v", cmd)
+	logger := ctx_zap.Extract(ctx)
+	logger.Sugar().Infof("Creating bid order %+v", cmd)
 
 	if err := m.commandBus.Handle(cmd); err != nil {
-		log.Printf("cannot create bid order: %v\n", err)
+		logger.Sugar().Infof("cannot create bid order: %v\n", err)
 		return nil, fmt.Errorf("cannot create bid order: %v", err)
 	}
 
-	log.Printf("bid order %s created\n", cmd.ID)
+	logger.Sugar().Infof("bid order %s created\n", cmd.ID)
 
 	return m.GetOrderByID(ctx, &pb.ID{Id: cmd.ID})
 }
