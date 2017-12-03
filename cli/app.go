@@ -1,27 +1,27 @@
 package cli
 
 import (
-	"os"
 	"fmt"
 	"net"
+	"os"
 	"sync"
 
 	"go.uber.org/zap"
 
-	gRPC "google.golang.org/grpc"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	gRPC "google.golang.org/grpc"
 
+	"github.com/sonm-io/marketplace/infra/cqrs"
 	"github.com/sonm-io/marketplace/infra/grpc"
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
-	"github.com/sonm-io/marketplace/infra/cqrs"
 	"github.com/sonm-io/marketplace/infra/storage/inmemory"
 
 	"github.com/sonm-io/marketplace/interface/adaptor"
-	"github.com/sonm-io/marketplace/interface/storage"
 	"github.com/sonm-io/marketplace/interface/grpc/srv"
+	"github.com/sonm-io/marketplace/interface/storage"
 
-	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
+	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 	"go.uber.org/zap/zapcore"
 )
 
@@ -44,7 +44,7 @@ func WithListenAddr(addr string) Option {
 type App struct {
 	sync.RWMutex
 
-	conf *Config
+	conf   *Config
 	logger *zap.Logger
 	server *gRPC.Server
 }
@@ -111,7 +111,6 @@ func (a *App) initLogger() error {
 	defer logger.Sync()
 
 	atom.SetLevel(zap.WarnLevel)
-
 
 	a.logger = logger
 	return nil

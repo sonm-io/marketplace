@@ -2,8 +2,8 @@ package srv_test
 
 import (
 	"context"
-	"github.com/stretchr/testify/require"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	"github.com/stretchr/testify/require"
 )
 
 func (s *MarketplaceTestSuite) createOrder() {

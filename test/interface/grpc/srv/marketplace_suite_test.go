@@ -8,11 +8,11 @@ import (
 	// registers grpc gzip encoder/decoder
 	_ "google.golang.org/grpc/encoding/gzip"
 
-	"github.com/stretchr/testify/suite"
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 
-	"github.com/sonm-io/marketplace/test/cli"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	"github.com/sonm-io/marketplace/test/cli"
 )
 
 // TestMarketplaceTestSuite initialize test suit.

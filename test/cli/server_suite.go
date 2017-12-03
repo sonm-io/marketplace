@@ -2,14 +2,14 @@ package cli
 
 import (
 	"net"
-	"time"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"gopkg.in/tomb.v2"
 
-	"github.com/stretchr/testify/suite"
 	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 
 	"github.com/sonm-io/marketplace/cli"
 )

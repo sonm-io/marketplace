@@ -3,9 +3,9 @@ package interceptor
 import (
 	"sync/atomic"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 )
 
 var (
@@ -25,7 +25,6 @@ func NewUnaryZapLogger(logger *zap.Logger) grpc.UnaryServerInterceptor {
 
 	return grpc_zap.UnaryServerInterceptor(logger)
 }
-
 
 // NewStreamZapLogger Creates new stream interceptor for logging using zap.
 func NewStreamZapLogger(logger *zap.Logger) grpc.StreamServerInterceptor {

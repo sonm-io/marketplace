@@ -3,15 +3,14 @@ package grpc
 import (
 	"google.golang.org/grpc"
 	// registers grpc gzip encoder/decoder
-	_ "google.golang.org/grpc/encoding/gzip"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
-
+	_ "google.golang.org/grpc/encoding/gzip"
 )
 
 type options struct {
 	grpcOptions []grpc.ServerOption
 
-	unary []grpc.UnaryServerInterceptor
+	unary  []grpc.UnaryServerInterceptor
 	stream []grpc.StreamServerInterceptor
 }
 
