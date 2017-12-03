@@ -11,7 +11,7 @@ GO_REQ_VER := 1.9.2
 # GOPATH          = $WORKSPACE
 # CATALOG_API_DIR = $WORKSPACE/src/marketplace
 # RESULTS_DIR     = $WORKSPACE/integration_results
-RESULTS_DIR := integration_results
+RESULTS_DIR := integration-results
 
 # DO NOT TOUCH BELLOW
 SHELL      = /bin/bash
@@ -50,7 +50,7 @@ all: clean deps test fast-build
 clean:
 	rm -f $(BIN)
 	rm -rf test-results
-	rm -rf integration_results
+	rm -rf integration-results
 #	find . -name "*_gen.go" | grep -v "handler2/docs" | (xargs rm || echo "Done")
 #	find . -name "*_gen_test.go" | grep -v "handler2/docs" | xargs rm | (xargs rm || echo "Done")
 
@@ -63,7 +63,7 @@ deps: get-dep
 	${GO} get github.com/golang/mock/mockgen
 
 .PHONY: ci-deps
-ci-deps: deps
+ci-deps:
 	${GO} get github.com/axw/gocov/gocov
 	${GO} get github.com/t-yuki/gocover-cobertura
 	${GO} get -v github.com/tebeka/go2xunit
@@ -71,9 +71,6 @@ ci-deps: deps
 
 .PHONY: build
 build: clean deps fast-build
-
-.PHONY: build-ci
-build-ci: clean ci-deps fast-build
 
 # fast build without check for deps
 .PHONY: fast-build

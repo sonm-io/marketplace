@@ -45,6 +45,10 @@ func main() {
 
 	log.Printf("Starting SONM Marketplace service at %s...\r\n", *listenAddr)
 	app := cli.NewApp(cli.WithListenAddr(*listenAddr))
+	if err := app.Init(); err != nil {
+		log.Fatalf("Cannot initialize SONM Marketplace service: %s\r\n", err)
+	}
+
 	if err := app.Run(); err != nil {
 		log.Fatalf("Cannot start SONM Marketplace service: %s\r\n", err)
 	}
