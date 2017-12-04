@@ -102,6 +102,7 @@ func (a *App) initLogger() error {
 	atom := zap.NewAtomicLevel()
 	encoderCfg := zap.NewProductionEncoderConfig()
 	encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
 
 	logger := zap.New(zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoderCfg),
@@ -109,7 +110,9 @@ func (a *App) initLogger() error {
 		zapcore.Lock(os.Stdout),
 		atom,
 	))
-	defer logger.Sync()
+
+	// use in destructor
+	//defer logger.Sync()
 
 	atom.SetLevel(zap.InfoLevel)
 
@@ -122,9 +125,11 @@ func (a *App) initServer(mp *srv.Marketplace) {
 	a.RLock()
 	opts := []grpc.ServerOption{
 		grpc.WithUnaryInterceptor(interceptor.NewUnaryZapLogger(a.logger)),
+		grpc.WithUnaryInterceptor(interceptor.NewUnarySimpleTracer()),
 		grpc.WithUnaryInterceptor(interceptor.NewUnaryPanic()),
 
 		grpc.WithStreamInterceptor(interceptor.NewStreamZapLogger(a.logger)),
+		grpc.WithStreamInterceptor(interceptor.NewStreamSimpleTracer()),
 		grpc.WithStreamInterceptor(interceptor.NewStreamPanic()),
 	}
 	a.RUnlock()

@@ -16,13 +16,13 @@
 [[projects]]
   branch = "master"
   name = "github.com/golang/protobuf"
-  packages = ["proto","ptypes","ptypes/any","ptypes/duration","ptypes/timestamp"]
+  packages = ["jsonpb","proto","ptypes","ptypes/any","ptypes/duration","ptypes/struct","ptypes/timestamp"]
   revision = "1e59b77b52bf8e4b449a57e6f79f21226d571845"
 
 [[projects]]
   branch = "master"
   name = "github.com/grpc-ecosystem/go-grpc-middleware"
-  packages = [".","recovery"]
+  packages = [".","logging","logging/zap","recovery","tags","tags/zap"]
   revision = "228a0b0a2fc73a3fad882db6d75cd82ad2b178c1"
 
 [[projects]]
@@ -71,7 +71,7 @@
   branch = "master"
   name = "golang.org/x/text"
   packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
-  revision = "75cc3cad82b5f47d3fb229ddda8c5167da14f294"
+  revision = "556d234e9c5239918de4d1fe247d1fe004e71764"
 
 [[projects]]
   branch = "master"
@@ -94,6 +94,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "76ca3f285340306753394c6d840e14eeaa7a04bf666ac69d165349be02299c7c"
+  inputs-digest = "548227aac7c72dec48d2af489a24937146714390336a7d05cd314e2bcb2e38f6"
   solver-name = "gps-cdcl"
   solver-version = 1

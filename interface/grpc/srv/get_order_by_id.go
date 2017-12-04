@@ -13,18 +13,18 @@ import (
 // GetOrderByID retrieves order information by order id.
 func (m *Marketplace) GetOrderByID(ctx context.Context, req *pb.ID) (*pb.Order, error) {
 	logger := ctx_zap.Extract(ctx)
-	logger.Sugar().Infof("Getting order", req.GetId())
+	logger.Sugar().Infof("Getting order %s", req.GetId())
 
 	order := &report.GetOrderReport{}
 	if err := m.orderByID.Handle(query.GetOrder{ID: req.GetId()}, order); err != nil {
-		logger.Sugar().Infof("cannot retreive order: %v\n", err)
+		logger.Sugar().Infof("Cannot retrieve order: %v\n", err)
 		return nil, err
 	}
 
 	resp := &pb.Order{}
 	bindGetOrderReport(order, resp)
 
-	logger.Sugar().Infof("order %#+v retrieved\n", resp)
+	logger.Sugar().Infof("Order %+v retrieved\n", resp)
 	return resp, nil
 }
 
