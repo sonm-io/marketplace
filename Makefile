@@ -59,11 +59,10 @@ deps: get-dep
 	@test -x $(DEP_BIN) || { echo "Dep $(DEP_REQ_VERSION) is required"; exit 1; }
 	@mkdir -p ./vendor/
 	$(DEP_BIN) ensure -v -vendor-only
-	${GO} get golang.org/x/net/context
 	${GO} get github.com/golang/mock/mockgen
 
 .PHONY: ci-deps
-ci-deps:
+ci-deps: deps
 	${GO} get github.com/axw/gocov/gocov
 	${GO} get github.com/t-yuki/gocover-cobertura
 	${GO} get -v github.com/tebeka/go2xunit
