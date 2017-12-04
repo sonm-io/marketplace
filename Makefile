@@ -60,6 +60,7 @@ deps: get-dep
 	@mkdir -p ./vendor/
 	$(DEP_BIN) ensure -v -vendor-only
 	${GO} get github.com/golang/mock/mockgen
+	${GO} get github.com/pkg/errors
 
 .PHONY: ci-deps
 ci-deps: deps
