@@ -3,8 +3,8 @@ package grpc
 import (
 	"google.golang.org/grpc"
 	// registers grpc gzip encoder/decoder
-	"github.com/grpc-ecosystem/go-grpc-middleware"
 	_ "google.golang.org/grpc/encoding/gzip"
+	"github.com/grpc-ecosystem/go-grpc-middleware"
 )
 
 type options struct {
@@ -14,27 +14,31 @@ type options struct {
 	stream []grpc.StreamServerInterceptor
 }
 
+// ServerOption sets server options.
 type ServerOption func(options *options)
 
-func WithGrpcOptions(opt ...grpc.ServerOption) ServerOption {
+// WithGRPCOptions sets gRPC server options.
+func WithGRPCOptions(opt ...grpc.ServerOption) ServerOption {
 	return func(o *options) {
 		o.grpcOptions = opt
 	}
 }
 
+// WithUnaryInterceptor adds an unary interceptor to the chain.
 func WithUnaryInterceptor(u grpc.UnaryServerInterceptor) ServerOption {
 	return func(o *options) {
 		o.unary = append(o.unary, u)
 	}
 }
 
+// WithStreamInterceptor adds a stream interceptor to the chain.
 func WithStreamInterceptor(s grpc.StreamServerInterceptor) ServerOption {
 	return func(o *options) {
 		o.stream = append(o.stream, s)
 	}
 }
 
-// NewServer creates a new instance of gRPC server with default interceptors.
+// NewServer creates a new instance of gRPC server.
 func NewServer(opt ...ServerOption) *grpc.Server {
 	opts := options{}
 	for _, o := range opt {

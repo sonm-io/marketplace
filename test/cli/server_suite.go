@@ -77,9 +77,9 @@ func (s *AppTestSuite) waitShutdown() {
 // IsAppRunning Checks whether the application is listening to the port (serving).
 func (s *AppTestSuite) IsAppRunning() bool {
 	for i := 0; i < 100; i++ {
-		conn, _ := net.DialTimeout("tcp", ListenAddr, 10*time.Millisecond)
+		conn, _ := net.DialTimeout("tcp", ListenAddr, 10*time.Millisecond) //nolint
 		if conn != nil {
-			conn.Close()
+			conn.Close() //nolint
 			return true
 		}
 	}
