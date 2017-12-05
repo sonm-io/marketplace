@@ -26,6 +26,6 @@ func (s *MarketplaceTestSuite) createOrder() {
 	obtained, err := s.client.CreateOrder(context.Background(), order)
 
 	// assert
-	require.NoError(s.T(), err)
+	require.NoError(s.T(), err, "cannot create order")
 	s.Equal(order.Id, obtained.Id)
 }

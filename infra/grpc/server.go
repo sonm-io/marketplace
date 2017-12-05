@@ -2,9 +2,9 @@ package grpc
 
 import (
 	"google.golang.org/grpc"
+	"github.com/grpc-ecosystem/go-grpc-middleware"
 	// registers grpc gzip encoder/decoder
 	_ "google.golang.org/grpc/encoding/gzip"
-	"github.com/grpc-ecosystem/go-grpc-middleware"
 )
 
 type options struct {

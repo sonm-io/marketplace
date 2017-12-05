@@ -6,10 +6,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"gopkg.in/tomb.v2"
-
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"gopkg.in/tomb.v2"
 
 	"github.com/sonm-io/marketplace/cli"
 )
@@ -30,8 +28,8 @@ type AppTestSuite struct {
 	t               tomb.Tomb
 }
 
-// SetupTest initializes application.
-func (s *AppTestSuite) SetupTest() {
+// SetupSuite runs once on suit initialization.
+func (s *AppTestSuite) SetupSuite() {
 	s.Lock()
 	defer s.Unlock()
 
@@ -40,9 +38,19 @@ func (s *AppTestSuite) SetupTest() {
 	s.NoError(err, "cannot initialize application")
 }
 
+// SetupTest initializes application before each test.
+func (s *AppTestSuite) SetupTest() {
+	s.StartApp()
+}
+
+// TearDownTest stops the application after each test.
+func (s *AppTestSuite) TearDownTest() {
+	s.StopApp() //nolint
+}
+
 // StartApp starts the application.
 func (s *AppTestSuite) StartApp() {
-	require.NotNil(s.T(), "application must be initialized")
+	s.Require().NotNil(s.App, "application must be initialized")
 	s.False(s.IsAppRunning(), "application must not be running before starting")
 
 	s.t.Go(s.App.Run)

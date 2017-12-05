@@ -1,14 +1,15 @@
 package srv_test
 
 import (
+	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"google.golang.org/grpc"
 	// registers grpc gzip encoder/decoder
 	_ "google.golang.org/grpc/encoding/gzip"
 
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
@@ -30,37 +31,46 @@ type MarketplaceTestSuite struct {
 
 // SetupTest prepare state for the test.
 func (s *MarketplaceTestSuite) SetupTest() {
+	// call parent's method.
 	s.AppTestSuite.SetupTest()
 
-	conn, err := GrpcClient()
-	require.NoError(s.T(), err, "cannot get grpc client")
+	conn, err := gRpcClient()
+	s.Require().NoError(err, "cannot get grpc client")
 
-	//defer conn.Close()
 	s.conn = conn
 	s.client = pb.NewMarketClient(conn)
 }
 
+// TearDownTest
 func (s *MarketplaceTestSuite) TearDownTest() {
 	s.conn.Close()
+
+	s.AppTestSuite.TearDownTest()
 }
 
 // All methods that begin with "Test" are run as tests within a
 // suite.
 func (s *MarketplaceTestSuite) TestMarketPlace() {
-	s.StartApp()
-	defer s.StopApp()
 
-	s.T().Run("CreateOrder", func(t *testing.T) {
-		s.createOrder()
-	})
+	//s.T().Run("CreateOrder", func(t *testing.T) {
+	s.createOrder()
+	//})
 
-	s.T().Run("GetOrderByID", func(t *testing.T) {
-		s.getOrderByID()
-	})
+	//	s.T().Run("GetOrderByID", func(t *testing.T) {
+	s.getOrderByID()
+	//	})
 }
 
-func GrpcClient() (*grpc.ClientConn, error) {
-	conn, err := grpc.Dial(cli.ListenAddr, grpc.WithInsecure())
+func gRpcClient() (*grpc.ClientConn, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
+	defer cancel()
+
+	conn, err := grpc.DialContext(ctx, cli.ListenAddr,
+		grpc.WithInsecure(),
+		grpc.WithBlock(),
+		grpc.WithBackoffConfig(grpc.BackoffConfig{MaxDelay: 2 * time.Second}),
+	)
+
 	if err != nil {
 		return nil, fmt.Errorf("did not connect: %v", err.Error())
 	}
