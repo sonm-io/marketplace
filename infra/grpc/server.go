@@ -1,8 +1,8 @@
 package grpc
 
 import (
-	"google.golang.org/grpc"
 	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"google.golang.org/grpc"
 	// registers grpc gzip encoder/decoder
 	_ "google.golang.org/grpc/encoding/gzip"
 )
