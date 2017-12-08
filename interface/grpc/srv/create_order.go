@@ -16,9 +16,7 @@ import (
 // CreateOrder creates a bid order.
 func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order, error) {
 	var cmd command.CreateBidOrder
-	if err := m.bind(req, &cmd); err != nil {
-		return nil, fmt.Errorf("cannot map request to command: %v", err)
-	}
+	bindCreateOrderCommand(req, &cmd)
 
 	logger := ctx_zap.Extract(ctx)
 	logger.Sugar().Infof("Creating bid order %+v", cmd)
@@ -33,7 +31,7 @@ func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order
 	return m.GetOrderByID(ctx, &pb.ID{Id: cmd.ID})
 }
 
-func (m *Marketplace) bind(req *pb.Order, cmd *command.CreateBidOrder) error {
+func bindCreateOrderCommand(req *pb.Order, cmd *command.CreateBidOrder) {
 
 	// get id from request or generate new
 	ID := req.GetId()
@@ -61,6 +59,4 @@ func (m *Marketplace) bind(req *pb.Order, cmd *command.CreateBidOrder) error {
 			}
 		}
 	}
-
-	return nil
 }
