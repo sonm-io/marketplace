@@ -41,4 +41,4 @@ generate-mocks-usecase-marketplace-query: tools
 generate-mocks-usecase-intf: tools
 	@mkdir  -p ./usecase/intf/mocks
 	@mockgen -package mocks \
-			-destination ./usecase/intf/mocks/cqrs.go github.com/sonm-io/marketplace/usecase/intf Query,QueryHandler
+			-destination ./usecase/intf/mocks/cqrs.go github.com/sonm-io/marketplace/usecase/intf Query,QueryHandler,Command,CommandHandler

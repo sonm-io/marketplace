@@ -166,4 +166,9 @@ func (a *App) Stop() {
 		return
 	}
 	a.server.GracefulStop()
+
+	if a.logger == nil {
+		return
+	}
+	a.logger.Sync() // nolint
 }
