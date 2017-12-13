@@ -1,0 +1,16 @@
+Source: sonm-core
+Section: misc
+Priority: optional
+Maintainer: Anton Tyurin <noxiouz@yandex.ru>
+Build-Depends: debhelper (>= 9), dh-systemd
+#golang (>= 2:1.7~1ubuntu1)
+Standards-Version: 3.9.8
+Homepage: https://github.com/sonm-io/core
+Vcs-Git: https://github.com/sonm-io/core.git
+Vcs-Browser: https://github.com/sonm-io/core
+
+Package: sonm-marketplace
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Marketplace for SONM network
+ Browser for the orders
