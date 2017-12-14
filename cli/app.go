@@ -7,9 +7,12 @@ import (
 	"sync"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	"go.uber.org/zap/zapgrpc"
 
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	gRPC "google.golang.org/grpc"
+	"google.golang.org/grpc/grpclog"
 
 	"github.com/sonm-io/marketplace/infra/cqrs"
 	"github.com/sonm-io/marketplace/infra/grpc"
@@ -18,16 +21,16 @@ import (
 
 	"github.com/sonm-io/marketplace/interface/adaptor"
 	"github.com/sonm-io/marketplace/interface/grpc/srv"
-	"github.com/sonm-io/marketplace/interface/storage"
 
+	"github.com/sonm-io/marketplace/interface/storage"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
-	"go.uber.org/zap/zapcore"
 )
 
 // Config application configuration object.
 type Config struct {
 	ListenAddr string
+	DataDir    string
 }
 
 // Option is a configuration parameter.
@@ -85,20 +88,6 @@ func (a *App) initLogger() error {
 	a.Lock()
 	defer a.Unlock()
 
-	// a fallback/root logger for events without context
-	//logger, err := zap.NewProduction(
-	//	zap.Fields(zap.Int("pid", os.Getpid()), zap.String("exe", path.Base(os.Args[0]))),
-	//)
-	//defer l.Sync()
-	//
-	//if err != nil {
-	//	return fmt.Errorf("cannot init logger: %v", err)
-	//}
-
-	//gRPC log level is set via env. Possible values (INFO, ERROR, WARNING)
-	//see also gRPC_GO_LOG_VERBOSITY_LEVEL
-	//os.Setenv("GRPC_GO_LOG_SEVERITY_LEVEL", "ERROR")
-
 	atom := zap.NewAtomicLevel()
 	encoderCfg := zap.NewProductionEncoderConfig()
 	encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
@@ -111,10 +100,17 @@ func (a *App) initLogger() error {
 		atom,
 	))
 
-	// use in destructor
-	//defer logger.Sync()
-
+	// TODO: (screwyprof) Read log level from settings file.
 	atom.SetLevel(zap.InfoLevel)
+
+	// grpclog will only log messages if zap log level is DebugLevel.
+	// it's needed to avoid grpclog flood at Info level.
+	//
+	// grpclog log level can also be set via GRPC_GO_LOG_SEVERITY_LEVEL ENV variable.
+	// Possible values (INFO, WARNING, ERROR, FATAL)
+	// Default is ERROR.
+	// See also GRPC_GO_LOG_VERBOSITY_LEVEL.
+	grpclog.SetLogger(zapgrpc.NewLogger(logger, zapgrpc.WithDebug()))
 
 	a.logger = logger
 	return nil
