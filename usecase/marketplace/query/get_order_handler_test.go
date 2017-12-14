@@ -20,11 +20,20 @@ func TestGetOrderHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 		Order: ds.Order{
 			ID:        "test_order",
 			BuyerID:   "TestBuyer",
-			OrderType: ds.ASK,
+			OrderType: ds.Ask,
 			Price:     555,
 			Slot: &ds.Slot{
-				BuyerRating:    0,
+				BuyerRating:    444,
 				SupplierRating: 0,
+				Resources: ds.Resources{
+					CPUCores:      4,
+					RAMBytes:      12000,
+					GPUCount:      ds.SingleGPU,
+					Storage:       120000,
+					NetworkType:   ds.Inbound,
+					NetTrafficIn:  100000,
+					NetTrafficOut: 10000,
+				},
 			},
 		},
 	}

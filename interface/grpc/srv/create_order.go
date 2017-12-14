@@ -53,9 +53,14 @@ func bindCreateOrderCommand(req *pb.Order, cmd *command.CreateBidOrder) {
 		if req.Slot.Resources != nil {
 			res := req.GetSlot().GetResources()
 			cmd.Slot.Resources = ds.Resources{
-				CPUCores: res.GetCpuCores(),
-				RAMBytes: res.GetRamBytes(),
-				Storage:  res.GetStorage(),
+				CPUCores:      res.GetCpuCores(),
+				RAMBytes:      res.GetRamBytes(),
+				GPUCount:      ds.GPUCount(res.GetGpuCount()),
+				Storage:       res.GetStorage(),
+				NetworkType:   ds.NetworkType(res.GetNetworkType()),
+				NetTrafficIn:  res.GetNetTrafficIn(),
+				NetTrafficOut: res.GetNetTrafficOut(),
+				Properties:    res.GetProperties(),
 			}
 		}
 	}

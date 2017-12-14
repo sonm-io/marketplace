@@ -6,8 +6,6 @@ type Slot struct {
 	BuyerRating int64
 	// Supplier’s rating. Got from Supplier’s profile for ASK orders.
 	SupplierRating int64
-	// Geo represent Worker's position
-	//Geo *Geo `protobuf:"bytes,3,opt,name=geo" json:"geo,omitempty"`
-	// Hardware resources requirements
+	// Hardware resources requirements.
 	Resources Resources
 }

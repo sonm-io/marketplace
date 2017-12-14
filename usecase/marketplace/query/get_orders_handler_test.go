@@ -20,13 +20,13 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 	orders := []ds.Order{
 		{
 			ID:        "test_order_101",
-			OrderType: ds.ASK,
+			OrderType: ds.Ask,
 			Price:     101,
 			BuyerID:   "TestBuyer",
 		},
 		{
 			ID:        "test_order_105",
-			OrderType: ds.ASK,
+			OrderType: ds.Ask,
 			Price:     105,
 			BuyerID:   "TestBuyer",
 		},
@@ -42,7 +42,7 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 	}
 
 	q := GetOrders{
-		OrderType: int(ds.ASK),
+		OrderType: int(ds.Ask),
 		Limit:     10,
 	}
 

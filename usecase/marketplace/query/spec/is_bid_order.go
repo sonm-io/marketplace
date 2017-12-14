@@ -16,5 +16,5 @@ func NewIsBidOrder() intf.CompositeSpecification {
 // IsSatisfiedBy implements CompositeSpecification interface.
 func (s *IsBidOrder) IsSatisfiedBy(object interface{}) bool {
 	order := object.(*ds.Order)
-	return order.OrderType == ds.BID
+	return order.OrderType == ds.Bid
 }
