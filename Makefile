@@ -36,6 +36,9 @@ LDFLAGS = -X 'main.AppVersion=$(APP_VERSION)' \
 GOFILES_NOVENDOR  = $(shell find . -type f -name '*.go' -not -path "*/vendor*")
 PACKAGES         := $(shell find . -name '*.go' -not -path '*/vendor*' -not -path '*/test*' -exec dirname '{}' ';' | sort -u  | sed -e 's/^\.\///')
 
+# export defined variables to included Makefiles
+export
+
 include ./tools/mk/tools.mk
 include ./tools/mk/dep.mk
 include ./tools/mk/lint.mk
@@ -76,3 +79,6 @@ build: clean deps fast-build
 .PHONY: fast-build
 fast-build:
 	cd $(BUILD_DIR) && ${GO} build -i -ldflags "$(LDFLAGS)" -o $(BIN)
+
+deb:
+	debuild --no-lintian --preserve-env -uc -us -i -I
