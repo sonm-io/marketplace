@@ -15,7 +15,7 @@ generate-mocks: generate-mocks-intf-storage generate-mocks-usecase-intf generate
 
 .PHONY: generate-mocks-intf-storage
 generate-mocks-intf-storage: tools
-	@mkdir  -p ./interface/storage/mocks
+	@mkdir  -p ./interface/storage/inmemory/mocks
 	@mockgen -package mocks \
             -source ./interface/storage/inmemory/engine.go Engine > ./interface/storage/inmemory/mocks/engine.go
 
