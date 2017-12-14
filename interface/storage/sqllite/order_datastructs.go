@@ -31,3 +31,14 @@ type OrderRow struct {
 
 // Properties represents Slot properties.
 type Properties map[string]float64
+
+// Scan implements Scanner interface.
+// used to properly assigned Properties.
+//func (p *Properties) Scan(src interface{}) error {
+//	strValue, ok := src.(string)
+//	if !ok {
+//		return fmt.Errorf("resources_properties field must be a json-encoded string, got %T instead", src)
+//	}
+//
+//	return json.Unmarshal([]byte(strValue), p)
+//}

@@ -47,11 +47,6 @@ func (s *AppTestSuite) SetupSuite() {
 		*DataDir = AbsPath(*DataDir + "../../data")
 	}
 
-	// get abs path
-
-	//a.logger.Info("BASENAME: " + basename)
-	//a.logger.Info("dataDir: " + dataDir)
-
 	s.App = cli.NewApp(cli.WithListenAddr(*ListenAddr), cli.WithDataDir(*DataDir))
 	err := s.App.Init()
 	s.NoError(err, "cannot initialize application")
