@@ -5,10 +5,11 @@ bin/*
 /test-results/
 /integration-results/
 /.cover/
+/data/data.db
 
 /mocks/*
-interface/storage/mocks/*
-/usecase/intf/mocks/*
+interface/storage/inmemory/mocks/*
+usecase/intf/mocks/*
 usecase/marketplace/query/mocks/*
 usecase/marketplace/command/mocks/*
 !/mocks/stub.go

@@ -21,7 +21,7 @@ func TestCreateBidOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 		BuyerID: "TestBuyer",
 		Price:   555,
 		Slot: ds.Slot{
-			BuyerRating:    7,
+			BuyerRating: 7,
 			Resources: ds.Resources{
 				CPUCores:    4,
 				RAMBytes:    100000000,

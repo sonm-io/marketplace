@@ -9,13 +9,23 @@ import (
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/tomb.v2"
 
+	"flag"
 	"github.com/sonm-io/marketplace/cli"
+	"path"
+	"runtime"
 )
 
 var (
 	// ListenAddr network address and port.
-	ListenAddr = "127.0.0.1:9095"
+	ListenAddr = flag.String("addr", ":9095", "SONM Marketplace service listen addr")
+
+	// DataDir database directory path, usually (./data)
+	DataDir = flag.String("data-dir", "", "Database directory")
 )
+
+func init() {
+	flag.Parse()
+}
 
 // AppTestSuite defines a test suite for the application.
 type AppTestSuite struct {
@@ -33,7 +43,16 @@ func (s *AppTestSuite) SetupSuite() {
 	s.Lock()
 	defer s.Unlock()
 
-	s.App = cli.NewApp(cli.WithListenAddr(ListenAddr))
+	if *DataDir == "" {
+		*DataDir = AbsPath(*DataDir + "../../data")
+	}
+
+	// get abs path
+
+	//a.logger.Info("BASENAME: " + basename)
+	//a.logger.Info("dataDir: " + dataDir)
+
+	s.App = cli.NewApp(cli.WithListenAddr(*ListenAddr), cli.WithDataDir(*DataDir))
 	err := s.App.Init()
 	s.NoError(err, "cannot initialize application")
 }
@@ -85,7 +104,7 @@ func (s *AppTestSuite) waitShutdown() {
 // IsAppRunning Checks whether the application is listening to the port (serving).
 func (s *AppTestSuite) IsAppRunning() bool {
 	for i := 0; i < 100; i++ {
-		conn, _ := net.DialTimeout("tcp", ListenAddr, 10*time.Millisecond) //nolint
+		conn, _ := net.DialTimeout("tcp", *ListenAddr, 10*time.Millisecond) //nolint
 		if conn != nil {
 			conn.Close() //nolint
 			return true
@@ -93,4 +112,11 @@ func (s *AppTestSuite) IsAppRunning() bool {
 	}
 
 	return false
+}
+
+// AbsPath Get absolute path by a relative file path.
+// It's needed to correctly detect ./data dir if -data-dir flag is not given.
+func AbsPath(fileName string) string {
+	_, file, _, _ := runtime.Caller(0)
+	return path.Join(path.Dir(file), fileName)
 }
