@@ -17,7 +17,7 @@ func (s *MarketplaceTestSuite) getOrderByID() {
 			BuyerRating: 555,
 			Resources: &pb.Resources{
 				CpuCores: 1,
-				GpuCount: 0,
+				GpuCount: pb.GPUCount_SINGLE_GPU,
 				RamBytes: 100000000,
 				Storage:  1000000000,
 

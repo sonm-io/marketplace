@@ -59,6 +59,8 @@ func (s *MarketplaceTestSuite) TestMarketPlace() {
 	//	s.T().Run("GetOrderByID", func(t *testing.T) {
 	s.getOrderByID()
 	//	})
+
+	s.getOrders()
 }
 
 func gRpcClient() (*grpc.ClientConn, error) {

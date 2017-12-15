@@ -126,40 +126,55 @@ func mapOrder(order *ds.Order, row *OrderRow) {
 // if limit is > 0, then only the given number of Orders will be returned.
 func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) ([]ds.Order, error) {
 
-	//rows, err := db.Query("select id, name from users where id = ?", 1)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//defer rows.Close()
-	//for rows.Next() {
-	//	err := rows.Scan(&id, &name)
-	//	if err != nil {
-	//		log.Fatal(err)
-	//	}
-	//	log.Println(id, name)
-	//}
-	//err = rows.Err()
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	rows, err := s.e.Query(
+		`SELECT id, type, supplier_id, buyer_id, price, slot_buyer_rating, slot_supplier_rating,
+			   		resources_cpu_cores, resources_ram_bytes, resources_gpu_count, resources_storage,
+			   		resources_net_inbound, resources_net_outbound, resources_net_type
+			   FROM orders
+			   ORDER BY price
+			   Limit ?`, limit)
+	if err != nil {
+		return nil, fmt.Errorf("cannot get orders: %v", err)
+	}
+	defer rows.Close()
+
+	var (
+		row    OrderRow
+		order  ds.Order
+		orders []ds.Order
+	)
+
+	for rows.Next() {
+		order = ds.Order{}
+		row = OrderRow{}
+
+		err := rows.Scan(&row.ID, &row.Type, &row.SupplierID, &row.BuyerID, &row.Price, &row.BuyerRating, &row.SupplierRating,
+			&row.CPUCores, &row.RAMBytes, &row.GPUCount, &row.Storage,
+			&row.NetInbound, &row.NetOutbound, &row.NetType)
+		if err != nil {
+			return nil, fmt.Errorf("cannot scan order raw into struct: %v", err)
+		}
+
+		if err := rows.Err(); err != nil {
+			return nil, fmt.Errorf("cannot retrieve orders: %v", err)
+		}
+
+		// a kludge
+		row.Properties = map[string]float64{
+			"hash_rate": 105.7,
+		}
+
+		mapOrder(&order, &row)
+		orders = append(orders, order)
+	}
 
 	//b := inmemory.NewBuilder()
 	//b.WithLimit(limit)
 	//b.WithSpec(spec)
 	//
 	//elements, err := s.e.Match(b.Build())
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//var orders []ds.Order
-	//for _, el := range elements {
-	//	order := el.(*ds.Order)
-	//	orders = append(orders, *order)
-	//}
-	//
+
 	//sort.Sort(ByPrice(orders))
-	//
-	//return orders, nil
-	return nil, nil
+
+	return orders, nil
 }

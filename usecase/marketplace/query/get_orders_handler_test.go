@@ -42,14 +42,14 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 	}
 
 	q := GetOrders{
-		OrderType: int(ds.Ask),
-		Limit:     10,
+		Order: ds.Order{
+			OrderType: ds.Ask,
+			Slot:      &ds.Slot{},
+		},
+		Limit: 10,
 	}
 
-	s, _ := spec.OrdersBySlot(ds.OrderType(q.OrderType), ds.Slot{
-		BuyerRating:    q.Slot.BuyerRating,
-		SupplierRating: q.Slot.SupplierRating,
-	})
+	s, _ := spec.OrdersBySlot(q.Order.OrderType, *q.Order.Slot)
 
 	storage := mocks.NewMockOrderBySpecStorage(ctrl)
 	storage.EXPECT().

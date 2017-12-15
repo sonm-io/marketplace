@@ -1,13 +1,13 @@
 package cli
 
 import (
-	"os"
-	"fmt"
-	"net"
-	"sync"
-	"io/ioutil"
 	"database/sql"
+	"fmt"
+	"io/ioutil"
+	"net"
+	"os"
 	"path/filepath"
+	"sync"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
