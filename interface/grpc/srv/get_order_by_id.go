@@ -62,5 +62,12 @@ func bindGetOrderReport(r *report.GetOrderReport, pbOrder *pb.Order) {
 
 	pbRes.CpuCores = rRes.CPUCores
 	pbRes.RamBytes = rRes.RAMBytes
+	pbRes.GpuCount = pb.GPUCount(rRes.GPUCount)
 	pbRes.Storage = rRes.Storage
+
+	pbRes.NetworkType = pb.NetworkType(rRes.NetworkType)
+	pbRes.NetTrafficIn = rRes.NetTrafficIn
+	pbRes.NetTrafficOut = rRes.NetTrafficOut
+
+	pbRes.Properties = rRes.Properties
 }

@@ -1,4 +1,4 @@
-package storage
+package inmemory
 
 import (
 	"github.com/sonm-io/marketplace/infra/storage/inmemory"
@@ -8,7 +8,7 @@ import (
 	"sort"
 )
 
-// OrderStorage stores and retrieves Orders (Read side).
+// OrderStorage stores and retrieves Orders.
 type OrderStorage struct {
 	e Engine
 }

@@ -1,9 +1,12 @@
 package cli
 
 import (
+	"database/sql"
 	"fmt"
+	"io/ioutil"
 	"net"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"go.uber.org/zap"
@@ -14,15 +17,17 @@ import (
 	gRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 
+	// register sqlite3 driver
+	_ "github.com/mattn/go-sqlite3"
+
 	"github.com/sonm-io/marketplace/infra/cqrs"
 	"github.com/sonm-io/marketplace/infra/grpc"
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
-	"github.com/sonm-io/marketplace/infra/storage/inmemory"
 
 	"github.com/sonm-io/marketplace/interface/adaptor"
 	"github.com/sonm-io/marketplace/interface/grpc/srv"
+	"github.com/sonm-io/marketplace/interface/storage/sqllite"
 
-	"github.com/sonm-io/marketplace/interface/storage"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 )
@@ -43,10 +48,18 @@ func WithListenAddr(addr string) Option {
 	}
 }
 
+// WithDataDir sets the database path.
+func WithDataDir(dirPath string) Option {
+	return func(c *Config) {
+		c.DataDir = dirPath
+	}
+}
+
 // App application root.
 type App struct {
 	sync.RWMutex
 
+	db     *sql.DB
 	conf   *Config
 	logger *zap.Logger
 	server *gRPC.Server
@@ -68,7 +81,11 @@ func (a *App) Init() error {
 		return err
 	}
 
-	repo := storage.NewOrderStorage(inmemory.NewStorage())
+	if err := a.initStorage(); err != nil {
+		return err
+	}
+
+	repo := sqllite.NewOrderStorage(a.db)
 
 	getOrderHandler := query.NewGetOrderHandler(repo)
 	getOrdersHandler := query.NewGetOrdersHandler(repo)
@@ -116,6 +133,44 @@ func (a *App) initLogger() error {
 	return nil
 }
 
+func (a *App) initStorage() error {
+
+	dataDirExists, err := a.pathExists(a.conf.DataDir)
+	if err != nil {
+		return fmt.Errorf("cannot check if data dir exists: %v", err)
+	}
+
+	if !dataDirExists {
+		a.conf.DataDir = filepath.Dir(os.Args[0]) + "/data"
+	}
+
+	dataDir, err := filepath.Abs(a.conf.DataDir)
+	if err != nil {
+		return fmt.Errorf("cannot get absolute path of database directory: %v", err)
+	}
+	a.conf.DataDir = dataDir
+
+	a.logger.Info("Importing database schema", zap.String("schema", a.conf.DataDir+"/schema.sql"))
+	schema, err := ioutil.ReadFile(a.conf.DataDir + "/schema.sql")
+	if err != nil {
+		return fmt.Errorf("cannot read database schema file: %v", err)
+	}
+	a.logger.Info("Database schema successfully imported")
+
+	db, err := sql.Open("sqlite3", a.conf.DataDir+"/data.db")
+	if err != nil {
+		return fmt.Errorf("cannot open database: %v", err)
+	}
+
+	_, err = db.Exec(string(schema))
+	if err != nil {
+		return fmt.Errorf("cannot import database schema: %v", err)
+	}
+	a.db = db
+
+	return nil
+}
+
 func (a *App) initServer(mp *srv.Marketplace) {
 
 	a.RLock()
@@ -158,13 +213,26 @@ func (a *App) Stop() {
 	a.RLock()
 	defer a.RUnlock()
 
-	if a.server == nil {
-		return
+	if a.server != nil {
+		a.server.GracefulStop()
 	}
-	a.server.GracefulStop()
 
-	if a.logger == nil {
-		return
+	if a.db != nil {
+		a.db.Close()
 	}
-	a.logger.Sync() // nolint
+
+	if a.logger != nil {
+		a.logger.Sync() // nolint
+	}
+}
+
+func (a *App) pathExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return true, err
 }

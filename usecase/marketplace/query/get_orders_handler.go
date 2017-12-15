@@ -38,11 +38,7 @@ func (h *GetOrdersHandler) Handle(req intf.Query, result interface{}) error {
 		return fmt.Errorf("invalid result %v given", result)
 	}
 
-	s, err := spec.OrdersBySlot(ds.OrderType(q.OrderType), ds.Slot{
-		BuyerRating:    q.Slot.BuyerRating,
-		SupplierRating: q.Slot.SupplierRating,
-	})
-
+	s, err := spec.OrdersBySlot(q.Order.OrderType, *q.Order.Slot)
 	if err != nil {
 		return err
 	}

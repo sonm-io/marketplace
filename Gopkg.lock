@@ -23,7 +23,13 @@
   branch = "master"
   name = "github.com/grpc-ecosystem/go-grpc-middleware"
   packages = [".","logging","logging/zap","recovery","tags","tags/zap"]
-  revision = "228a0b0a2fc73a3fad882db6d75cd82ad2b178c1"
+  revision = "ae5f7006a21711dbb27695b3d12278a11ad11328"
+
+[[projects]]
+  name = "github.com/mattn/go-sqlite3"
+  packages = ["."]
+  revision = "ed69081a91fd053f17672236b0dd52ba7485e1a3"
+  version = "v1.4.0"
 
 [[projects]]
   name = "github.com/pborman/uuid"
@@ -65,25 +71,25 @@
   branch = "master"
   name = "golang.org/x/net"
   packages = ["context","http2","http2/hpack","idna","internal/timeseries","lex/httplex","trace"]
-  revision = "a8b9294777976932365dabb6640cf1468d95c70f"
+  revision = "d866cfc389cec985d6fda2859936a575a55a3ab6"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
   packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
-  revision = "556d234e9c5239918de4d1fe247d1fe004e71764"
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
 
 [[projects]]
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "7f0da29060c682909f650ad8ed4e515bd74fa12a"
+  revision = "a8101f21cf983e773d0c1133ebc5424792003214"
 
 [[projects]]
   name = "google.golang.org/grpc"
   packages = [".","balancer","balancer/roundrobin","codes","connectivity","credentials","encoding","encoding/gzip","grpclb/grpc_lb_v1/messages","grpclog","internal","keepalive","metadata","naming","peer","resolver","resolver/dns","resolver/passthrough","stats","status","tap","transport"]
-  revision = "5a9f7b402fe85096d2e1d0383435ee1876e863d0"
-  version = "v1.8.0"
+  revision = "e687fa4e6424368ece6e4fe727cea2c806a0fcb4"
+  version = "v1.8.2"
 
 [[projects]]
   branch = "v2"
@@ -94,6 +100,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "548227aac7c72dec48d2af489a24937146714390336a7d05cd314e2bcb2e38f6"
+  inputs-digest = "f43e5bc0bd5e4d7c3a1fb60622e420ee8938c9fd17d6fc7bc486fd87308b7c5b"
   solver-name = "gps-cdcl"
   solver-version = 1

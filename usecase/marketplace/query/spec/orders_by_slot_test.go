@@ -9,7 +9,7 @@ import (
 func TestOrdersBySlotIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
-		OrderType: ds.BID,
+		OrderType: ds.Bid,
 		Slot: &ds.Slot{
 			BuyerRating: 500,
 			Resources: ds.Resources{
@@ -28,7 +28,7 @@ func TestOrdersBySlotIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.
 	}
 
 	// act
-	s, err := OrdersBySlot(ds.BID, *slot)
+	s, err := OrdersBySlot(ds.Bid, *slot)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert
@@ -53,7 +53,7 @@ func TestOrdersBySlotIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturned(t *testi
 	}
 
 	// act
-	s, err := OrdersBySlot(ds.BID, slot)
+	s, err := OrdersBySlot(ds.Bid, slot)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert

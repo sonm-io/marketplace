@@ -9,7 +9,7 @@ import (
 func TestIsAskOrderIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
-		OrderType: ds.ASK,
+		OrderType: ds.Ask,
 	}
 
 	// act
@@ -23,7 +23,7 @@ func TestIsAskOrderIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.T)
 func TestIsAskOrderIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
-		OrderType: ds.ANY,
+		OrderType: ds.Any,
 	}
 
 	// act

@@ -1,4 +1,4 @@
-package storage
+package inmemory
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/infra/storage/inmemory"
-	"github.com/sonm-io/marketplace/interface/storage/mocks"
+	"github.com/sonm-io/marketplace/interface/storage/inmemory/mocks"
 )
 
 func TestOrderStorageByID_ExistingIDGiven_OrderReturned(t *testing.T) {

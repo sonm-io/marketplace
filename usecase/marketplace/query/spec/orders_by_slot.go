@@ -9,9 +9,9 @@ import (
 // OrdersBySlot is a factory method that creates a spec for GetOrders query.
 func OrdersBySlot(orderType ds.OrderType, slot ds.Slot) (intf.CompositeSpecification, error) {
 	switch orderType {
-	case ds.ASK:
+	case ds.Ask:
 		return forAsk(slot), nil
-	case ds.BID:
+	case ds.Bid:
 		return forBid(slot), nil
 	default:
 		return nil, fmt.Errorf("invalid order type %v given", orderType)

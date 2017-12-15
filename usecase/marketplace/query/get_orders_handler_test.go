@@ -20,13 +20,13 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 	orders := []ds.Order{
 		{
 			ID:        "test_order_101",
-			OrderType: ds.ASK,
+			OrderType: ds.Ask,
 			Price:     101,
 			BuyerID:   "TestBuyer",
 		},
 		{
 			ID:        "test_order_105",
-			OrderType: ds.ASK,
+			OrderType: ds.Ask,
 			Price:     105,
 			BuyerID:   "TestBuyer",
 		},
@@ -42,14 +42,14 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 	}
 
 	q := GetOrders{
-		OrderType: int(ds.ASK),
-		Limit:     10,
+		Order: ds.Order{
+			OrderType: ds.Ask,
+			Slot:      &ds.Slot{},
+		},
+		Limit: 10,
 	}
 
-	s, _ := spec.OrdersBySlot(ds.OrderType(q.OrderType), ds.Slot{
-		BuyerRating:    q.Slot.BuyerRating,
-		SupplierRating: q.Slot.SupplierRating,
-	})
+	s, _ := spec.OrdersBySlot(q.Order.OrderType, *q.Order.Slot)
 
 	storage := mocks.NewMockOrderBySpecStorage(ctrl)
 	storage.EXPECT().

@@ -23,7 +23,7 @@ func NewAskOrder(ID, supplierID string, price int64, slot ds.Slot) (*Order, erro
 			ID:         ID,
 			SupplierID: supplierID,
 			Price:      price,
-			OrderType:  ds.ANY,
+			OrderType:  ds.Any,
 			Slot:       &slot,
 		},
 	}
@@ -46,7 +46,7 @@ func NewBidOrder(ID, buyerID string, price int64, slot ds.Slot) (*Order, error) 
 			ID:        ID,
 			BuyerID:   buyerID,
 			Price:     price,
-			OrderType: ds.BID,
+			OrderType: ds.Bid,
 			Slot:      &slot,
 		},
 	}

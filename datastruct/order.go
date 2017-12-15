@@ -4,9 +4,9 @@ package datastruct
 type Order struct {
 	// Order ID, UUIDv4
 	ID string
-	// Buyer's EtherumID (ASK)
+	// Buyer's EthereumID (Ask).
 	BuyerID string
-	// Supplier's is EtherumID (BID)
+	// Supplier's is EthereumID (Bid).
 	SupplierID string
 	// Order price
 	Price int64
@@ -21,7 +21,7 @@ type OrderType int32
 
 // List of available order types.
 const (
-	ANY OrderType = 0
-	BID OrderType = 1
-	ASK OrderType = 2
+	Any OrderType = 0
+	Bid           = 1
+	Ask           = 2
 )
