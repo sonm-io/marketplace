@@ -57,7 +57,6 @@ func (s *OrderStorage) Remove(ID string) error {
 // ByID Fetches an Order by its ID.
 // If ID is not found, an error is returned.
 func (s *OrderStorage) ByID(ID string) (ds.Order, error) {
-
 	var row OrderRow
 
 	err := s.e.QueryRow(
@@ -124,15 +123,35 @@ func mapOrder(order *ds.Order, row *OrderRow) {
 
 // BySpecWithLimit fetches Orders that satisfy the given Spec.
 // if limit is > 0, then only the given number of Orders will be returned.
+// WARNING: At nonce all the Orders will be loaded in memory and after that filtered.
+// TODO: (screwyprof) Add filtering without loading all the records.
 func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) ([]ds.Order, error) {
+	allOrders, err := s.fetchAll()
+	if err != nil {
+		return nil, err
+	}
 
+	var elements []ds.Order
+	for _, order := range allOrders {
+		if limit > 0 && uint64(len(elements)) >= limit {
+			break
+		}
+
+		if spec.IsSatisfiedBy(&order) {
+			elements = append(elements, order)
+		}
+	}
+
+	return elements, nil
+}
+
+func (s *OrderStorage) fetchAll() ([]ds.Order, error) {
 	rows, err := s.e.Query(
 		`SELECT id, type, supplier_id, buyer_id, price, slot_buyer_rating, slot_supplier_rating,
 			   		resources_cpu_cores, resources_ram_bytes, resources_gpu_count, resources_storage,
 			   		resources_net_inbound, resources_net_outbound, resources_net_type
 			   FROM orders
-			   ORDER BY price
-			   Limit ?`, limit)
+			   ORDER BY price`)
 	if err != nil {
 		return nil, fmt.Errorf("cannot get orders: %v", err)
 	}
@@ -167,14 +186,6 @@ func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) ([
 		mapOrder(&order, &row)
 		orders = append(orders, order)
 	}
-
-	//b := inmemory.NewBuilder()
-	//b.WithLimit(limit)
-	//b.WithSpec(spec)
-	//
-	//elements, err := s.e.Match(b.Build())
-
-	//sort.Sort(ByPrice(orders))
 
 	return orders, nil
 }
