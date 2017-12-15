@@ -1,8 +1,14 @@
 GO_SYS_VER:=$(shell go version | cut -d" " -f3 | sed 's/go//')
 GO_SYS_BIN:=$(shell which go)
 
-GO:=go
-GOFMT:=gofmt
+
+# try to find Go if not defined into upper-level Makefile
+# or via the env variables
+ifeq ($(GO), )
+	GO:=$(shell which go)
+endif
+
+GOFMT:=$(shell which gofmt)
 
 $(info checking version of $(GO)…)
 ifneq ($(GO_SYS_VER), $(GO_REQ_VER))
