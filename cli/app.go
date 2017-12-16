@@ -118,7 +118,7 @@ func (a *App) initLogger() error {
 	))
 
 	// TODO: (screwyprof) Read log level from settings file.
-	atom.SetLevel(zap.InfoLevel)
+	atom.SetLevel(zap.DebugLevel)
 
 	// grpclog will only log messages if zap log level is DebugLevel.
 	// it's needed to avoid grpclog flood at Info level.

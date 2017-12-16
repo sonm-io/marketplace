@@ -9,7 +9,7 @@ package sqllite
 type OrderRow struct {
 	ID    string `db:"id"`
 	Type  int32  `db:"type"`
-	Price int64  `db:"price"`
+	Price string `db:"price"`
 
 	BuyerID    string `db:"buyer_id"`
 	SupplierID string `db:"supplier_id"`

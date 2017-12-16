@@ -27,7 +27,7 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 		Id:        "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		OrderType: pb.OrderType_BID,
 		ByuerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-		Price:     100,
+		Price:     "100",
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
 				CpuCores: 4,
@@ -43,7 +43,7 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 	expected := &pb.Order{
 		Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		ByuerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-		Price:   100,
+		Price:   "100",
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
 				CpuCores: 4,
@@ -56,7 +56,7 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 		Order: ds.Order{
 			ID:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 			BuyerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-			Price:   100,
+			Price:   "100",
 			Slot: &ds.Slot{
 				Resources: ds.Resources{
 					CPUCores: 4,
@@ -101,7 +101,7 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 		//Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		OrderType:  pb.OrderType_ASK,
 		SupplierID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-		Price:      100,
+		Price:      "100",
 		Slot: &pb.Slot{
 			SupplierRating: 555,
 		},
@@ -119,7 +119,7 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 	expected := &pb.Order{
 		Id:         expectedID,
 		SupplierID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-		Price:      100,
+		Price:      "100",
 		Slot: &pb.Slot{
 			SupplierRating: 555,
 			Resources:      &pb.Resources{},
@@ -130,7 +130,7 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 		Order: ds.Order{
 			ID:         expectedID,
 			SupplierID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-			Price:      100,
+			Price:      "100",
 			Slot: &ds.Slot{
 				SupplierRating: 555,
 			},
@@ -172,7 +172,7 @@ func TestMarketplaceCreateOrder_InValidRequest_ErrorReturned(t *testing.T) {
 		Id:        "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		OrderType: pb.OrderType_BID,
 		ByuerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-		Price:     100,
+		Price:     "100",
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
 				CpuCores: 4,
@@ -211,7 +211,7 @@ func TestMarketplaceCreateOrder_InvalidOrderTypeGiven_ErrorReturned(t *testing.T
 	req := &pb.Order{
 		Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		ByuerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-		Price:   100,
+		Price:   "100",
 	}
 
 	m := NewMarketplace(nil, nil, nil)

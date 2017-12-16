@@ -1,23 +1,13 @@
 syntax = "proto3";
 
+import "insonmnia.proto";
+
 package sonm;
 
 enum OrderType {
     ANY = 0;
     BID = 1;
     ASK = 2;
-}
-
-enum NetworkType {
-    NO_NETWORK = 0;
-    OUTBOUND = 1;
-    INCOMING = 2;
-}
-
-enum GPUCount {
-    NO_GPU = 0;
-    SINGLE_GPU = 1;
-    MULTIPLE_GPU = 2;
 }
 
 // Geo represent GeoIP results for node
@@ -48,9 +38,6 @@ message Resources {
     map<string, double> properties = 8;
 }
 
-// todo(all): slot needs an ID
-// todo(all): extra discuss required
-
 message Slot {
     // Buyer’s rating. Got from Buyer’s profile for BID orders rating_supplier.
     int64 buyerRating = 1;
@@ -70,7 +57,8 @@ message Order {
     // Supplier's is EtherumID
     string supplierID = 3;
     // Order price
-    int64 price = 4;
+    // int64 price = 4;
+    string price = 4;
     // Order type (Bid or Ask)
     OrderType orderType = 5;
     // Slot describe resource requiements

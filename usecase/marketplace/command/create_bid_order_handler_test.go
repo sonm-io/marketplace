@@ -19,7 +19,7 @@ func TestCreateBidOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 	cmd := CreateBidOrder{
 		ID:      "TestBidOrder",
 		BuyerID: "TestBuyer",
-		Price:   555,
+		Price:   "555",
 		Slot: ds.Slot{
 			BuyerRating: 7,
 			Resources: ds.Resources{
