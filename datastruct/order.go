@@ -9,7 +9,7 @@ type Order struct {
 	// Supplier's is EthereumID (Bid).
 	SupplierID string
 	// Order price
-	Price int64
+	Price string
 	// Order type (Bid or Ask)
 	OrderType OrderType
 	// Slot describes resource requirements

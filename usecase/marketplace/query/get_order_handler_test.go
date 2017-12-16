@@ -21,7 +21,7 @@ func TestGetOrderHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 			ID:        "test_order",
 			BuyerID:   "TestBuyer",
 			OrderType: ds.Ask,
-			Price:     555,
+			Price:     "555",
 			Slot: &ds.Slot{
 				BuyerRating:    444,
 				SupplierRating: 0,

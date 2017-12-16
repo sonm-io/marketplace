@@ -35,7 +35,6 @@ func (m *Marketplace) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (
 		logger.Sugar().Infof("Cannot retrieve orders: %v\n", err)
 		return nil, err
 	}
-
 	logger.Info("Orders retrieved\n", zap.Any("orders", orders))
 
 	var resp []*pb.Order
@@ -56,23 +55,27 @@ func bindGetOrdersQuery(req *pb.GetOrdersRequest, q *query.GetOrders) {
 	q.Limit = req.GetCount()
 	q.Order.OrderType = ds.OrderType(req.GetOrderType())
 
-	if req.Slot != nil {
-		q.Order.Slot.SupplierRating = req.GetSlot().GetSupplierRating()
-		q.Order.Slot.BuyerRating = req.GetSlot().GetBuyerRating()
-		if req.Slot.Resources != nil {
-			res := req.GetSlot().GetResources()
-			q.Order.Slot.Resources = ds.Resources{
-				CPUCores:      res.GetCpuCores(),
-				RAMBytes:      res.GetRamBytes(),
-				GPUCount:      ds.GPUCount(res.GetGpuCount()),
-				Storage:       res.GetStorage(),
-				NetworkType:   ds.NetworkType(res.GetNetworkType()),
-				NetTrafficIn:  res.GetNetTrafficIn(),
-				NetTrafficOut: res.GetNetTrafficOut(),
-				Properties:    res.GetProperties(),
-			}
-		}
-	} else {
+	if req.Slot == nil {
+		return
+	}
+
+	if q.Order.Slot == nil {
 		q.Order.Slot = &ds.Slot{}
+	}
+
+	q.Order.Slot.SupplierRating = req.GetSlot().GetSupplierRating()
+	q.Order.Slot.BuyerRating = req.GetSlot().GetBuyerRating()
+	if req.Slot.Resources != nil {
+		res := req.GetSlot().GetResources()
+		q.Order.Slot.Resources = ds.Resources{
+			CPUCores:      res.GetCpuCores(),
+			RAMBytes:      res.GetRamBytes(),
+			GPUCount:      ds.GPUCount(res.GetGpuCount()),
+			Storage:       res.GetStorage(),
+			NetworkType:   ds.NetworkType(res.GetNetworkType()),
+			NetTrafficIn:  res.GetNetTrafficIn(),
+			NetTrafficOut: res.GetNetTrafficOut(),
+			Properties:    res.GetProperties(),
+		}
 	}
 }

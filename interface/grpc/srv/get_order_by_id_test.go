@@ -21,7 +21,7 @@ func TestMarketplace_GetOrderByID(t *testing.T) {
 	expected := &pb.Order{
 		Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		ByuerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-		Price:   100,
+		Price:   "100",
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
 				CpuCores: 4,
@@ -38,7 +38,7 @@ func TestMarketplace_GetOrderByID(t *testing.T) {
 		Order: ds.Order{
 			ID:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 			BuyerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-			Price:   100,
+			Price:   "100",
 			Slot: &ds.Slot{
 				Resources: ds.Resources{
 					CPUCores: 4,

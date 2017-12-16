@@ -11,7 +11,7 @@ func (s *MarketplaceTestSuite) createOrder() {
 	order := &pb.Order{
 		Id:        "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
 		OrderType: pb.OrderType_BID,
-		Price:     100,
+		Price:     "777",
 		ByuerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
 
 		Slot: &pb.Slot{

@@ -17,7 +17,7 @@ var (
 )
 
 // NewAskOrder creates a new ask order.
-func NewAskOrder(ID, supplierID string, price int64, slot ds.Slot) (*Order, error) {
+func NewAskOrder(ID, supplierID, price string, slot ds.Slot) (*Order, error) {
 	o := &Order{
 		Order: ds.Order{
 			ID:         ID,
@@ -32,7 +32,7 @@ func NewAskOrder(ID, supplierID string, price int64, slot ds.Slot) (*Order, erro
 		return nil, errSupplierIsRequired
 	}
 
-	if o.Price <= 0 {
+	if o.Price == "" {
 		return nil, errPriceIsZero
 	}
 
@@ -40,7 +40,7 @@ func NewAskOrder(ID, supplierID string, price int64, slot ds.Slot) (*Order, erro
 }
 
 // NewBidOrder creates a new bid order.
-func NewBidOrder(ID, buyerID string, price int64, slot ds.Slot) (*Order, error) {
+func NewBidOrder(ID, buyerID, price string, slot ds.Slot) (*Order, error) {
 	o := &Order{
 		Order: ds.Order{
 			ID:        ID,
@@ -51,7 +51,7 @@ func NewBidOrder(ID, buyerID string, price int64, slot ds.Slot) (*Order, error) 
 		},
 	}
 
-	if o.Price <= 0 {
+	if o.Price == "" {
 		return nil, errPriceIsZero
 	}
 

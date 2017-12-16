@@ -21,13 +21,13 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 		{
 			ID:        "test_order_101",
 			OrderType: ds.Ask,
-			Price:     101,
+			Price:     "101",
 			BuyerID:   "TestBuyer",
 		},
 		{
 			ID:        "test_order_105",
 			OrderType: ds.Ask,
-			Price:     105,
+			Price:     "105",
 			BuyerID:   "TestBuyer",
 		},
 	}

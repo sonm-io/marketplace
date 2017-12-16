@@ -2,6 +2,7 @@ package srv_test
 
 import (
 	"context"
+	"github.com/davecgh/go-spew/spew"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 )
 
@@ -10,6 +11,11 @@ func (s *MarketplaceTestSuite) getOrders() {
 	req := &pb.GetOrdersRequest{
 		OrderType: pb.OrderType_BID,
 		Count:     100,
+		Slot: &pb.Slot{
+			Resources: &pb.Resources{
+				NetTrafficIn: 500000,
+			},
+		},
 	}
 
 	expected := &pb.GetOrdersReply{
@@ -17,7 +23,7 @@ func (s *MarketplaceTestSuite) getOrders() {
 			{
 				Id:        "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
 				OrderType: pb.OrderType_BID,
-				Price:     100,
+				Price:     "777",
 				ByuerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
 
 				Slot: &pb.Slot{
@@ -42,7 +48,10 @@ func (s *MarketplaceTestSuite) getOrders() {
 
 	// act
 	obtained, err := s.client.GetOrders(context.Background(), req)
+	spew.Dump(expected)
+	spew.Dump(obtained)
 
+	//panic("bingo")
 	// assert
 	s.NoError(err)
 	s.Equal(expected, obtained)
