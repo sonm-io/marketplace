@@ -59,13 +59,15 @@ func (s *MarketplaceTestSuite) TestMarketPlace() {
 	//	s.T().Run("GetOrderByID", func(t *testing.T) {
 	s.getOrderByID()
 	//	})
+
+	s.getOrders()
 }
 
 func gRpcClient() (*grpc.ClientConn, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
 	defer cancel()
 
-	conn, err := grpc.DialContext(ctx, cli.ListenAddr,
+	conn, err := grpc.DialContext(ctx, *cli.ListenAddr,
 		grpc.WithInsecure(),
 		grpc.WithBlock(),
 		grpc.WithBackoffConfig(grpc.BackoffConfig{MaxDelay: 2 * time.Second}),

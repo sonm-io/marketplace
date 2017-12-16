@@ -1,4 +1,4 @@
-package storage
+package inmemory
 
 import "github.com/sonm-io/marketplace/infra/storage/inmemory"
 

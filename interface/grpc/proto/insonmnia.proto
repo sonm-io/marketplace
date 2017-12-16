@@ -10,6 +10,25 @@ message ID {
     string id = 1;
 }
 
+message TaskID {
+    // Id is task ID itself
+    string id = 1;
+    // HubID is ID of hub on which task if running
+    string hubAddr = 2;
+}
+
+enum NetworkType {
+    NO_NETWORK = 0;
+    OUTBOUND = 1;
+    INCOMING = 2;
+}
+
+enum GPUCount {
+    NO_GPU = 0;
+    SINGLE_GPU = 1;
+    MULTIPLE_GPU = 2;
+}
+
 message PingReply {
     string status = 1;
 }
@@ -59,7 +78,27 @@ message TaskStatusReply {
     string ports = 3;
     uint64 uptime = 4;
     ResourceUsage usage = 5;
-    string minerID = 6;
+    AvailableResources availableResources = 6;
+    string minerID = 7;
+}
+
+message AvailableResources {
+    int64 numCPUs = 1;
+    int64 numGPUs = 2;
+    uint64 memory = 3;
+    int64 CPUPeriod = 4;
+    int64 CPUQuota = 5;
+    int64 CPURealtimePeriod = 6;
+    int64 CPURealtimeRuntime = 7;
+    string CpusetCpus = 8;
+    string CpusetMems = 9;
+    int64 DiskQuota = 10;
+    int64 KernelMemory = 11;
+    int64 MemoryReservation = 12;
+    int64 MemorySwap = 13;
+    int64 PidsLimit = 14;
+    string cgroup = 15;
+    string cgroupParent = 16;
 }
 
 message StatusMapReply {
@@ -84,6 +123,7 @@ message TaskLogsRequest {
     bool Follow = 5;
     string Tail = 6;
     bool Details = 7;
+    string hubAddr = 8;
 }
 
 message TaskLogsChunk {
@@ -95,14 +135,12 @@ message DiscoverHubRequest {
 }
 
 message TaskResourceRequirements {
-    // Number of CPU cores.
+    // CPUCores specifies the number of CPU cores required.
     uint64 CPUCores = 1;
-    // Memory in bytes required.
+    // MaxMemory specifies the maximum memory in bytes required.
     int64 maxMemory = 2;
-    // Describes whether a task requires GPU supoort.
-    bool GPUSupport = 3;
-
-    int64 nanoCPUs = 4;
+    // GPUCount Describes whether a task requires GPU support.
+    GPUCount GPUSupport = 3;
 }
 
 message Timestamp {
@@ -115,4 +153,13 @@ message Timestamp {
     // that count forward in time. Must be from 0 to 999'999'999
     // inclusive.
     int32 nanos = 2;
+}
+
+
+message Chunk {
+    bytes chunk = 1;
+}
+
+message Progress {
+    int64 size = 1;
 }

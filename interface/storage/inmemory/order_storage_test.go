@@ -1,4 +1,4 @@
-package storage
+package inmemory
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/infra/storage/inmemory"
-	"github.com/sonm-io/marketplace/interface/storage/mocks"
+	"github.com/sonm-io/marketplace/interface/storage/inmemory/mocks"
 )
 
 func TestOrderStorageByID_ExistingIDGiven_OrderReturned(t *testing.T) {
@@ -77,11 +77,11 @@ func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T)
 	expected := []ds.Order{
 		{
 			ID:    "test_obj_101",
-			Price: 101,
+			Price: "101",
 		},
 		{
 			ID:    "test_obj_105",
-			Price: 105,
+			Price: "105",
 		},
 	}
 
@@ -91,7 +91,7 @@ func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T)
 	}
 
 	//var orders report.GetOrdersReport
-	spec := priceIsBetweenTestSpec{From: 101, To: 106}
+	spec := priceIsBetweenTestSpec{From: "101", To: "106"}
 	q := inmemory.ConcreteCriteria{
 		Limit: 10,
 		Spec:  spec,
@@ -112,8 +112,8 @@ func TestOrderStorageBySpecWithLimit_ValidSpecGiven_OrdersReturned(t *testing.T)
 }
 
 type priceIsBetweenTestSpec struct {
-	From int64
-	To   int64
+	From string
+	To   string
 }
 
 func (s priceIsBetweenTestSpec) IsSatisfiedBy(object interface{}) bool {
