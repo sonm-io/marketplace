@@ -2,7 +2,6 @@ package srv_test
 
 import (
 	"context"
-	"github.com/davecgh/go-spew/spew"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 )
 
@@ -48,10 +47,7 @@ func (s *MarketplaceTestSuite) getOrders() {
 
 	// act
 	obtained, err := s.client.GetOrders(context.Background(), req)
-	spew.Dump(expected)
-	spew.Dump(obtained)
 
-	//panic("bingo")
 	// assert
 	s.NoError(err)
 	s.Equal(expected, obtained)

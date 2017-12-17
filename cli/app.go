@@ -23,6 +23,7 @@ import (
 	"github.com/sonm-io/marketplace/infra/cqrs"
 	"github.com/sonm-io/marketplace/infra/grpc"
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
+	engine "github.com/sonm-io/marketplace/infra/storage/sqllite"
 
 	"github.com/sonm-io/marketplace/interface/adaptor"
 	"github.com/sonm-io/marketplace/interface/grpc/srv"
@@ -85,7 +86,7 @@ func (a *App) Init() error {
 		return err
 	}
 
-	repo := sqllite.NewOrderStorage(a.db)
+	repo := sqllite.NewOrderStorage(engine.NewOrderStorage(a.db))
 
 	getOrderHandler := query.NewGetOrderHandler(repo)
 	getOrdersHandler := query.NewGetOrdersHandler(repo)

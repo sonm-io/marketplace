@@ -1,20 +1,28 @@
 package sqllite
 
 import (
-	"database/sql"
 	"fmt"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
+	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
+// Engine represents Storage Engine.
+type Engine interface {
+	InsertRow(row *sds.OrderRow) error
+	DeleteRow(ID string) error
+	FetchRow(ID string, row *sds.OrderRow) error
+	FetchAll() (sds.OrderRows, error)
+}
+
 // OrderStorage stores and retrieves Orders.
 type OrderStorage struct {
-	e *sql.DB
+	e Engine
 }
 
 // NewOrderStorage creates an new instance of OrderStorage.
-func NewOrderStorage(e *sql.DB) *OrderStorage {
+func NewOrderStorage(e Engine) *OrderStorage {
 	return &OrderStorage{
 		e: e,
 	}
@@ -22,33 +30,22 @@ func NewOrderStorage(e *sql.DB) *OrderStorage {
 
 // Add adds the given Order to the storage.
 func (s *OrderStorage) Add(o *ds.Order) error {
-	if o.Slot == nil {
-		o.Slot = &ds.Slot{}
+	if o == nil {
+		return fmt.Errorf("cannot add an empty order")
 	}
 
-	q := `
-		INSERT OR REPLACE INTO orders
-		(id, type, supplier_id, buyer_id, price, slot_buyer_rating, slot_supplier_rating,
-		resources_cpu_cores, resources_ram_bytes, resources_gpu_count, resources_storage,
-		resources_net_inbound, resources_net_outbound, resources_net_type)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`
-	_, err := s.e.Exec(q,
-		o.ID, int(o.OrderType), o.SupplierID, o.BuyerID, o.Price, o.Slot.BuyerRating, o.Slot.SupplierRating,
-		o.Slot.Resources.CPUCores, o.Slot.Resources.RAMBytes, int(o.Slot.Resources.GPUCount), o.Slot.Resources.Storage,
-		o.Slot.Resources.NetTrafficIn, o.Slot.Resources.NetTrafficOut, int(o.Slot.Resources.NetworkType))
-	if err != nil {
+	row := sds.OrderRow{}
+	orderToRow(o, &row)
+
+	if err := s.e.InsertRow(&row); err != nil {
 		return fmt.Errorf("cannot add new order: %v", err)
 	}
-
 	return nil
 }
 
 // Remove removes an Order with the given ID from OrderStorage.
-// If no orders found, an error is returned.
 func (s *OrderStorage) Remove(ID string) error {
-	_, err := s.e.Exec("DELETE FROM orders WHERE id = ?", ID)
-	if err != nil {
+	if err := s.e.DeleteRow(ID); err != nil {
 		return fmt.Errorf("cannot remove order: %v", err)
 	}
 	return nil
@@ -57,34 +54,74 @@ func (s *OrderStorage) Remove(ID string) error {
 // ByID Fetches an Order by its ID.
 // If ID is not found, an error is returned.
 func (s *OrderStorage) ByID(ID string) (ds.Order, error) {
-	var row OrderRow
-
-	err := s.e.QueryRow(
-		`SELECT id, type, supplier_id, buyer_id, price, slot_buyer_rating, slot_supplier_rating,
-			   		resources_cpu_cores, resources_ram_bytes, resources_gpu_count, resources_storage,
-			   		resources_net_inbound, resources_net_outbound, resources_net_type
-			   FROM orders
-			   WHERE id = ?`, ID).
-		Scan(&row.ID, &row.Type, &row.SupplierID, &row.BuyerID, &row.Price, &row.BuyerRating, &row.SupplierRating,
-			&row.CPUCores, &row.RAMBytes, &row.GPUCount, &row.Storage,
-			&row.NetInbound, &row.NetOutbound, &row.NetType)
-
-	if err != nil {
+	var row sds.OrderRow
+	if err := s.e.FetchRow(ID, &row); err != nil {
 		return ds.Order{}, fmt.Errorf("cannot get order: %v", err)
 	}
 
-	// a kludge
-	row.Properties = map[string]float64{
-		"hash_rate": 105.7,
-	}
-
 	order := ds.Order{}
-	mapOrder(&order, &row)
+	orderFromRow(&order, &row)
 
 	return order, nil
 }
 
-func mapOrder(order *ds.Order, row *OrderRow) {
+// BySpecWithLimit fetches Orders that satisfy the given Spec.
+// if limit is > 0, then only the given number of Orders will be returned.
+// WARNING: At nonce all the Orders will be loaded in memory and after that filtered.
+// TODO: (screwyprof) Add filtering without loading all the records.
+func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) ([]ds.Order, error) {
+	rows, err := s.e.FetchAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var (
+		order  ds.Order
+		orders []ds.Order
+	)
+	for idx := range rows {
+		if limit > 0 && uint64(len(orders)) >= limit {
+			break
+		}
+
+		order = ds.Order{}
+		orderFromRow(&order, &rows[idx])
+
+		if spec.IsSatisfiedBy(&order) {
+			orders = append(orders, order)
+		}
+	}
+
+	return orders, nil
+}
+
+func orderToRow(order *ds.Order, row *sds.OrderRow) {
+	row.ID = order.ID
+	row.Type = int32(order.OrderType)
+	row.BuyerID = order.BuyerID
+	row.SupplierID = order.SupplierID
+	row.Price = order.Price
+
+	if order.Slot == nil {
+		order.Slot = &ds.Slot{}
+	}
+
+	row.BuyerRating = order.Slot.BuyerRating
+	row.SupplierRating = order.Slot.SupplierRating
+
+	row.CPUCores = order.Slot.Resources.CPUCores
+	row.RAMBytes = order.Slot.Resources.RAMBytes
+	row.GPUCount = uint64(order.Slot.Resources.GPUCount)
+	row.Storage = order.Slot.Resources.Storage
+
+	row.NetType = uint64(order.Slot.Resources.NetworkType)
+	row.NetInbound = order.Slot.Resources.NetTrafficIn
+	row.NetOutbound = order.Slot.Resources.NetTrafficOut
+
+	row.Properties = sds.Properties(order.Slot.Resources.Properties)
+}
+
+func orderFromRow(order *ds.Order, row *sds.OrderRow) {
 	if order == nil {
 		return
 	}
@@ -119,73 +156,4 @@ func mapOrder(order *ds.Order, row *OrderRow) {
 	}
 
 	order.Slot = slot
-}
-
-// BySpecWithLimit fetches Orders that satisfy the given Spec.
-// if limit is > 0, then only the given number of Orders will be returned.
-// WARNING: At nonce all the Orders will be loaded in memory and after that filtered.
-// TODO: (screwyprof) Add filtering without loading all the records.
-func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) ([]ds.Order, error) {
-	allOrders, err := s.fetchAll()
-	if err != nil {
-		return nil, err
-	}
-
-	var elements []ds.Order
-	for _, order := range allOrders {
-		if limit > 0 && uint64(len(elements)) >= limit {
-			break
-		}
-
-		if spec.IsSatisfiedBy(&order) {
-			elements = append(elements, order)
-		}
-	}
-
-	return elements, nil
-}
-
-func (s *OrderStorage) fetchAll() ([]ds.Order, error) {
-	rows, err := s.e.Query(
-		`SELECT id, type, supplier_id, buyer_id, price, slot_buyer_rating, slot_supplier_rating,
-			   		resources_cpu_cores, resources_ram_bytes, resources_gpu_count, resources_storage,
-			   		resources_net_inbound, resources_net_outbound, resources_net_type
-			   FROM orders
-			   ORDER BY price`)
-	if err != nil {
-		return nil, fmt.Errorf("cannot get orders: %v", err)
-	}
-	defer rows.Close()
-
-	var (
-		row    OrderRow
-		order  ds.Order
-		orders []ds.Order
-	)
-
-	for rows.Next() {
-		order = ds.Order{}
-		row = OrderRow{}
-
-		err := rows.Scan(&row.ID, &row.Type, &row.SupplierID, &row.BuyerID, &row.Price, &row.BuyerRating, &row.SupplierRating,
-			&row.CPUCores, &row.RAMBytes, &row.GPUCount, &row.Storage,
-			&row.NetInbound, &row.NetOutbound, &row.NetType)
-		if err != nil {
-			return nil, fmt.Errorf("cannot scan order raw into struct: %v", err)
-		}
-
-		if err := rows.Err(); err != nil {
-			return nil, fmt.Errorf("cannot retrieve orders: %v", err)
-		}
-
-		// a kludge
-		row.Properties = map[string]float64{
-			"hash_rate": 105.7,
-		}
-
-		mapOrder(&order, &row)
-		orders = append(orders, order)
-	}
-
-	return orders, nil
 }
