@@ -16,9 +16,10 @@ import (
 )
 
 var (
+	// ConfigPath path to config file, usually (./etc/market.yaml)
+	ConfigPath = flag.String("config", "", "Path to marketplace config file")
 	// ListenAddr network address and port.
 	ListenAddr = flag.String("addr", ":9095", "SONM Marketplace service listen addr")
-
 	// DataDir database directory path, usually (./data)
 	DataDir = flag.String("data-dir", "", "Database directory")
 )
@@ -43,13 +44,17 @@ func (s *AppTestSuite) SetupSuite() {
 	s.Lock()
 	defer s.Unlock()
 
+	if *ConfigPath == "" {
+		*ConfigPath = AbsPath("../../etc/market.yaml")
+	}
+
 	if *DataDir == "" {
 		*DataDir = AbsPath(*DataDir + "../../data")
 	}
 
-	s.App = cli.NewApp(cli.WithListenAddr(*ListenAddr), cli.WithDataDir(*DataDir))
+	s.App = cli.NewApp(cli.WithConfigPath(*ConfigPath), cli.WithListenAddr(*ListenAddr), cli.WithDataDir(*DataDir))
 	err := s.App.Init()
-	s.NoError(err, "cannot initialize application")
+	s.Require().NoError(err, "cannot initialize application")
 }
 
 // SetupTest initializes application before each test.

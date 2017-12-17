@@ -6,6 +6,7 @@ bin/*
 /integration-results/
 /.cover/
 /data/data.db
+/keys/
 
 /mocks/*
 interface/storage/inmemory/mocks/*

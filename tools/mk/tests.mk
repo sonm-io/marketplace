@@ -67,10 +67,10 @@ $(UNIT_TEST_COVERAGE_TARGETS): generate tools test-results create-fake-test-file
 
 # tests are tee'ed for further parsing in Jenkins.
 	@echo "Testing package ${ROOT_PACKAGE}/marketplace/$($@_package)"
-	@set -o pipefail; ${GO} test -test.v -timeout 10s -coverprofile test-results/cover/$($@_coverprofile).out ${ROOT_PACKAGE}/marketplace/$($@_package) 2>&1 \
+	set -o pipefail; ${GO} test -test.v -timeout 10s -coverprofile test-results/cover/$($@_coverprofile).out ${ROOT_PACKAGE}/marketplace/$($@_package) 2>&1 \
 	  | tee test-results/output/unit_$($@_coverprofile);
 # collect all cover reports without first line with mode (default is "mode: set")
-	@sed '1d' "test-results/cover/$($@_coverprofile).out" >> test-results/cover_report.out || true;
+	sed '1d' "test-results/cover/$($@_coverprofile).out" >> test-results/cover_report.out || true;
 
 # Integration tests are those started with 'test/'.
 # Note that if you omit the slash (\), bash variables won't be interpolated.
@@ -108,10 +108,9 @@ if [ -z $${coverpkg} ]; then \
        | tee test-results/output/integration_$($@_coverprofile); \
 else \
 	set -o pipefail; ${GO} test -test.v -timeout 2m -coverprofile test-results/cover/$($@_coverprofile).out \
-	  -coverpkg=$${coverpkg} ${ROOT_PACKAGE}/marketplace/$($@_package) 2>&1 \
+	  -coverpkg=${ROOT_PACKAGE}/$${coverpkg} ${ROOT_PACKAGE}/marketplace/$($@_package) 2>&1 \
 	  | tee test-results/output/integration_$($@_coverprofile); \
-	@sed -i '/mocks/d'        test-results/cover/$($@_coverprofile).out; \
-	@sed '1d' test-results/cover/$($@_coverprofile).out >> test-results/cover_report.out || true; \
+	sed '1d' "test-results/cover/$($@_coverprofile).out" >> test-results/cover_report.out || true; \
 fi
 
 # Errors like "warning: no packages being tested depend on marketplace/dao/datastruct" may occur. It'a alright
