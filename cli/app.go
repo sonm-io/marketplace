@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"context"
+	"crypto/ecdsa"
 	"database/sql"
 	"fmt"
 	"io/ioutil"
@@ -16,6 +18,7 @@ import (
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	gRPC "google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/credentials"
 
 	// register sqlite3 driver
 	_ "github.com/mattn/go-sqlite3"
@@ -23,6 +26,7 @@ import (
 	"github.com/sonm-io/marketplace/infra/cqrs"
 	"github.com/sonm-io/marketplace/infra/grpc"
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
+	"github.com/sonm-io/marketplace/infra/util"
 
 	"github.com/sonm-io/marketplace/interface/adaptor"
 	"github.com/sonm-io/marketplace/interface/grpc/srv"
@@ -32,29 +36,6 @@ import (
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 )
 
-// Config application configuration object.
-type Config struct {
-	ListenAddr string
-	DataDir    string
-}
-
-// Option is a configuration parameter.
-type Option func(f *Config)
-
-// WithListenAddr sets listen address.
-func WithListenAddr(addr string) Option {
-	return func(c *Config) {
-		c.ListenAddr = addr
-	}
-}
-
-// WithDataDir sets the database path.
-func WithDataDir(dirPath string) Option {
-	return func(c *Config) {
-		c.DataDir = dirPath
-	}
-}
-
 // App application root.
 type App struct {
 	sync.RWMutex
@@ -62,21 +43,24 @@ type App struct {
 	db     *sql.DB
 	conf   *Config
 	logger *zap.Logger
-	server *gRPC.Server
+
+	privateKey *ecdsa.PrivateKey
+	server     *gRPC.Server
+	creds      credentials.TransportCredentials
+	rotator    util.HitlessCertRotator
 }
 
 // NewApp creates a new App instance.
 func NewApp(opts ...Option) *App {
-	conf := &Config{ListenAddr: ":9090"}
-	for _, option := range opts {
-		option(conf)
-	}
-
-	return &App{conf: conf}
+	return &App{conf: NewConfig(opts...)}
 }
 
 // Init initialize the application.
 func (a *App) Init() error {
+	if err := a.initConfig(); err != nil {
+		return err
+	}
+
 	if err := a.initLogger(); err != nil {
 		return err
 	}
@@ -97,7 +81,42 @@ func (a *App) Init() error {
 	commandBus.RegisterHandler("CreateBidOrder", adaptor.FromDomain(createOrderHandler))
 	commandBus.RegisterHandler("CancelOrder", adaptor.FromDomain(cancelOrderHandler))
 
-	a.initServer(srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler))
+	if err := a.initServer(
+		srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler)); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (a *App) initConfig() error {
+	a.Lock()
+	defer a.Unlock()
+
+	if a.conf.CfgPath == "" {
+		absCfgPath, err := filepath.Abs(filepath.Dir(os.Args[0]) + "/etc/market.yaml")
+		if err != nil {
+			return fmt.Errorf("cannot get absolute path of config file: %v", err)
+		}
+		a.conf.CfgPath = absCfgPath
+	}
+
+	cfgFileExists, err := a.pathExists(a.conf.CfgPath)
+	if err != nil {
+		return fmt.Errorf("cannot check if config file exists: %v", err)
+	}
+
+	if !cfgFileExists {
+		return fmt.Errorf("config file %q does not exist", a.conf.CfgPath)
+	}
+	a.conf.FromFile(a.conf.CfgPath)
+
+	key, err := a.conf.EthCfg.LoadKey()
+	if err != nil {
+		return fmt.Errorf("cannot load private key: %v", err)
+	}
+
+	a.privateKey = key
+
 	return nil
 }
 
@@ -134,7 +153,6 @@ func (a *App) initLogger() error {
 }
 
 func (a *App) initStorage() error {
-
 	dataDirExists, err := a.pathExists(a.conf.DataDir)
 	if err != nil {
 		return fmt.Errorf("cannot check if data dir exists: %v", err)
@@ -171,25 +189,43 @@ func (a *App) initStorage() error {
 	return nil
 }
 
-func (a *App) initServer(mp *srv.Marketplace) {
-
+func (a *App) initServer(mp *srv.Marketplace) error {
 	a.RLock()
+	logger := a.logger
+	key := a.privateKey
+	a.RUnlock()
+
+	if key == nil {
+		return fmt.Errorf("private key is not loaded")
+	}
+
+	rotator, tlsConfig, err := util.NewHitlessCertRotator(context.Background(), key)
+	if err != nil {
+		return err
+	}
+
+	creds := util.NewTLS(tlsConfig)
+
 	opts := []grpc.ServerOption{
-		grpc.WithUnaryInterceptor(interceptor.NewUnaryZapLogger(a.logger)),
+		grpc.WithGRPCOptions(gRPC.Creds(creds)),
+
+		grpc.WithUnaryInterceptor(interceptor.NewUnaryZapLogger(logger)),
 		grpc.WithUnaryInterceptor(interceptor.NewUnarySimpleTracer()),
 		grpc.WithUnaryInterceptor(interceptor.NewUnaryPanic()),
 
-		grpc.WithStreamInterceptor(interceptor.NewStreamZapLogger(a.logger)),
+		grpc.WithStreamInterceptor(interceptor.NewStreamZapLogger(logger)),
 		grpc.WithStreamInterceptor(interceptor.NewStreamSimpleTracer()),
 		grpc.WithStreamInterceptor(interceptor.NewStreamPanic()),
 	}
-	a.RUnlock()
 
 	a.Lock()
+	a.rotator = rotator
+	a.creds = creds
 	a.server = grpc.NewServer(opts...)
 	a.Unlock()
 
 	pb.RegisterMarketServer(a.server, mp)
+	return nil
 }
 
 // Run runs the application.
@@ -205,6 +241,9 @@ func (a *App) Run() error {
 	if err != nil {
 		return fmt.Errorf("failed to listen: %v", err)
 	}
+
+	a.logger.Info("Ready to serve", zap.String("addr", a.conf.ListenAddr))
+	//a.logger.Debug("Application config", zap.Any("conf", a.conf))
 	return a.server.Serve(lis)
 }
 
@@ -217,6 +256,10 @@ func (a *App) Stop() {
 		a.server.GracefulStop()
 	}
 
+	if a.rotator != nil {
+		a.rotator.Close()
+	}
+
 	if a.db != nil {
 		a.db.Close()
 	}
@@ -224,6 +267,14 @@ func (a *App) Stop() {
 	if a.logger != nil {
 		a.logger.Sync() // nolint
 	}
+}
+
+// Creds a kludge to ease integration testing
+// TODO: (screwyprof) read keys on client side.
+func (a *App) Creds() credentials.TransportCredentials {
+	a.RLock()
+	defer a.RUnlock()
+	return a.creds
 }
 
 func (a *App) pathExists(path string) (bool, error) {
@@ -236,3 +287,5 @@ func (a *App) pathExists(path string) (bool, error) {
 	}
 	return true, err
 }
+
+//
