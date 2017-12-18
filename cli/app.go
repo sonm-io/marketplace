@@ -75,11 +75,13 @@ func (a *App) Init() error {
 	getOrderHandler := query.NewGetOrderHandler(repo)
 	getOrdersHandler := query.NewGetOrdersHandler(repo)
 
-	createOrderHandler := command.NewCreateBidOrderHandler(repo)
+	createBidOrderHandler := command.NewCreateBidOrderHandler(repo)
+	createAskOrderHandler := command.NewCreateAskOrderHandler(repo)
 	cancelOrderHandler := command.NewCancelOrderHandler(repo)
 
 	commandBus := cqrs.NewCommandBus()
-	commandBus.RegisterHandler("CreateBidOrder", adaptor.FromDomain(createOrderHandler))
+	commandBus.RegisterHandler("CreateBidOrder", adaptor.FromDomain(createBidOrderHandler))
+	commandBus.RegisterHandler("CreateAskOrder", adaptor.FromDomain(createAskOrderHandler))
 	commandBus.RegisterHandler("CancelOrder", adaptor.FromDomain(cancelOrderHandler))
 
 	if err := a.initServer(

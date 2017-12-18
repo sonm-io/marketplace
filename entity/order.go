@@ -23,7 +23,7 @@ func NewAskOrder(ID, supplierID, price string, slot ds.Slot) (*Order, error) {
 			ID:         ID,
 			SupplierID: supplierID,
 			Price:      price,
-			OrderType:  ds.Any,
+			OrderType:  ds.Ask,
 			Slot:       &slot,
 		},
 	}

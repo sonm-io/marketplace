@@ -3,13 +3,14 @@ package command
 import (
 	"fmt"
 
+	ds "github.com/sonm-io/marketplace/datastruct"
 	"github.com/sonm-io/marketplace/entity"
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
 // CreateAskOrderStorage adds an order to the storage.
 type CreateAskOrderStorage interface {
-	Add(o *entity.Order) error
+	Add(o *ds.Order) error
 }
 
 // CreateAskOrderHandler creates new ask orders.
@@ -36,5 +37,5 @@ func (h CreateAskOrderHandler) Handle(cmd intf.Command) error {
 		return err
 	}
 
-	return h.s.Add(order)
+	return h.s.Add(&order.Order)
 }
