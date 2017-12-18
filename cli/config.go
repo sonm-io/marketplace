@@ -12,7 +12,7 @@ type Config struct {
 	CfgPath string
 
 	ListenAddr string `yaml:"address"`
-	DataDir    string `yaml:"data_dir"`
+	DataDir    string `yaml:"data_dir" required:"true" default: "./data"`
 
 	EthCfg accounts.EthConfig `required:"true" yaml:"ethereum"`
 }
