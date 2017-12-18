@@ -35,7 +35,7 @@ func TestStorageGreaterOrEqualIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturned
 	}
 
 	// act
-	s := NewCPUCoresGreaterOrEqual(12000)
+	s := NewStorageGreaterOrEqual(12000)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert

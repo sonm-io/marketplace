@@ -8,6 +8,7 @@ import (
 
 	"google.golang.org/grpc"
 	// registers grpc gzip encoder/decoder
+	"google.golang.org/grpc/credentials"
 	_ "google.golang.org/grpc/encoding/gzip"
 
 	"github.com/stretchr/testify/suite"
@@ -34,7 +35,7 @@ func (s *MarketplaceTestSuite) SetupTest() {
 	// call parent's method.
 	s.AppTestSuite.SetupTest()
 
-	conn, err := gRpcClient()
+	conn, err := NewGRPCClient(s.App.Creds())
 	s.Require().NoError(err, "cannot get grpc client")
 
 	s.conn = conn
@@ -53,22 +54,29 @@ func (s *MarketplaceTestSuite) TearDownTest() {
 func (s *MarketplaceTestSuite) TestMarketPlace() {
 
 	//s.T().Run("CreateOrder", func(t *testing.T) {
-	s.createOrder()
+	s.createBidOrder()
+	s.createAskOrder()
 	//})
 
 	//	s.T().Run("GetOrderByID", func(t *testing.T) {
-	s.getOrderByID()
+	s.getBidOrderByID()
 	//	})
 
-	s.getOrders()
+	s.getBidOrders()
+	s.getAskOrders()
 }
 
-func gRpcClient() (*grpc.ClientConn, error) {
+func NewGRPCClient(creds credentials.TransportCredentials) (*grpc.ClientConn, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 6*time.Second)
 	defer cancel()
 
+	var secureOpt = grpc.WithInsecure()
+	if creds != nil {
+		secureOpt = grpc.WithTransportCredentials(creds)
+	}
+
 	conn, err := grpc.DialContext(ctx, *cli.ListenAddr,
-		grpc.WithInsecure(),
+		secureOpt,
 		grpc.WithBlock(),
 		grpc.WithBackoffConfig(grpc.BackoffConfig{MaxDelay: 2 * time.Second}),
 	)

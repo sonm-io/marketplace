@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
+func TestGetOrdersHandlerHandle_ValidQueryGiven_OrderReturned(t *testing.T) {
 	// arrange
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -49,7 +49,7 @@ func TestGetOrdersHandlerHandle_ValidCommandGiven_OrderReturned(t *testing.T) {
 		Limit: 10,
 	}
 
-	s, _ := spec.OrdersBySlot(q.Order.OrderType, *q.Order.Slot)
+	s, _ := spec.MatchOrders(q.Order)
 
 	storage := mocks.NewMockOrderBySpecStorage(ctrl)
 	storage.EXPECT().

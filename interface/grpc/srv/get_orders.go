@@ -20,7 +20,7 @@ const (
 func (m *Marketplace) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersReply, error) {
 
 	logger := ctx_zap.Extract(ctx)
-	logger.Sugar().Infof("Getting orders %s", req)
+	logger.Info("Getting orders", zap.Any("req", req))
 
 	limit := req.GetCount()
 	if limit == 0 {
@@ -32,10 +32,10 @@ func (m *Marketplace) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (
 
 	orders := report.GetOrdersReport{}
 	if err := m.ordersBySpec.Handle(q, &orders); err != nil {
-		logger.Sugar().Infof("Cannot retrieve orders: %v\n", err)
+		logger.Info("Cannot retrieve orders", zap.Error(err))
 		return nil, err
 	}
-	logger.Info("Orders retrieved\n", zap.Any("orders", orders))
+	logger.Info("Orders retrieved", zap.Any("orders", orders))
 
 	var resp []*pb.Order
 	for idx := range orders {
@@ -53,9 +53,9 @@ func bindGetOrdersQuery(req *pb.GetOrdersRequest, q *query.GetOrders) {
 	}
 
 	q.Limit = req.GetCount()
-	q.Order.OrderType = ds.OrderType(req.GetOrderType())
+	q.Order.OrderType = ds.OrderType(req.GetOrder().GetOrderType())
 
-	if req.Slot == nil {
+	if req.GetOrder().GetSlot() == nil {
 		return
 	}
 
@@ -63,19 +63,23 @@ func bindGetOrdersQuery(req *pb.GetOrdersRequest, q *query.GetOrders) {
 		q.Order.Slot = &ds.Slot{}
 	}
 
-	q.Order.Slot.SupplierRating = req.GetSlot().GetSupplierRating()
-	q.Order.Slot.BuyerRating = req.GetSlot().GetBuyerRating()
-	if req.Slot.Resources != nil {
-		res := req.GetSlot().GetResources()
-		q.Order.Slot.Resources = ds.Resources{
-			CPUCores:      res.GetCpuCores(),
-			RAMBytes:      res.GetRamBytes(),
-			GPUCount:      ds.GPUCount(res.GetGpuCount()),
-			Storage:       res.GetStorage(),
-			NetworkType:   ds.NetworkType(res.GetNetworkType()),
-			NetTrafficIn:  res.GetNetTrafficIn(),
-			NetTrafficOut: res.GetNetTrafficOut(),
-			Properties:    res.GetProperties(),
-		}
+	reqSlot := req.GetOrder().GetSlot()
+	q.Order.Slot.SupplierRating = reqSlot.GetSupplierRating()
+	q.Order.Slot.BuyerRating = reqSlot.GetBuyerRating()
+
+	if reqSlot.Resources == nil {
+		return
+	}
+
+	res := reqSlot.GetResources()
+	q.Order.Slot.Resources = ds.Resources{
+		CPUCores:      res.GetCpuCores(),
+		RAMBytes:      res.GetRamBytes(),
+		GPUCount:      ds.GPUCount(res.GetGpuCount()),
+		Storage:       res.GetStorage(),
+		NetworkType:   ds.NetworkType(res.GetNetworkType()),
+		NetTrafficIn:  res.GetNetTrafficIn(),
+		NetTrafficOut: res.GetNetTrafficOut(),
+		Properties:    res.GetProperties(),
 	}
 }

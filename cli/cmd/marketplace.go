@@ -24,8 +24,7 @@ var (
 
 // flags
 var (
-	listenAddr    = flag.String("addr", ":9095", "SONM Marketplace service listen addr")
-	dataDir       = flag.String("data-dir", "", "Database directory")
+	configPath    = flag.String("config", "", "Path to marketplace config file")
 	showVersion   = flag.Bool("version", false, "Show SONM Marketplace version and exit")
 	showBuildInfo = flag.Bool("build-info", false, "Display build info and exit")
 )
@@ -44,8 +43,8 @@ func main() {
 		return
 	}
 
-	log.Printf("Starting SONM Marketplace service at %s...\r\n", *listenAddr)
-	app := cli.NewApp(cli.WithListenAddr(*listenAddr), cli.WithDataDir(*dataDir))
+	log.Println("Starting SONM Marketplace service")
+	app := cli.NewApp(cli.WithConfigPath(*configPath))
 	if err := app.Init(); err != nil {
 		log.Fatalf("Cannot initialize SONM Marketplace service: %s\r\n", err)
 	}
