@@ -45,7 +45,7 @@ func (s *AppTestSuite) SetupSuite() {
 	defer s.Unlock()
 
 	if *ConfigPath == "" {
-		*ConfigPath = AbsPath("../../etc/market.yaml")
+		*ConfigPath = AbsPath("../../etc/market.test.yaml")
 	}
 
 	if *DataDir == "" {

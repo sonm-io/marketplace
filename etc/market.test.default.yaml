@@ -1,0 +1,11 @@
+address: "0.0.0.0:9095"
+
+# path to data dir, default ./data
+data_dir: "<DATA_DIR>"
+
+# blockchain-specific settings.
+ethereum:
+  # path to keystore, default ./etc/keys
+  key_store: "<KEYS_DIR>"
+  # passphrase for keystore
+  pass_phrase: "any"

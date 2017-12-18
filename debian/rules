@@ -1,25 +1,24 @@
 #!/usr/bin/make -f
 #export DH_VERBOSE = 1
-
 %:
-		dh $@ --with systemd
+	dh $@ --with systemd
 
 override_dh_auto_build:
-		make -j build
+	make -j build
 
 override_dh_auto_test:
-		echo
+#	make fast-unit-test
+#	make fast-integration-test
 
 override_dh_auto_install:
-		cp $(GOPATH)/bin/marketplace ./sonmmarketplace
-		install -d $(DEB_DESTDIR)etc/sonm/
-		install -m644 ./etc/market.yaml $(DEB_DESTDIR)etc/sonm/marketplace-default.yaml
-		install -m644 ./data/schema.sql $(DEB_DESTDIR)etc/sonm/schema.sql
-
+	cp $(GOPATH)/bin/marketplace ./sonmmarketplace
+	install -d $(DEB_DESTDIR)etc/sonm/
+	install -m644 ./etc/market.yaml $(DEB_DESTDIR)etc/sonm/marketplace-default.yaml
+	install -m644 ./data/schema.sql $(DEB_DESTDIR)etc/sonm/schema.sql
 override_dh_systemd_start:
-		@echo "Not running dh_systemd_start"
+	@echo "Not running dh_systemd_start"
 
-override_dh_auto_clean:
-		rm -rf etc/sonm
-		rm ./sonmmarketplace
-		dh_auto_clean
+#override_dh_auto_clean:
+	rm -rf etc/sonm
+	rm ./sonmmarketplace
+#	dh_auto_clean
