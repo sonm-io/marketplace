@@ -54,14 +54,16 @@ func (s *MarketplaceTestSuite) TearDownTest() {
 func (s *MarketplaceTestSuite) TestMarketPlace() {
 
 	//s.T().Run("CreateOrder", func(t *testing.T) {
-	s.createOrder()
+	s.createBidOrder()
+	s.createAskOrder()
 	//})
 
 	//	s.T().Run("GetOrderByID", func(t *testing.T) {
-	s.getOrderByID()
+	s.getBidOrderByID()
 	//	})
 
-	s.getOrders()
+	s.getBidOrders()
+	s.getAskOrders()
 }
 
 func NewGRPCClient(creds credentials.TransportCredentials) (*grpc.ClientConn, error) {

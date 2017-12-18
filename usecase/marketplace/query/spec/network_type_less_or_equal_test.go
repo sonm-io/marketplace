@@ -6,36 +6,36 @@ import (
 	"testing"
 )
 
-func TestStorageGreaterOrEqualIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.T) {
+func TestNetworkTypeLessOrEqualIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
 		Slot: &ds.Slot{
 			Resources: ds.Resources{
-				Storage: 10000,
+				NetworkType: ds.NoNetwork,
 			},
 		},
 	}
 
 	// act
-	s := NewStorageGreaterOrEqual(8000)
+	s := NewNetworkTypeLessOrEqual(ds.Inbound)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert
 	assert.True(t, obtained)
 }
 
-func TestStorageGreaterOrEqualIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturned(t *testing.T) {
+func TestNetworkTypeLessOrEqualIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
 		Slot: &ds.Slot{
 			Resources: ds.Resources{
-				Storage: 10000,
+				NetworkType: ds.Inbound,
 			},
 		},
 	}
 
 	// act
-	s := NewStorageGreaterOrEqual(12000)
+	s := NewNetworkTypeLessOrEqual(ds.NoNetwork)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert

@@ -85,7 +85,7 @@ func bindCreateAskOrderCommand(req *pb.Order, cmd *command.CreateAskOrder) {
 	}
 	cmd.ID = ID
 	cmd.Price = req.GetPrice()
-	cmd.SupplierID = req.GetByuerID()
+	cmd.SupplierID = req.GetSupplierID()
 
 	bindSlot(req.Slot, &cmd.Slot)
 }

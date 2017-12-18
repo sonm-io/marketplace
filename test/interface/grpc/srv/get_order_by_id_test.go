@@ -5,7 +5,7 @@ import (
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 )
 
-func (s *MarketplaceTestSuite) getOrderByID() {
+func (s *MarketplaceTestSuite) getBidOrderByID() {
 	// arrange
 	expected := &pb.Order{
 		Id:        "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
@@ -14,7 +14,8 @@ func (s *MarketplaceTestSuite) getOrderByID() {
 		ByuerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
 
 		Slot: &pb.Slot{
-			BuyerRating: 555,
+			BuyerRating:    555,
+			SupplierRating: 666,
 			Resources: &pb.Resources{
 				CpuCores: 1,
 				GpuCount: pb.GPUCount_SINGLE_GPU,

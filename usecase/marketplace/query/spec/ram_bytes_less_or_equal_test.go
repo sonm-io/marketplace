@@ -6,36 +6,36 @@ import (
 	"testing"
 )
 
-func TestStorageGreaterOrEqualIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.T) {
+func TestRamBytesLessOrEqualIsSatisfiedBy_SatisfyingOrderGiven_TrueReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
 		Slot: &ds.Slot{
 			Resources: ds.Resources{
-				Storage: 10000,
+				RAMBytes: 10000,
 			},
 		},
 	}
 
 	// act
-	s := NewStorageGreaterOrEqual(8000)
+	s := NewRAMBytesLessOrEqual(12000)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert
 	assert.True(t, obtained)
 }
 
-func TestStorageGreaterOrEqualIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturned(t *testing.T) {
+func TestRamBytesLessOrEqualIsSatisfiedBy_UnsatisfyingOrderGiven_FalseReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
 		Slot: &ds.Slot{
 			Resources: ds.Resources{
-				Storage: 10000,
+				RAMBytes: 6000,
 			},
 		},
 	}
 
 	// act
-	s := NewStorageGreaterOrEqual(12000)
+	s := NewRAMBytesLessOrEqual(4000)
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert
