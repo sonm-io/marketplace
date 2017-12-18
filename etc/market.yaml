@@ -1,4 +1,6 @@
-address: "127.0.0.1:9095"
+address: "0.0.0.0:9095"
+
+data_dir: "/etc/sonm"
 
 # blockchain-specific settings.
 ethereum:

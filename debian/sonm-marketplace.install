@@ -1,2 +1,3 @@
 sonmmarketplace usr/bin
 etc/sonm/marketplace-default.yaml
+etc/sonm/schema.sql
