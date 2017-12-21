@@ -5,6 +5,6 @@ data_dir: "/etc/sonm"
 # blockchain-specific settings.
 ethereum:
   # path to keystore
-  key_store: "./keys"
+  key_store: "./etc/keys"
   # passphrase for keystore
   pass_phrase: "any"
