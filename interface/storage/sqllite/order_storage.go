@@ -1,8 +1,8 @@
 package sqllite
 
 import (
-	"fmt"
 	"database/sql"
+	"fmt"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
