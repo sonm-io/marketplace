@@ -32,7 +32,7 @@ func TestCreateBidOrderHandlerHandle_ValidCommandGiven_BidOrderCreated(t *testin
 		},
 	}
 
-	expectedOrder, _ := entity.NewBidOrder(cmd.ID, cmd.BuyerID, cmd.Price, cmd.Slot)
+	expectedOrder, _ := entity.NewBidOrder(cmd.ID, cmd.BuyerID, cmd.SupplierID, cmd.Price, cmd.Slot)
 
 	storage := mocks.NewMockCreateBidOrderStorage(ctrl)
 	storage.EXPECT().Add(&expectedOrder.Order).Times(1).Return(nil)

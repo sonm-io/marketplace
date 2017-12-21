@@ -2,6 +2,9 @@ package srv_test
 
 import (
 	"context"
+
+	"github.com/sonm-io/marketplace/infra/util"
+
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 )
 
@@ -19,13 +22,16 @@ func (s *MarketplaceTestSuite) getBidOrders() {
 		Count: 100,
 	}
 
+	// smth like "0x9B27D3C3571731deDb23EaFEa34a3a6E05daE159"
+	BuyerID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
+
 	expected := &pb.GetOrdersReply{
 		Orders: []*pb.Order{
 			{
 				Id:        "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
 				OrderType: pb.OrderType_BID,
 				Price:     "777",
-				ByuerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+				ByuerID:   BuyerID,
 
 				Slot: &pb.Slot{
 					BuyerRating:    555,
@@ -80,13 +86,16 @@ func (s *MarketplaceTestSuite) getAskOrders() {
 		Count: 100,
 	}
 
+	// smth like "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD"
+	SupplierID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
+
 	expected := &pb.GetOrdersReply{
 		Orders: []*pb.Order{
 			{
 				Id:         "fc018acd-d9a9-4b8a-a45f-f90456a469c1",
 				OrderType:  pb.OrderType_ASK,
 				Price:      "777",
-				SupplierID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+				SupplierID: SupplierID,
 
 				Slot: &pb.Slot{
 					SupplierRating: 555,

@@ -4,18 +4,20 @@ import (
 	"context"
 	"testing"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 
-	"fmt"
 	"github.com/sonm-io/marketplace/usecase/intf"
 	"github.com/sonm-io/marketplace/usecase/intf/mocks"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
+
+	"fmt"
 )
 
 func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
@@ -23,6 +25,7 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.Order{
 		Id:        "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		OrderType: pb.OrderType_BID,
@@ -42,7 +45,7 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 
 	expected := &pb.Order{
 		Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-		ByuerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+		ByuerID: buyerID,
 		Price:   "100",
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
@@ -50,6 +53,10 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 				RamBytes: 10000,
 			},
 		},
+	}
+
+	AuthInfoExtractor = func(ctx context.Context) (common.Address, error) {
+		return common.HexToAddress(buyerID), nil
 	}
 
 	orderReport := report.GetOrderReport{
@@ -97,10 +104,10 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	supplierID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.Order{
-		//Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		OrderType:  pb.OrderType_ASK,
-		SupplierID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+		SupplierID: supplierID,
 		Price:      "100",
 		Slot: &pb.Slot{
 			SupplierRating: 555,
@@ -118,7 +125,7 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 
 	expected := &pb.Order{
 		Id:         expectedID,
-		SupplierID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+		SupplierID: supplierID,
 		Price:      "100",
 		Slot: &pb.Slot{
 			SupplierRating: 555,
@@ -126,10 +133,14 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 		},
 	}
 
+	AuthInfoExtractor = func(ctx context.Context) (common.Address, error) {
+		return common.HexToAddress(supplierID), nil
+	}
+
 	orderReport := report.GetOrderReport{
 		Order: ds.Order{
 			ID:         expectedID,
-			SupplierID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+			SupplierID: supplierID,
 			Price:      "100",
 			Slot: &ds.Slot{
 				SupplierRating: 555,
@@ -181,7 +192,7 @@ func TestMarketplaceCreateOrder_InValidRequest_ErrorReturned(t *testing.T) {
 		},
 	}
 
-	expectedErr := fmt.Errorf("an error occured")
+	expectedErr := fmt.Errorf("an error occurred")
 
 	var (
 		cmd command.CreateBidOrder
@@ -200,7 +211,7 @@ func TestMarketplaceCreateOrder_InValidRequest_ErrorReturned(t *testing.T) {
 	_, err := m.CreateOrder(context.Background(), req)
 
 	// assert
-	assert.Error(t, err)
+	assert.EqualError(t, err, "cannot create order: an error occurred")
 }
 
 func TestMarketplaceCreateOrder_InvalidOrderTypeGiven_ErrorReturned(t *testing.T) {

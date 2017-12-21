@@ -7,9 +7,12 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
+
+	"github.com/sonm-io/marketplace/infra/util"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
+
 	"github.com/sonm-io/marketplace/usecase/intf"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 )
@@ -20,20 +23,31 @@ var IDGenerator = func() string {
 	return uuid.New()
 }
 
+// AuthInfoExtractor extracts auth info from context.
+var AuthInfoExtractor = util.ExtractEthAddr
+
 // CreateOrder creates a bid order.
 func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order, error) {
+	key, err := AuthInfoExtractor(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("cannot get auth info: %v", err)
+	}
+
 	var (
 		cmd intf.Command
 		ID  string
 	)
+
 	switch req.OrderType {
 	case pb.OrderType_BID:
+		req.ByuerID = key.Hex()
 		c := command.CreateBidOrder{}
 		bindCreateBidOrderCommand(req, &c)
 		ID = c.ID
 		cmd = c
 
 	case pb.OrderType_ASK:
+		req.SupplierID = key.Hex()
 		c := command.CreateAskOrder{}
 		bindCreateAskOrderCommand(req, &c)
 		ID = c.ID
@@ -73,6 +87,7 @@ func bindCreateBidOrderCommand(req *pb.Order, cmd *command.CreateBidOrder) {
 	cmd.ID = ID
 	cmd.Price = req.GetPrice()
 	cmd.BuyerID = req.GetByuerID()
+	cmd.SupplierID = req.GetSupplierID()
 
 	bindSlot(req.Slot, &cmd.Slot)
 }
@@ -86,6 +101,7 @@ func bindCreateAskOrderCommand(req *pb.Order, cmd *command.CreateAskOrder) {
 	cmd.ID = ID
 	cmd.Price = req.GetPrice()
 	cmd.SupplierID = req.GetSupplierID()
+	cmd.BuyerID = req.GetByuerID()
 
 	bindSlot(req.Slot, &cmd.Slot)
 }
