@@ -43,3 +43,12 @@ func (s *MarketplaceTestSuite) getBidOrderByID() {
 	s.NoError(err)
 	s.Equal(expected, obtained)
 }
+
+func (s *MarketplaceTestSuite) getInExistentOrder() {
+
+	// act
+	_, err := s.client.GetOrderByID(context.Background(), &pb.ID{Id: "non-existent-order"})
+
+	// assert
+	s.EqualError(err, `rpc error: code = Unknown desc = order "non-existent-order" is not found`)
+}

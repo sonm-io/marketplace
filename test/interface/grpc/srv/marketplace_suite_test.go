@@ -59,6 +59,7 @@ func (s *MarketplaceTestSuite) TestMarketPlace() {
 	//})
 
 	//	s.T().Run("GetOrderByID", func(t *testing.T) {
+	s.getInExistentOrder()
 	s.getBidOrderByID()
 	//	})
 
