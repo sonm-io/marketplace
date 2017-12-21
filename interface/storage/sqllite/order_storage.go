@@ -2,6 +2,7 @@ package sqllite
 
 import (
 	"fmt"
+	"database/sql"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
@@ -56,6 +57,9 @@ func (s *OrderStorage) Remove(ID string) error {
 func (s *OrderStorage) ByID(ID string) (ds.Order, error) {
 	var row sds.OrderRow
 	if err := s.e.FetchRow(ID, &row); err != nil {
+		if err == sql.ErrNoRows {
+			return ds.Order{}, fmt.Errorf("order %q is not found", ID)
+		}
 		return ds.Order{}, fmt.Errorf("cannot get order: %v", err)
 	}
 
