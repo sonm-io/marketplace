@@ -2,16 +2,20 @@ package srv_test
 
 import (
 	"context"
+	"github.com/sonm-io/marketplace/infra/util"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 )
 
 func (s *MarketplaceTestSuite) getBidOrderByID() {
-	// arrange
+
+	// smth like "0x9B27D3C3571731deDb23EaFEa34a3a6E05daE159"
+	BuyerID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
+
 	expected := &pb.Order{
 		Id:        "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
 		OrderType: pb.OrderType_BID,
 		Price:     "777",
-		ByuerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+		ByuerID:   BuyerID,
 
 		Slot: &pb.Slot{
 			BuyerRating:    555,
@@ -38,4 +42,13 @@ func (s *MarketplaceTestSuite) getBidOrderByID() {
 	// assert
 	s.NoError(err)
 	s.Equal(expected, obtained)
+}
+
+func (s *MarketplaceTestSuite) getInExistentOrder() {
+
+	// act
+	_, err := s.client.GetOrderByID(context.Background(), &pb.ID{Id: "non-existent-order"})
+
+	// assert
+	s.EqualError(err, `rpc error: code = Unknown desc = order "non-existent-order" is not found`)
 }

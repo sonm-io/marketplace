@@ -58,11 +58,8 @@ func (s *OrderStorage) FetchRow(ID string, row *ds.OrderRow) error {
 		Scan(&row.ID, &row.Type, &row.SupplierID, &row.BuyerID, &row.Price, &row.BuyerRating, &row.SupplierRating,
 			&row.CPUCores, &row.RAMBytes, &row.GPUCount, &row.Storage,
 			&row.NetInbound, &row.NetOutbound, &row.NetType, &row.Properties)
-	if err != nil {
-		return fmt.Errorf("cannot fetch row: %v", err)
-	}
 
-	return nil
+	return err
 }
 
 func (s *OrderStorage) FetchAll() (ds.OrderRows, error) {

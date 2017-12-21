@@ -32,7 +32,7 @@ func (h CreateAskOrderHandler) Handle(cmd intf.Command) error {
 		return fmt.Errorf("invalid command %v given", cmd)
 	}
 
-	order, err := entity.NewAskOrder(c.ID, c.SupplierID, c.Price, c.Slot)
+	order, err := entity.NewAskOrder(c.ID, c.SupplierID, c.BuyerID, c.Price, c.Slot)
 	if err != nil {
 		return err
 	}

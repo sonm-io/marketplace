@@ -17,11 +17,12 @@ var (
 )
 
 // NewAskOrder creates a new ask order.
-func NewAskOrder(ID, supplierID, price string, slot ds.Slot) (*Order, error) {
+func NewAskOrder(ID, supplierID, buyerID, price string, slot ds.Slot) (*Order, error) {
 	o := &Order{
 		Order: ds.Order{
 			ID:         ID,
 			SupplierID: supplierID,
+			BuyerID:    buyerID,
 			Price:      price,
 			OrderType:  ds.Ask,
 			Slot:       &slot,
@@ -40,14 +41,15 @@ func NewAskOrder(ID, supplierID, price string, slot ds.Slot) (*Order, error) {
 }
 
 // NewBidOrder creates a new bid order.
-func NewBidOrder(ID, buyerID, price string, slot ds.Slot) (*Order, error) {
+func NewBidOrder(ID, buyerID, supplierID, price string, slot ds.Slot) (*Order, error) {
 	o := &Order{
 		Order: ds.Order{
-			ID:        ID,
-			BuyerID:   buyerID,
-			Price:     price,
-			OrderType: ds.Bid,
-			Slot:      &slot,
+			ID:         ID,
+			BuyerID:    buyerID,
+			SupplierID: supplierID,
+			Price:      price,
+			OrderType:  ds.Bid,
+			Slot:       &slot,
 		},
 	}
 

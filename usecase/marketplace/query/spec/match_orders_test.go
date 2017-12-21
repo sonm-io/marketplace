@@ -12,11 +12,44 @@ func TestMatchOrdersIsSatisfiedBy_SatisfyingBidOrderGiven_TrueReturned(t *testin
 	order := &ds.Order{
 		OrderType: ds.Bid,
 		Slot: &ds.Slot{
+			BuyerRating: 300,
+			Resources: ds.Resources{
+				CPUCores: 2,
+				RAMBytes: 12000,
+				Storage:  100000000,
+			},
+		},
+	}
+
+	matchAgainst := ds.Order{
+		OrderType: ds.Bid,
+		Slot: &ds.Slot{
 			BuyerRating: 500,
 			Resources: ds.Resources{
-				CPUCores: 4,
-				RAMBytes: 12000,
+				CPUCores:     4,
+				RAMBytes:     12000,
+				Storage:      12000000,
+				NetTrafficIn: 500,
 			},
+		},
+	}
+
+	// act
+	s, err := MatchOrders(matchAgainst)
+	require.NoError(t, err)
+
+	obtained := s.IsSatisfiedBy(order)
+
+	// assert
+	assert.True(t, obtained)
+}
+
+func TestMatchOrdersIsSatisfiedBy_UnsatisfyingBidOrderGiven_FalseReturned(t *testing.T) {
+	// arrange
+	order := &ds.Order{
+		OrderType: ds.Ask,
+		Slot: &ds.Slot{
+			BuyerRating: 500,
 		},
 	}
 
@@ -38,18 +71,13 @@ func TestMatchOrdersIsSatisfiedBy_SatisfyingBidOrderGiven_TrueReturned(t *testin
 	obtained := s.IsSatisfiedBy(order)
 
 	// assert
-	assert.True(t, obtained)
+	assert.False(t, obtained)
 }
 
-func TestMatchOrdersIsSatisfiedBy_UnsatisfyingBidOrderGiven_FalseReturned(t *testing.T) {
+func TestMatchOrdersIsSatisfiedBy_IncorrectOrderTypeGiven_ErrorReturned(t *testing.T) {
 	// arrange
-	order := &ds.Order{
-		Slot: &ds.Slot{
-			BuyerRating: 500,
-		},
-	}
-
 	matchAgainst := ds.Order{
+		OrderType: ds.Any,
 		Slot: &ds.Slot{
 			BuyerRating: 300,
 			Resources: ds.Resources{
@@ -60,13 +88,10 @@ func TestMatchOrdersIsSatisfiedBy_UnsatisfyingBidOrderGiven_FalseReturned(t *tes
 	}
 
 	// act
-	s, err := MatchOrders(matchAgainst)
-	require.NoError(t, err)
-
-	obtained := s.IsSatisfiedBy(order)
+	_, err := MatchOrders(matchAgainst)
 
 	// assert
-	assert.False(t, obtained)
+	assert.EqualError(t, err, "searching by any type is not supported")
 }
 
 func TestMatchOrdersIsSatisfiedBy_SatisfyingAskOrderGiven_TrueReturned(t *testing.T) {
@@ -77,8 +102,10 @@ func TestMatchOrdersIsSatisfiedBy_SatisfyingAskOrderGiven_TrueReturned(t *testin
 		Slot: &ds.Slot{
 			SupplierRating: 500,
 			Resources: ds.Resources{
-				CPUCores: 1,
-				RAMBytes: 100000000,
+				CPUCores:    2,
+				RAMBytes:    1200000000,
+				Storage:     2000000000,
+				NetworkType: ds.Inbound,
 			},
 		},
 	}
@@ -175,4 +202,61 @@ func TestMatchOrdersIsSatisfiedBy_OrderWithNoSlotWithNoOwnerGiven_FalseReturned(
 
 	// assert
 	assert.False(t, obtained)
+}
+
+func TestMatchOrdersIsSatisfiedBy_OrderWithBuyerIDWithNoSlotGiven_TrueReturned(t *testing.T) {
+	// arrange
+	order := &ds.Order{
+		BuyerID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+		Slot: &ds.Slot{
+			BuyerRating: 500,
+		},
+	}
+
+	matchAgainst := ds.Order{
+		BuyerID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+	}
+
+	// act
+	s, err := MatchOrders(matchAgainst)
+	require.NoError(t, err)
+
+	obtained := s.IsSatisfiedBy(order)
+
+	// assert
+	assert.True(t, obtained)
+}
+
+func TestMatchOrdersIsSatisfiedBy_OrderWithSupplierIDAndSlotGiven_TrueReturned(t *testing.T) {
+	// arrange
+	order := &ds.Order{
+		OrderType: ds.Bid,
+		BuyerID:   "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+		Slot: &ds.Slot{
+			Resources: ds.Resources{
+				NetTrafficOut: 15000,
+			},
+		},
+	}
+
+	matchAgainst := ds.Order{
+		OrderType: ds.Bid,
+		BuyerID:   "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+		Slot: &ds.Slot{
+			Resources: ds.Resources{
+				NetworkType:   ds.NoNetwork,
+				GPUCount:      ds.NoGPU,
+				NetTrafficOut: 20000,
+			},
+		},
+	}
+
+	// act
+	s, err := MatchOrders(matchAgainst)
+	require.NoError(t, err)
+
+	obtained := s.IsSatisfiedBy(order)
+
+	// assert
+	assert.True(t, obtained)
 }

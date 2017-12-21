@@ -8,6 +8,8 @@ type CreateBidOrder struct {
 	ID string
 	// Buyer's Ethereum ID
 	BuyerID string
+	// Supplier's Ethereum ID
+	SupplierID string
 	// Order price
 	Price string
 	// Slot a slot

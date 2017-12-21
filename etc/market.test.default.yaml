@@ -1,4 +1,4 @@
-address: "0.0.0.0:9095"
+address: "127.0.0.1:5095"
 
 # path to data dir, default ./data
 data_dir: "<DATA_DIR>"
