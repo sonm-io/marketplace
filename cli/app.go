@@ -280,6 +280,13 @@ func (a *App) Creds() credentials.TransportCredentials {
 	return a.creds
 }
 
+// PublicKey used in integration tests.
+func (a *App) PublicKey() ecdsa.PublicKey {
+	a.RLock()
+	defer a.RUnlock()
+	return a.privateKey.PublicKey
+}
+
 func (a *App) pathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
