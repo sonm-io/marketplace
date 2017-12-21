@@ -12,6 +12,9 @@ func (s *MarketplaceTestSuite) getBidOrders() {
 			OrderType: pb.OrderType_BID,
 			Slot: &pb.Slot{
 				Resources: &pb.Resources{
+					CpuCores:     4,
+					GpuCount:     pb.GPUCount_SINGLE_GPU,
+					NetworkType:  pb.NetworkType_INCOMING,
 					NetTrafficIn: 500000,
 				},
 			},

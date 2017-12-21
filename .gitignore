@@ -6,7 +6,8 @@ bin/*
 /integration-results/
 /.cover/
 /data/data.db
-/keys/
+/etc/keys/
+/etc/market.test.yaml
 
 /mocks/*
 interface/storage/inmemory/mocks/*
