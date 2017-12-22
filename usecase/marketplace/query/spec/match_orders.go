@@ -40,7 +40,6 @@ func MatchOrders(order ds.Order) (intf.CompositeSpecification, error) {
 
 func forBid(slot ds.Slot) intf.CompositeSpecification {
 	s := NewIsBidOrder().
-		And(NewSupplierRatingGreaterOrEqual(slot.SupplierRating)).
 		And(NewGPUCountLessOrEqual(slot.Resources.GPUCount)).
 		And(NewNetworkTypeLessOrEqual(slot.Resources.NetworkType))
 
@@ -69,7 +68,6 @@ func forBid(slot ds.Slot) intf.CompositeSpecification {
 
 func forAsk(slot ds.Slot) intf.CompositeSpecification {
 	s := NewIsAskOrder().
-		And(NewSupplierRatingGreaterOrEqual(slot.SupplierRating)).
 		And(NewCPUCoresGreaterOrEqual(slot.Resources.CPUCores)).
 		And(NewRAMBytesGreaterOrEqual(slot.Resources.RAMBytes)).
 		And(NewGPUCountGreaterOrEqual(slot.Resources.GPUCount)).
