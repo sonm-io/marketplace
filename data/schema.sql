@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS orders
   price TEXT DEFAULT 0 NOT NULL,
   slot_buyer_rating INTEGER DEFAULT 0 NOT NULL,
   slot_supplier_rating INTEGER DEFAULT 0 NOT NULL,
+  slot_duration INTEGER DEFAULT 0 NOT NULL,
   resources_cpu_cores INTEGER DEFAULT 0 NOT NULL,
   resources_ram_bytes  INTEGER DEFAULT 0 NOT NULL,
   resources_gpu_count INTEGER DEFAULT 0 NOT NULL,

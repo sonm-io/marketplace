@@ -37,6 +37,7 @@ func (s *MarketplaceTestSuite) getBidOrders() {
 				ByuerID:   BuyerID,
 
 				Slot: &pb.Slot{
+					Duration:       900,
 					BuyerRating:    555,
 					SupplierRating: 666,
 					Resources: &pb.Resources{
@@ -72,6 +73,7 @@ func (s *MarketplaceTestSuite) getAskOrders() {
 		Order: &pb.Order{
 			OrderType: pb.OrderType_ASK,
 			Slot: &pb.Slot{
+				Duration:       900,
 				SupplierRating: 555,
 				Resources: &pb.Resources{
 					CpuCores:     1,
@@ -101,6 +103,7 @@ func (s *MarketplaceTestSuite) getAskOrders() {
 				SupplierID: SupplierID,
 
 				Slot: &pb.Slot{
+					Duration:       600,
 					SupplierRating: 555,
 					Resources: &pb.Resources{
 						CpuCores: 1,
