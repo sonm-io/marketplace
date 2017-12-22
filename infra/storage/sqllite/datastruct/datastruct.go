@@ -32,6 +32,8 @@ type OrderRow struct {
 	NetOutbound uint64 `db:"resources_net_outbound"`
 
 	Properties Properties `db:"resources_properties"`
+
+	Status uint8 `db:"status"`
 }
 
 // Properties represents Slot properties.

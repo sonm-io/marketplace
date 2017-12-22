@@ -59,12 +59,14 @@ func (s *MarketplaceTestSuite) TestMarketPlace() {
 	//})
 
 	//	s.T().Run("GetOrderByID", func(t *testing.T) {
-	s.getInExistentOrder()
 	s.getBidOrderByID()
+	s.getInExistentOrder()
 	//	})
 
 	s.getBidOrders()
 	s.getAskOrders()
+
+	s.CancelOrder()
 }
 
 func NewGRPCClient(creds credentials.TransportCredentials) (*grpc.ClientConn, error) {

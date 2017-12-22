@@ -4,6 +4,9 @@ import (
 	"context"
 	"go.uber.org/zap"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 
@@ -32,8 +35,7 @@ func (m *Marketplace) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (
 
 	orders := report.GetOrdersReport{}
 	if err := m.ordersBySpec.Handle(q, &orders); err != nil {
-		logger.Info("Cannot retrieve orders", zap.Error(err))
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "cannot get orders: %v", err)
 	}
 	logger.Info("Orders retrieved", zap.Any("orders", orders))
 

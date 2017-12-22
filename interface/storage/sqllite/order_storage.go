@@ -9,10 +9,17 @@ import (
 	"github.com/sonm-io/marketplace/usecase/intf"
 )
 
+type Status uint8
+
+const (
+	InActive Status = 0
+	Active          = 1
+)
+
 // Engine represents Storage Engine.
 type Engine interface {
 	InsertRow(row *sds.OrderRow) error
-	DeleteRow(ID string) error
+	UpdateStatus(ID string, status uint8) error
 	FetchRow(ID string, row *sds.OrderRow) error
 	FetchAll() (sds.OrderRows, error)
 }
@@ -46,7 +53,7 @@ func (s *OrderStorage) Add(o *ds.Order) error {
 
 // Remove removes an Order with the given ID from OrderStorage.
 func (s *OrderStorage) Remove(ID string) error {
-	if err := s.e.DeleteRow(ID); err != nil {
+	if err := s.e.UpdateStatus(ID, uint8(InActive)); err != nil {
 		return fmt.Errorf("cannot remove order: %v", err)
 	}
 	return nil
@@ -58,13 +65,17 @@ func (s *OrderStorage) ByID(ID string) (ds.Order, error) {
 	var row sds.OrderRow
 	if err := s.e.FetchRow(ID, &row); err != nil {
 		if err == sql.ErrNoRows {
-			return ds.Order{}, fmt.Errorf("order %q is not found", ID)
+			return ds.Order{}, fmt.Errorf("order %s is not found", ID)
 		}
-		return ds.Order{}, fmt.Errorf("cannot get order: %v", err)
+		return ds.Order{}, fmt.Errorf("an error occured: %v", err)
 	}
 
 	order := ds.Order{}
 	orderFromRow(&order, &row)
+
+	if row.Status == uint8(InActive) {
+		return ds.Order{}, fmt.Errorf("order %s is inactive", ID)
+	}
 
 	return order, nil
 }

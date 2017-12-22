@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS orders
   resources_net_inbound INTEGER DEFAULT 0 NOT NULL,
   resources_net_outbound INTEGER DEFAULT 0 NOT NULL,
   resources_net_type INTEGER DEFAULT 0 NOT NULL,
-  resources_properties TEXT
+  resources_properties TEXT,
+  status INTEGER NOT NULL DEFAULT 1
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS orders_id_uindex on orders (id);

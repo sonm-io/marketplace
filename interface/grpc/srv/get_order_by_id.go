@@ -1,9 +1,12 @@
 package srv
 
 import (
+	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
 	"golang.org/x/net/context"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
@@ -17,8 +20,7 @@ func (m *Marketplace) GetOrderByID(ctx context.Context, req *pb.ID) (*pb.Order, 
 
 	order := &report.GetOrderReport{}
 	if err := m.orderByID.Handle(query.GetOrder{ID: req.GetId()}, order); err != nil {
-		logger.Sugar().Infof("Cannot retrieve order: %v\n", err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "cannot get order: %v", err)
 	}
 
 	resp := &pb.Order{}

@@ -6,6 +6,9 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
 	"golang.org/x/net/context"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	ds "github.com/sonm-io/marketplace/datastruct"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 
@@ -42,7 +45,7 @@ func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order
 	}
 
 	if err := m.createOrder(ctx, cmd); err != nil {
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "Cannot create order: %v", err)
 	}
 
 	return m.GetOrderByID(ctx, &pb.ID{Id: ID})
@@ -53,8 +56,7 @@ func (m *Marketplace) createOrder(ctx context.Context, cmd intf.Command) error {
 	logger.Sugar().Infof("Creating order %+v", cmd)
 
 	if err := m.commandBus.Handle(cmd); err != nil {
-		logger.Sugar().Infof("cannot create order: %v\n", err)
-		return fmt.Errorf("cannot create order: %v", err)
+		return err
 	}
 
 	logger.Sugar().Info("order created")
