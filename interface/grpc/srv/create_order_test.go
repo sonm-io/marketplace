@@ -211,7 +211,7 @@ func TestMarketplaceCreateOrder_InValidRequest_ErrorReturned(t *testing.T) {
 	_, err := m.CreateOrder(context.Background(), req)
 
 	// assert
-	assert.EqualError(t, err, "cannot create order: an error occurred")
+	assert.EqualError(t, err, "rpc error: code = Internal desc = Cannot create order: an error occurred")
 }
 
 func TestMarketplaceCreateOrder_InvalidOrderTypeGiven_ErrorReturned(t *testing.T) {
