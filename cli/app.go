@@ -17,6 +17,7 @@ import (
 
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	gRPC "google.golang.org/grpc"
+
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/grpclog"
 
@@ -213,10 +214,12 @@ func (a *App) initServer(mp *srv.Marketplace) error {
 		grpc.WithGRPCOptions(gRPC.Creds(creds)),
 
 		grpc.WithUnaryInterceptor(interceptor.NewUnaryZapLogger(logger)),
+		grpc.WithUnaryInterceptor(interceptor.NewUnaryAuthenticator(interceptor.AuthFunc)),
 		grpc.WithUnaryInterceptor(interceptor.NewUnarySimpleTracer()),
 		grpc.WithUnaryInterceptor(interceptor.NewUnaryPanic()),
 
 		grpc.WithStreamInterceptor(interceptor.NewStreamZapLogger(logger)),
+		grpc.WithStreamInterceptor(interceptor.NewStreamAuthenticator(interceptor.AuthFunc)),
 		grpc.WithStreamInterceptor(interceptor.NewStreamSimpleTracer()),
 		grpc.WithStreamInterceptor(interceptor.NewStreamPanic()),
 	}

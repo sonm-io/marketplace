@@ -26,6 +26,11 @@ func (e EthAuthInfo) AuthType() string {
 	return "ETH+" + e.TLS.AuthType()
 }
 
+// WalletAddress returns ethereum wallet address.
+func (e EthAuthInfo) WalletAddress() ethcommon.Address {
+	return e.Wallet
+}
+
 type tlsVerifier struct {
 	credentials.TransportCredentials
 }
