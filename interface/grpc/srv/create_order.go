@@ -3,34 +3,23 @@ package srv
 import (
 	"fmt"
 
-	"github.com/pborman/uuid"
+	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
 	"golang.org/x/net/context"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
-
-	"github.com/sonm-io/marketplace/infra/util"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
+	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 
 	"github.com/sonm-io/marketplace/usecase/intf"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 )
 
-// IDGenerator generates command IDs.
-// Function is used to ease mocking.
-var IDGenerator = func() string {
-	return uuid.New()
-}
-
-// AuthInfoExtractor extracts auth info from context.
-var AuthInfoExtractor = util.ExtractEthAddr
-
 // CreateOrder creates a bid order.
 func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order, error) {
-	key, err := AuthInfoExtractor(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("cannot get auth info: %v", err)
+	if err := CheckPermissions(ctx, req); err != nil {
+		return nil, err
 	}
 
 	var (
@@ -40,14 +29,12 @@ func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order
 
 	switch req.OrderType {
 	case pb.OrderType_BID:
-		req.ByuerID = key.Hex()
 		c := command.CreateBidOrder{}
 		bindCreateBidOrderCommand(req, &c)
 		ID = c.ID
 		cmd = c
 
 	case pb.OrderType_ASK:
-		req.SupplierID = key.Hex()
 		c := command.CreateAskOrder{}
 		bindCreateAskOrderCommand(req, &c)
 		ID = c.ID
@@ -58,7 +45,7 @@ func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order
 	}
 
 	if err := m.createOrder(ctx, cmd); err != nil {
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "Cannot create order: %v", err)
 	}
 
 	return m.GetOrderByID(ctx, &pb.ID{Id: ID})
@@ -69,8 +56,7 @@ func (m *Marketplace) createOrder(ctx context.Context, cmd intf.Command) error {
 	logger.Sugar().Infof("Creating order %+v", cmd)
 
 	if err := m.commandBus.Handle(cmd); err != nil {
-		logger.Sugar().Infof("cannot create order: %v\n", err)
-		return fmt.Errorf("cannot create order: %v", err)
+		return err
 	}
 
 	logger.Sugar().Info("order created")
@@ -113,6 +99,7 @@ func bindSlot(pbSlot *pb.Slot, dsSlot *ds.Slot) {
 
 	dsSlot.SupplierRating = pbSlot.GetSupplierRating()
 	dsSlot.BuyerRating = pbSlot.GetBuyerRating()
+	dsSlot.Duration = pbSlot.GetDuration()
 
 	if pbSlot.Resources == nil {
 		return

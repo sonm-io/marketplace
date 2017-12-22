@@ -18,8 +18,9 @@ type OrderRow struct {
 	BuyerID    string `db:"buyer_id"`
 	SupplierID string `db:"supplier_id"`
 
-	BuyerRating    int64 `db:"slot_buyer_rating"`
-	SupplierRating int64 `db:"slot_supplier_rating"`
+	Duration       uint64 `db:"slot_duration"`
+	BuyerRating    int64  `db:"slot_buyer_rating"`
+	SupplierRating int64  `db:"slot_supplier_rating"`
 
 	CPUCores uint64 `db:"resources_cpu_cores"`
 	RAMBytes uint64 `db:"resources_ram_bytes"`
@@ -31,6 +32,8 @@ type OrderRow struct {
 	NetOutbound uint64 `db:"resources_net_outbound"`
 
 	Properties Properties `db:"resources_properties"`
+
+	Status uint8 `db:"status"`
 }
 
 // Properties represents Slot properties.

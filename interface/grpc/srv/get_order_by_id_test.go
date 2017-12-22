@@ -2,14 +2,17 @@ package srv
 
 import (
 	"context"
+	"testing"
+
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
+
 	ds "github.com/sonm-io/marketplace/datastruct"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+
 	"github.com/sonm-io/marketplace/usecase/intf/mocks"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
-	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestMarketplace_GetOrderByID(t *testing.T) {
@@ -23,6 +26,7 @@ func TestMarketplace_GetOrderByID(t *testing.T) {
 		ByuerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
 		Price:   "100",
 		Slot: &pb.Slot{
+			Duration: 900,
 			Resources: &pb.Resources{
 				CpuCores: 4,
 				RamBytes: 10000,
@@ -40,6 +44,7 @@ func TestMarketplace_GetOrderByID(t *testing.T) {
 			BuyerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
 			Price:   "100",
 			Slot: &ds.Slot{
+				Duration: 900,
 				Resources: ds.Resources{
 					CPUCores: 4,
 					RAMBytes: 10000,

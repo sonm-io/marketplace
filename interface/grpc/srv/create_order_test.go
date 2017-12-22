@@ -2,11 +2,14 @@ package srv
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
@@ -16,8 +19,6 @@ import (
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
-
-	"fmt"
 )
 
 func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
@@ -29,7 +30,7 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 	req := &pb.Order{
 		Id:        "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		OrderType: pb.OrderType_BID,
-		ByuerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+		ByuerID:   buyerID,
 		Price:     "100",
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
@@ -55,14 +56,10 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 		},
 	}
 
-	AuthInfoExtractor = func(ctx context.Context) (common.Address, error) {
-		return common.HexToAddress(buyerID), nil
-	}
-
 	orderReport := report.GetOrderReport{
 		Order: ds.Order{
 			ID:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-			BuyerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+			BuyerID: buyerID,
 			Price:   "100",
 			Slot: &ds.Slot{
 				Resources: ds.Resources{
@@ -90,9 +87,10 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 		Return(nil)
 
 	m := NewMarketplace(createOrderMock, orderByIDMock, nil)
+	ctx := interceptor.EthAddrToContext(context.Background(), common.HexToAddress(buyerID))
 
 	// act
-	obtained, err := m.CreateOrder(context.Background(), req)
+	obtained, err := m.CreateOrder(ctx, req)
 
 	// assert
 	assert.NoError(t, err)
@@ -133,10 +131,6 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 		},
 	}
 
-	AuthInfoExtractor = func(ctx context.Context) (common.Address, error) {
-		return common.HexToAddress(supplierID), nil
-	}
-
 	orderReport := report.GetOrderReport{
 		Order: ds.Order{
 			ID:         expectedID,
@@ -165,9 +159,10 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 		Return(nil)
 
 	m := NewMarketplace(createOrderMock, orderByIDMock, nil)
+	ctx := interceptor.EthAddrToContext(context.Background(), common.HexToAddress(supplierID))
 
 	// act
-	obtained, err := m.CreateOrder(context.Background(), req)
+	obtained, err := m.CreateOrder(ctx, req)
 
 	// assert
 	assert.NoError(t, err)
@@ -179,10 +174,11 @@ func TestMarketplaceCreateOrder_InValidRequest_ErrorReturned(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.Order{
 		Id:        "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
 		OrderType: pb.OrderType_BID,
-		ByuerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+		ByuerID:   buyerID,
 		Price:     "100",
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
@@ -206,12 +202,13 @@ func TestMarketplaceCreateOrder_InValidRequest_ErrorReturned(t *testing.T) {
 		Return(expectedErr)
 
 	m := NewMarketplace(createOrderMock, nil, nil)
+	ctx := interceptor.EthAddrToContext(context.Background(), common.HexToAddress(buyerID))
 
 	// act
-	_, err := m.CreateOrder(context.Background(), req)
+	_, err := m.CreateOrder(ctx, req)
 
 	// assert
-	assert.EqualError(t, err, "cannot create order: an error occurred")
+	assert.EqualError(t, err, "rpc error: code = Internal desc = Cannot create order: an error occurred")
 }
 
 func TestMarketplaceCreateOrder_InvalidOrderTypeGiven_ErrorReturned(t *testing.T) {
@@ -219,17 +216,20 @@ func TestMarketplaceCreateOrder_InvalidOrderTypeGiven_ErrorReturned(t *testing.T
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.Order{
 		Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-		ByuerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+		ByuerID: buyerID,
 		Price:   "100",
 	}
 
 	m := NewMarketplace(nil, nil, nil)
+	ctx := interceptor.EthAddrToContext(context.Background(), common.HexToAddress(buyerID))
 
 	// act
-	_, err := m.CreateOrder(context.Background(), req)
+	_, err := m.CreateOrder(ctx, req)
 
 	// assert
-	assert.EqualError(t, err, "incorrect order type given: ANY")
+	assert.EqualError(t, err,
+		"rpc error: code = InvalidArgument desc = auth failed: incorrect order type given: ANY")
 }

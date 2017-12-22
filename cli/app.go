@@ -17,6 +17,7 @@ import (
 
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	gRPC "google.golang.org/grpc"
+
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/grpclog"
 
@@ -65,6 +66,9 @@ func (a *App) Init() error {
 	if err := a.initLogger(); err != nil {
 		return err
 	}
+
+	a.logger.Info("Config loaded form", zap.String("path", a.conf.CfgPath))
+	a.logger.Info("Public key", zap.String("address", util.PubKeyToAddr(a.privateKey.PublicKey).Hex()))
 
 	if err := a.initStorage(); err != nil {
 		return err
@@ -170,6 +174,7 @@ func (a *App) initStorage() error {
 		return fmt.Errorf("cannot get absolute path of database directory: %v", err)
 	}
 	a.conf.DataDir = dataDir
+	a.logger.Info("Data dir", zap.String("path", a.conf.DataDir))
 
 	a.logger.Info("Importing database schema", zap.String("schema", a.conf.DataDir+"/schema.sql"))
 	schema, err := ioutil.ReadFile(a.conf.DataDir + "/schema.sql")
@@ -213,10 +218,12 @@ func (a *App) initServer(mp *srv.Marketplace) error {
 		grpc.WithGRPCOptions(gRPC.Creds(creds)),
 
 		grpc.WithUnaryInterceptor(interceptor.NewUnaryZapLogger(logger)),
+		grpc.WithUnaryInterceptor(interceptor.NewUnaryAuthenticator(interceptor.AuthFunc)),
 		grpc.WithUnaryInterceptor(interceptor.NewUnarySimpleTracer()),
 		grpc.WithUnaryInterceptor(interceptor.NewUnaryPanic()),
 
 		grpc.WithStreamInterceptor(interceptor.NewStreamZapLogger(logger)),
+		grpc.WithStreamInterceptor(interceptor.NewStreamAuthenticator(interceptor.AuthFunc)),
 		grpc.WithStreamInterceptor(interceptor.NewStreamSimpleTracer()),
 		grpc.WithStreamInterceptor(interceptor.NewStreamPanic()),
 	}
