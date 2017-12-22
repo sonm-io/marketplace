@@ -110,6 +110,7 @@ func orderToRow(order *ds.Order, row *sds.OrderRow) {
 		order.Slot = &ds.Slot{}
 	}
 
+	row.Duration = order.Slot.Duration
 	row.BuyerRating = order.Slot.BuyerRating
 	row.SupplierRating = order.Slot.SupplierRating
 
@@ -142,6 +143,7 @@ func orderFromRow(order *ds.Order, row *sds.OrderRow) {
 	}
 
 	slot := &ds.Slot{
+		Duration:       row.Duration,
 		BuyerRating:    row.BuyerRating,
 		SupplierRating: row.SupplierRating,
 

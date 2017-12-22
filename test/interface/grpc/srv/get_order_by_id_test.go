@@ -18,6 +18,7 @@ func (s *MarketplaceTestSuite) getBidOrderByID() {
 		ByuerID:   BuyerID,
 
 		Slot: &pb.Slot{
+			Duration:       900,
 			BuyerRating:    555,
 			SupplierRating: 666,
 			Resources: &pb.Resources{

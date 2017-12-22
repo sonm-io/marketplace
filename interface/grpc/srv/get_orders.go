@@ -64,6 +64,7 @@ func bindGetOrdersQuery(req *pb.GetOrdersRequest, q *query.GetOrders) {
 	}
 
 	reqSlot := req.GetOrder().GetSlot()
+	q.Order.Slot.Duration = reqSlot.GetDuration()
 	q.Order.Slot.SupplierRating = reqSlot.GetSupplierRating()
 	q.Order.Slot.BuyerRating = reqSlot.GetBuyerRating()
 

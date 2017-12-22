@@ -2,6 +2,7 @@ package srv_test
 
 import (
 	"context"
+
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 	"github.com/stretchr/testify/require"
 
@@ -18,6 +19,7 @@ func (s *MarketplaceTestSuite) createBidOrder() {
 		ByuerID:   buyerID,
 
 		Slot: &pb.Slot{
+			Duration:       900,
 			BuyerRating:    555,
 			SupplierRating: 666,
 			Resources: &pb.Resources{
@@ -54,6 +56,7 @@ func (s *MarketplaceTestSuite) createAskOrder() {
 		SupplierID: supplierID,
 
 		Slot: &pb.Slot{
+			Duration:       600,
 			SupplierRating: 555,
 			Resources: &pb.Resources{
 				CpuCores: 1,

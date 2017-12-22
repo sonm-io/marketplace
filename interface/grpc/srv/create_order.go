@@ -97,6 +97,7 @@ func bindSlot(pbSlot *pb.Slot, dsSlot *ds.Slot) {
 
 	dsSlot.SupplierRating = pbSlot.GetSupplierRating()
 	dsSlot.BuyerRating = pbSlot.GetBuyerRating()
+	dsSlot.Duration = pbSlot.GetDuration()
 
 	if pbSlot.Resources == nil {
 		return

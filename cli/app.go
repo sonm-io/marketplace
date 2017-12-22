@@ -67,6 +67,9 @@ func (a *App) Init() error {
 		return err
 	}
 
+	a.logger.Info("Config loaded form", zap.String("path", a.conf.CfgPath))
+	a.logger.Info("Public key", zap.String("address", util.PubKeyToAddr(a.privateKey.PublicKey).Hex()))
+
 	if err := a.initStorage(); err != nil {
 		return err
 	}
@@ -171,6 +174,7 @@ func (a *App) initStorage() error {
 		return fmt.Errorf("cannot get absolute path of database directory: %v", err)
 	}
 	a.conf.DataDir = dataDir
+	a.logger.Info("Data dir", zap.String("path", a.conf.DataDir))
 
 	a.logger.Info("Importing database schema", zap.String("schema", a.conf.DataDir+"/schema.sql"))
 	schema, err := ioutil.ReadFile(a.conf.DataDir + "/schema.sql")

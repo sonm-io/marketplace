@@ -22,13 +22,14 @@ func NewOrderStorage(e *sql.DB) *OrderStorage {
 func (s *OrderStorage) InsertRow(row *ds.OrderRow) error {
 	q := `
 		INSERT OR REPLACE INTO orders
-		(id, type, supplier_id, buyer_id, price, slot_buyer_rating, slot_supplier_rating,
+		(id, type, supplier_id, buyer_id, price, slot_duration, slot_buyer_rating, slot_supplier_rating,
 		resources_cpu_cores, resources_ram_bytes, resources_gpu_count, resources_storage,
 		resources_net_inbound, resources_net_outbound, resources_net_type, resources_properties)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 	_, err := s.e.Exec(q,
-		row.ID, row.Type, row.SupplierID, row.BuyerID, row.Price, row.BuyerRating, row.SupplierRating,
+		row.ID, row.Type, row.SupplierID, row.BuyerID, row.Price,
+		row.Duration, row.BuyerRating, row.SupplierRating,
 		row.CPUCores, row.RAMBytes, row.GPUCount, row.Storage,
 		row.NetInbound, row.NetOutbound, row.NetType,
 		row.Properties)
@@ -50,12 +51,14 @@ func (s *OrderStorage) DeleteRow(ID string) error {
 
 func (s *OrderStorage) FetchRow(ID string, row *ds.OrderRow) error {
 	err := s.e.QueryRow(
-		`SELECT id, type, supplier_id, buyer_id, price, slot_buyer_rating, slot_supplier_rating,
+		`SELECT id, type, supplier_id, buyer_id, price,
+					slot_duration, slot_buyer_rating, slot_supplier_rating,
 			   		resources_cpu_cores, resources_ram_bytes, resources_gpu_count, resources_storage,
 			   		resources_net_inbound, resources_net_outbound, resources_net_type, resources_properties
 			   FROM orders
 			   WHERE id = ?`, ID).
-		Scan(&row.ID, &row.Type, &row.SupplierID, &row.BuyerID, &row.Price, &row.BuyerRating, &row.SupplierRating,
+		Scan(&row.ID, &row.Type, &row.SupplierID, &row.BuyerID, &row.Price,
+			&row.Duration, &row.BuyerRating, &row.SupplierRating,
 			&row.CPUCores, &row.RAMBytes, &row.GPUCount, &row.Storage,
 			&row.NetInbound, &row.NetOutbound, &row.NetType, &row.Properties)
 
@@ -64,7 +67,8 @@ func (s *OrderStorage) FetchRow(ID string, row *ds.OrderRow) error {
 
 func (s *OrderStorage) FetchAll() (ds.OrderRows, error) {
 	rows, err := s.e.Query(
-		`SELECT id, type, supplier_id, buyer_id, price, slot_buyer_rating, slot_supplier_rating,
+		`SELECT id, type, supplier_id, buyer_id, price,
+					slot_duration, slot_buyer_rating, slot_supplier_rating,
 			   		resources_cpu_cores, resources_ram_bytes, resources_gpu_count, resources_storage,
 			   		resources_net_inbound, resources_net_outbound, resources_net_type, resources_properties
 			   FROM orders
@@ -83,7 +87,7 @@ func (s *OrderStorage) FetchAll() (ds.OrderRows, error) {
 		row = ds.OrderRow{}
 
 		err := rows.Scan(&row.ID, &row.Type, &row.SupplierID, &row.BuyerID, &row.Price,
-			&row.BuyerRating, &row.SupplierRating,
+			&row.Duration, &row.BuyerRating, &row.SupplierRating,
 			&row.CPUCores, &row.RAMBytes, &row.GPUCount, &row.Storage,
 			&row.NetInbound, &row.NetOutbound, &row.NetType,
 			&row.Properties)

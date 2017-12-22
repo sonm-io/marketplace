@@ -50,6 +50,7 @@ func bindGetOrderReport(r *report.GetOrderReport, pbOrder *pb.Order) {
 	pbSlot := pbOrder.Slot
 	rSlot := r.Slot
 
+	pbSlot.Duration = rSlot.Duration
 	pbSlot.SupplierRating = rSlot.SupplierRating
 	pbSlot.BuyerRating = rSlot.BuyerRating
 
