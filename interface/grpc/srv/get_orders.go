@@ -21,7 +21,6 @@ const (
 
 // GetOrders retrieves orders by matching the given order options against the storage.
 func (m *Marketplace) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (*pb.GetOrdersReply, error) {
-
 	logger := ctx_zap.Extract(ctx)
 	logger.Info("Getting orders", zap.Any("req", req))
 
@@ -50,14 +49,19 @@ func (m *Marketplace) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (
 }
 
 func bindGetOrdersQuery(req *pb.GetOrdersRequest, q *query.GetOrders) {
-	if q == nil {
+	if q == nil || req.Order == nil {
 		return
 	}
 
-	q.Limit = req.GetCount()
-	q.Order.OrderType = ds.OrderType(req.GetOrder().GetOrderType())
+	reqOrder := req.GetOrder()
 
-	if req.GetOrder().GetSlot() == nil {
+	q.Order.OrderType = ds.OrderType(reqOrder.GetOrderType())
+	q.Order.SupplierID = reqOrder.GetSupplierID()
+	q.Order.BuyerID = reqOrder.GetByuerID()
+
+	q.Limit = req.GetCount()
+
+	if reqOrder.GetSlot() == nil {
 		return
 	}
 
