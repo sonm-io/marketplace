@@ -23,24 +23,26 @@ func MatchOrders(order ds.Order) (intf.CompositeSpecification, error) {
 		spec.And(NewBuyerIDEquals(order.BuyerID))
 	}
 
-	// nothing to match against further
-	if order.Slot == nil {
-		return spec, nil
-	}
-
 	switch order.OrderType {
 	case ds.Ask:
-		return spec.And(forAsk(*order.Slot)), nil
+		return spec.And(forAsk(order)), nil
 	case ds.Bid:
-		return spec.And(forBid(*order.Slot)), nil
+		return spec.And(forBid(order)), nil
 	default:
 		return nil, fmt.Errorf("searching by any type is not supported")
 	}
 }
 
-func forBid(slot ds.Slot) intf.CompositeSpecification {
-	s := NewIsBidOrder().
-		And(NewGPUCountLessOrEqual(slot.Resources.GPUCount)).
+func forBid(order ds.Order) intf.CompositeSpecification {
+	s := NewIsBidOrder()
+	// matching by type only
+	if order.Slot == nil {
+		return s
+	}
+
+	slot := order.Slot
+
+	s.And(NewGPUCountLessOrEqual(slot.Resources.GPUCount)).
 		And(NewNetworkTypeLessOrEqual(slot.Resources.NetworkType))
 
 	if slot.Resources.CPUCores > 0 {
@@ -66,9 +68,15 @@ func forBid(slot ds.Slot) intf.CompositeSpecification {
 	return s
 }
 
-func forAsk(slot ds.Slot) intf.CompositeSpecification {
-	s := NewIsAskOrder().
-		And(NewCPUCoresGreaterOrEqual(slot.Resources.CPUCores)).
+func forAsk(order ds.Order) intf.CompositeSpecification {
+	s := NewIsAskOrder()
+	// matching by type only
+	if order.Slot == nil {
+		return s
+	}
+
+	slot := order.Slot
+	s.And(NewCPUCoresGreaterOrEqual(slot.Resources.CPUCores)).
 		And(NewRAMBytesGreaterOrEqual(slot.Resources.RAMBytes)).
 		And(NewGPUCountGreaterOrEqual(slot.Resources.GPUCount)).
 		And(NewStorageGreaterOrEqual(slot.Resources.Storage)).
