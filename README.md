@@ -1,4 +1,5 @@
 # sonm-marketplace
+[![Build Status](https://travis-ci.org/sonm-io/marketplace.svg?branch=master)](https://travis-ci.org/sonm-io/marketplace)
 
 ### Installing from deb package
 *Note: all the steps below were tested successfully on
