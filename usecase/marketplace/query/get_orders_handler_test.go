@@ -108,16 +108,18 @@ func TestGetOrdersHandlerHandle_BuyerIDGiven_OrdersReturned(t *testing.T) {
 	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	q := GetOrders{
 		Order: ds.Order{
-			BuyerID: buyerID,
+			OrderType: ds.Bid,
+			BuyerID:   buyerID,
 		},
 		Limit: 10,
 	}
 
 	orders := []ds.Order{
 		{
-			ID:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-			BuyerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-			Price:   "100",
+			ID:        "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+			BuyerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+			OrderType: ds.Bid,
+			Price:     "100",
 			Slot: &ds.Slot{
 				Duration: 900,
 				Resources: ds.Resources{

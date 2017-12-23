@@ -140,6 +140,7 @@ func TestMatchOrdersIsSatisfiedBy_SatisfyingAskOrderGiven_TrueReturned(t *testin
 func TestMatchOrdersIsSatisfiedBy_OrderWithNoSlotWithSupplierGiven_TrueReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
+		OrderType:  ds.Ask,
 		SupplierID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
 		Slot: &ds.Slot{
 			BuyerRating: 500,
@@ -147,6 +148,7 @@ func TestMatchOrdersIsSatisfiedBy_OrderWithNoSlotWithSupplierGiven_TrueReturned(
 	}
 
 	matchAgainst := ds.Order{
+		OrderType:  ds.Ask,
 		SupplierID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
 	}
 
@@ -163,14 +165,16 @@ func TestMatchOrdersIsSatisfiedBy_OrderWithNoSlotWithSupplierGiven_TrueReturned(
 func TestMatchOrdersIsSatisfiedBy_OrderWithNoSlotWithBuyerGiven_TrueReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
-		BuyerID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+		BuyerID:   "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+		OrderType: ds.Bid,
 		Slot: &ds.Slot{
 			BuyerRating: 500,
 		},
 	}
 
 	matchAgainst := ds.Order{
-		BuyerID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+		OrderType: ds.Bid,
+		BuyerID:   "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
 	}
 
 	// act
@@ -207,14 +211,16 @@ func TestMatchOrdersIsSatisfiedBy_OrderWithNoSlotWithNoOwnerGiven_FalseReturned(
 func TestMatchOrdersIsSatisfiedBy_OrderWithBuyerIDWithNoSlotGiven_TrueReturned(t *testing.T) {
 	// arrange
 	order := &ds.Order{
-		BuyerID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+		BuyerID:   "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+		OrderType: ds.Bid,
 		Slot: &ds.Slot{
 			BuyerRating: 500,
 		},
 	}
 
 	matchAgainst := ds.Order{
-		BuyerID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
+		OrderType: ds.Bid,
+		BuyerID:   "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
 	}
 
 	// act
