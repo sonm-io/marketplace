@@ -15,7 +15,6 @@ script:
   - gocov convert ./.cover/coverage.txt | gocov-html > ./.cover/index.html
 
 before_install:
-
   - make deps
-  - make generate
   - rm -rf ./vendor/github.com/golang/mock/mockgen/
+  - make generate
