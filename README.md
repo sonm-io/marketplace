@@ -1,5 +1,6 @@
 # sonm-marketplace
 [![Build Status](https://travis-ci.org/sonm-io/marketplace.svg?branch=master)](https://travis-ci.org/sonm-io/marketplace)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sonm-io/marketplace)](https://goreportcard.com/report/github.com/sonm-io/marketplace)
 
 ### Installing from deb package
 *Note: all the steps below were tested successfully on
