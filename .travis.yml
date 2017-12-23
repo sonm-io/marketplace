@@ -1,0 +1,21 @@
+language: go
+
+go_import_path: github.com/sonm-io/marketplace
+
+go:
+  - 1.9.x
+
+script:
+  - go get -u gopkg.in/matm/v1/gocov-html
+  - cp ./etc/market.test.default.yaml ./etc/market.test.yaml
+  - sed -i 's#<DATA_DIR>#'"$TRAVIS_BUILD_DIR"'/data#g' ./etc/market.test.yaml
+  - sed -i 's#<KEYS_DIR>#'"$TRAVIS_BUILD_DIR"'/etc/keys#g' ./etc/market.test.yaml
+  - ./tools/coverage.sh tool
+  - ./tools/coverage.sh -m atomic all
+  - gocov convert ./.cover/coverage.txt | gocov-html > ./.cover/index.html
+
+before_install:
+
+  - make deps
+  - make generate
+  - rm -rf ./vendor/github.com/golang/mock/mockgen/
