@@ -46,6 +46,10 @@ func (s *OrderStorage) ByID(ID string) (ds.Order, error) {
 // BySpecWithLimit fetches Orders that satisfy the given Spec.
 // if limit is > 0, then only the given number of Orders will be returned.
 func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) ([]ds.Order, error) {
+	// spec is empty, nothing to return
+	if spec == nil {
+		return nil, nil
+	}
 
 	b := inmemory.NewBuilder()
 	b.WithLimit(limit)

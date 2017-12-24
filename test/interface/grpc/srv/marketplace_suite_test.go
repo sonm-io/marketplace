@@ -53,20 +53,26 @@ func (s *MarketplaceTestSuite) TearDownTest() {
 // suite.
 func (s *MarketplaceTestSuite) TestMarketPlace() {
 
-	//s.T().Run("CreateOrder", func(t *testing.T) {
-	s.createBidOrder()
-	s.createAskOrder()
-	//})
+	s.T().Run("CreateOrder", func(t *testing.T) {
+		s.createBidOrder(t)
+		s.createAskOrder(t)
+	})
 
-	//	s.T().Run("GetOrderByID", func(t *testing.T) {
-	s.getBidOrderByID()
-	s.getInExistentOrder()
-	//	})
+	s.T().Run("GetOrderByID", func(t *testing.T) {
+		s.getBidOrderByID(t)
+		s.getInExistentOrder(t)
+	})
 
-	s.getBidOrders()
-	s.getAskOrders()
+	s.T().Run("GetOrders", func(t *testing.T) {
+		s.getBidOrdersByBuyerID(t)
+		s.getBidOrders(t)
+		s.getAskOrders(t)
+	})
 
-	s.CancelOrder()
+	s.T().Run("CancelOrder", func(t *testing.T) {
+		s.CancelOrder(t)
+	})
+
 }
 
 func NewGRPCClient(creds credentials.TransportCredentials) (*grpc.ClientConn, error) {

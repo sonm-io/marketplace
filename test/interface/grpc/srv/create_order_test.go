@@ -2,14 +2,16 @@ package srv_test
 
 import (
 	"context"
-
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
-	"github.com/stretchr/testify/require"
+	"testing"
 
 	"github.com/sonm-io/marketplace/infra/util"
+	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func (s *MarketplaceTestSuite) createBidOrder() {
+func (s *MarketplaceTestSuite) createBidOrder(t *testing.T) {
 	// arrange
 	buyerID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
 	order := &pb.Order{
@@ -42,11 +44,11 @@ func (s *MarketplaceTestSuite) createBidOrder() {
 	obtained, err := s.client.CreateOrder(context.Background(), order)
 
 	// assert
-	require.NoError(s.T(), err, "cannot create order")
-	s.Equal(order.Id, obtained.Id)
+	require.NoError(t, err, "cannot create order")
+	assert.Equal(t, order.Id, obtained.Id)
 }
 
-func (s *MarketplaceTestSuite) createAskOrder() {
+func (s *MarketplaceTestSuite) createAskOrder(t *testing.T) {
 	// arrange
 	supplierID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
 	order := &pb.Order{
@@ -78,6 +80,6 @@ func (s *MarketplaceTestSuite) createAskOrder() {
 	obtained, err := s.client.CreateOrder(context.Background(), order)
 
 	// assert
-	require.NoError(s.T(), err, "cannot create order")
-	s.Equal(order.Id, obtained.Id)
+	require.NoError(t, err, "cannot create order")
+	assert.Equal(t, order.Id, obtained.Id)
 }
