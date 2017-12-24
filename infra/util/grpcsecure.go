@@ -1,13 +1,18 @@
 package util
 
 import (
+	"bytes"
+	"crypto/ecdsa"
 	"crypto/tls"
+	"encoding/base32"
 	"fmt"
+	"io/ioutil"
 	"net"
 
 	"strings"
 
 	ethcommon "github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -132,7 +137,7 @@ func (w *WalletAuthenticator) compareWallets(authInfo credentials.AuthInfo) erro
 	switch authInfo := authInfo.(type) {
 	case EthAuthInfo:
 		if !EqualAddresses(authInfo.Wallet, w.Wallet) {
-			return fmt.Errorf("authorization failed: expected %s, actual %s", w.Wallet, authInfo.Wallet)
+			return fmt.Errorf("authorization failed: expected %s, actual %s", w.Wallet.Hex(), authInfo.Wallet.Hex())
 		}
 	default:
 		return fmt.Errorf("unsupported AuthInfo %s %T", authInfo.AuthType(), authInfo)
@@ -161,10 +166,11 @@ func ParseEndpoint(endpoint string) (string, ethcommon.Address, error) {
 	return socketAddr, ethcommon.HexToAddress(ethAddr), nil
 }
 
-func MakeWalletAuthenticatedClient(ctx context.Context, creds credentials.TransportCredentials, endpoint string) (*grpc.ClientConn, error) {
+func MakeWalletAuthenticatedClient(ctx context.Context, creds credentials.TransportCredentials, endpoint string,
+	opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 	sockaddr, ethAddr, err := ParseEndpoint(endpoint)
 	if err != nil {
-		conn, err := MakeGrpcClient(ctx, endpoint, creds)
+		conn, err := MakeGrpcClient(ctx, endpoint, creds, opts...)
 		if err != nil {
 			return nil, err
 		}
@@ -180,4 +186,71 @@ func MakeWalletAuthenticatedClient(ctx context.Context, creds credentials.Transp
 	}
 
 	return conn, nil
+}
+
+type SelfSignedWallet struct {
+	Message string
+}
+
+func NewSelfSignedWallet(key *ecdsa.PrivateKey) (*SelfSignedWallet, error) {
+	address := crypto.PubkeyToAddress(key.PublicKey).Hex()
+	message := crypto.Keccak256([]byte(address))
+
+	sign, err := crypto.Sign(message, key)
+	if err != nil {
+		return nil, err
+	}
+
+	signed := new(bytes.Buffer)
+	signed.WriteString(address)
+	signed.WriteByte('@')
+	signed.WriteString(base32.StdEncoding.EncodeToString(sign))
+
+	return &SelfSignedWallet{Message: signed.String()}, nil
+}
+
+// WalletAccess supplies PerRPCCredentials from a given self-signed wallet.
+type WalletAccess struct {
+	wallet *SelfSignedWallet
+}
+
+// NewWalletAccess constructs the new PerRPCCredentials using with given
+// self-signed wallet.
+func NewWalletAccess(wallet *SelfSignedWallet) credentials.PerRPCCredentials {
+	return &WalletAccess{
+		wallet: wallet,
+	}
+}
+
+func (c WalletAccess) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
+	return map[string]string{
+		"wallet": c.wallet.Message,
+	}, nil
+}
+
+func (c WalletAccess) RequireTransportSecurity() bool {
+	return true
+}
+
+func VerifySelfSignedWallet(signedWallet string) (string, error) {
+	parts := strings.Split(signedWallet, "@")
+	if len(parts) != 2 {
+		return "", fmt.Errorf("malformed wallet provided")
+	}
+
+	address := []byte(parts[0])
+	sign, err := ioutil.ReadAll(base32.NewDecoder(base32.StdEncoding, strings.NewReader(parts[1])))
+	if err != nil {
+		return "", err
+	}
+
+	recoveredPub, err := crypto.Ecrecover(crypto.Keccak256(address), sign)
+	if err != nil {
+		return "", err
+	}
+
+	pubKey := crypto.ToECDSAPub(recoveredPub)
+	recoveredAddr := crypto.PubkeyToAddress(*pubKey).Hex()
+
+	return recoveredAddr, nil
 }
