@@ -85,11 +85,15 @@ func (s *OrderStorage) ByID(ID string) (ds.Order, error) {
 // WARNING: At nonce all the Orders will be loaded in memory and after that filtered.
 // TODO: (screwyprof) Add filtering without loading all the records.
 func (s *OrderStorage) BySpecWithLimit(spec intf.Specification, limit uint64) ([]ds.Order, error) {
+	// spec is empty, nothing to return
+	if spec == nil {
+		return nil, nil
+	}
+
 	rows, err := s.e.FetchAll()
 	if err != nil {
 		return nil, err
 	}
-
 	var (
 		order  ds.Order
 		orders []ds.Order

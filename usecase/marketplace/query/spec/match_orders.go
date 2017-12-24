@@ -8,26 +8,11 @@ import (
 
 // MatchOrders is a factory method that creates a spec for GetOrders query.
 func MatchOrders(order ds.Order) (intf.CompositeSpecification, error) {
-	// if no matching criteria is given return spec which returns false
-	if order.SupplierID == "" && order.BuyerID == "" && order.Slot == nil {
-		return intf.BaseSpecification{}, nil
-	}
-
-	// spec which returns true by default
-	spec := (intf.BaseSpecification{}).Not()
-	if order.SupplierID != "" {
-		spec.And(NewSupplierIDEquals(order.SupplierID))
-	}
-
-	if order.BuyerID != "" {
-		spec.And(NewBuyerIDEquals(order.BuyerID))
-	}
-
 	switch order.OrderType {
 	case ds.Ask:
-		return spec.And(forAsk(order)), nil
+		return forAsk(order), nil
 	case ds.Bid:
-		return spec.And(forBid(order)), nil
+		return forBid(order), nil
 	default:
 		return nil, fmt.Errorf("searching by any type is not supported")
 	}
@@ -35,7 +20,14 @@ func MatchOrders(order ds.Order) (intf.CompositeSpecification, error) {
 
 func forBid(order ds.Order) intf.CompositeSpecification {
 	s := NewIsBidOrder()
-	// matching by type only
+	if order.BuyerID != "" {
+		s = s.And(NewBuyerIDEquals(order.BuyerID))
+	}
+
+	if order.SupplierID != "" {
+		s = s.And(NewSupplierIDEquals(order.SupplierID))
+	}
+
 	if order.Slot == nil {
 		return s
 	}
@@ -70,7 +62,14 @@ func forBid(order ds.Order) intf.CompositeSpecification {
 
 func forAsk(order ds.Order) intf.CompositeSpecification {
 	s := NewIsAskOrder()
-	// matching by type only
+	if order.BuyerID != "" {
+		s = s.And(NewBuyerIDEquals(order.BuyerID))
+	}
+
+	if order.SupplierID != "" {
+		s = s.And(NewSupplierIDEquals(order.SupplierID))
+	}
+
 	if order.Slot == nil {
 		return s
 	}

@@ -187,25 +187,16 @@ func TestMatchOrdersIsSatisfiedBy_OrderWithNoSlotWithBuyerGiven_TrueReturned(t *
 	assert.True(t, obtained)
 }
 
-func TestMatchOrdersIsSatisfiedBy_OrderWithNoSlotWithNoOwnerGiven_FalseReturned(t *testing.T) {
+func TestMatchOrdersIsSatisfiedBy_OrderWithNoOrderTypeGiven_FalseReturned(t *testing.T) {
 	// arrange
-	order := &ds.Order{
-		BuyerID: "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD",
-		Slot: &ds.Slot{
-			BuyerRating: 500,
-		},
-	}
 
 	matchAgainst := ds.Order{}
 
 	// act
-	s, err := MatchOrders(matchAgainst)
-	require.NoError(t, err)
+	_, err := MatchOrders(matchAgainst)
 
-	obtained := s.IsSatisfiedBy(order)
+	assert.EqualError(t, err, "searching by any type is not supported")
 
-	// assert
-	assert.False(t, obtained)
 }
 
 func TestMatchOrdersIsSatisfiedBy_OrderWithBuyerIDWithNoSlotGiven_TrueReturned(t *testing.T) {
