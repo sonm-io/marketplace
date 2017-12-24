@@ -3,16 +3,15 @@ package srv
 import (
 	"golang.org/x/net/context"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
 
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
-
 )
 
 // CancelOrder removes the given order from the storage.
