@@ -12,23 +12,17 @@ import (
 )
 
 func TestHitlessRotator(t *testing.T) {
-	oldRotValidPeriod := util.ValidPeriod
-	util.ValidPeriod = time.Second * 15
-	defer func() {
-		util.ValidPeriod = oldRotValidPeriod
-	}()
-
 	req := require.New(t)
-	priv, err := ethcrypto.GenerateKey()
+	key, err := ethcrypto.GenerateKey()
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
 	ctx := context.Background()
-	r, cfg, err := util.NewHitlessCertRotator(ctx, priv)
+	r, cfg, err := util.NewHitlessCertRotator(ctx, key)
 	req.NoError(err)
 	defer r.Close()
 
-	deadline := time.Now().Add(util.ValidPeriod * 2)
+	deadline := time.Now().Add(time.Second * 6)
 	for time.Now().Before(deadline) {
 		tCfg, _ := cfg.GetCertificate(nil)
 		x509Cert, err := x509.ParseCertificate(tCfg.Certificate[0])
