@@ -10,7 +10,7 @@ rm-mocks:
 	rm -rf mocks.go
 
 .PHONY: generate-mocks
-generate-mocks: generate-mocks-intf-storage generate-mocks-usecase-intf generate-mocks-usecase-marketplace-command generate-mocks-usecase-marketplace-query clean-mocks
+generate-mocks: generate-mocks-intf-storage generate-mocks-intf-reporting generate-mocks-usecase-intf generate-mocks-usecase-marketplace-command generate-mocks-usecase-marketplace-query clean-mocks
 	@echo "Generating mocks"
 
 .PHONY: generate-mocks-intf-storage
@@ -18,6 +18,11 @@ generate-mocks-intf-storage: tools
 	@mkdir  -p ./interface/storage/inmemory/mocks
 	@mockgen -package mocks \
             -source ./interface/storage/inmemory/engine.go Engine > ./interface/storage/inmemory/mocks/engine.go
+
+generate-mocks-intf-reporting: tools
+	@mkdir  -p ./interface/reporting/sqllite/mocks
+	@mockgen -package mocks \
+            -source ./interface/reporting/sqllite/order_by_id_handler.go OrderRowFetcher > ./interface/reporting/sqllite/mocks/order_row_fetcher.go
 
 .PHONY: generate-mocks-usecase-marketplace-command
 generate-mocks-usecase-marketplace-command: tools
@@ -32,8 +37,6 @@ generate-mocks-usecase-marketplace-command: tools
  .PHONY: generate-mocks-usecase-marketplace-query
 generate-mocks-usecase-marketplace-query: tools
 	@mkdir  -p ./usecase/marketplace/query/mocks
-	@mockgen -package mocks \
-            -source ./usecase/marketplace/query/get_order_handler.go OrderByIDStorage > ./usecase/marketplace/query/mocks/order_by_id_storage.go
 	@mockgen -package mocks \
             -source ./usecase/marketplace/query/get_orders_handler.go OrderBySpecStorage > ./usecase/marketplace/query/mocks/order_by_spec_storage.go
 
