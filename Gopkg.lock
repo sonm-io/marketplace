@@ -11,7 +11,7 @@
   branch = "master"
   name = "github.com/aristanetworks/goarista"
   packages = ["monotime"]
-  revision = "18a2f1dd52bb9abbc1e898439df06c74f28f63a4"
+  revision = "11c54aa7a83a11afdbe92aab92e701bb8cc7395b"
 
 [[projects]]
   branch = "master"
@@ -28,8 +28,7 @@
 [[projects]]
   name = "github.com/ethereum/go-ethereum"
   packages = [".","accounts","accounts/keystore","common","common/hexutil","common/math","common/mclock","core/types","crypto","crypto/randentropy","crypto/secp256k1","crypto/sha3","event","log","params","rlp","trie"]
-  revision = "4bb3c89d44e372e6a9ab85a8be0c9345265c763a"
-  version = "v1.7.3"
+  revision = "9d187f02389ba12493112c7feb15a83f44e3a3ff"
 
 [[projects]]
   name = "github.com/go-stack/stack"
@@ -52,7 +51,7 @@
 [[projects]]
   branch = "master"
   name = "github.com/grpc-ecosystem/go-grpc-middleware"
-  packages = [".","logging","logging/zap","recovery","tags","tags/zap"]
+  packages = [".","auth","logging","logging/zap","recovery","tags","tags/zap","util/metautils"]
   revision = "967bee733a734780623ac3d7c8e9216e4372ea62"
 
 [[projects]]
@@ -137,7 +136,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["pbkdf2","scrypt","ssh/terminal"]
-  revision = "94eea52f7b742c7cbe0b03b22f0c4c8631ece122"
+  revision = "d585fd2cc9195196078f516b69daff6744ef5e84"
 
 [[projects]]
   branch = "master"
@@ -149,13 +148,13 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "571f7bbbe08da2a8955aed9d4db316e78630e9a3"
+  revision = "83801418e1b59fb1880e363299581ee543af32ca"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/text"
   packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
-  revision = "d5a9226ed7dd70cade6ccae9d37517fe14dd9fee"
+  revision = "eb22672bea55af56d225d4e35405f4d2e9f062a0"
 
 [[projects]]
   branch = "master"
@@ -196,6 +195,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "cb09254ac4d4de2de48f5f187d4234552ab5e8eee197a52a987e886388beca7c"
+  inputs-digest = "9ca2738a0621b1968abaf884385c8a10a8b292038e2a3123b34a3cf25f94d49a"
   solver-name = "gps-cdcl"
   solver-version = 1
