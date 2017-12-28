@@ -1,9 +1,9 @@
 package sqllite
 
 import (
-	"testing"
-	"fmt"
 	"database/sql"
+	"fmt"
+	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -156,4 +156,3 @@ func TestOrderByIDHandlerHandle_IncorrectQueryResultGiven_ErrorReturned(t *testi
 	// assert
 	assert.EqualError(t, err, fmt.Sprintf("invalid result %v given", result))
 }
-

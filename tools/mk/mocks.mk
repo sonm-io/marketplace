@@ -10,7 +10,7 @@ rm-mocks:
 	rm -rf mocks.go
 
 .PHONY: generate-mocks
-generate-mocks: generate-mocks-intf-storage generate-mocks-intf-reporting generate-mocks-usecase-intf generate-mocks-usecase-marketplace-command generate-mocks-usecase-marketplace-query clean-mocks
+generate-mocks: generate-mocks-intf-storage generate-mocks-intf-reporting generate-mocks-usecase-intf generate-mocks-usecase-marketplace-command clean-mocks
 	@echo "Generating mocks"
 
 .PHONY: generate-mocks-intf-storage
@@ -23,6 +23,8 @@ generate-mocks-intf-reporting: tools
 	@mkdir  -p ./interface/reporting/sqllite/mocks
 	@mockgen -package mocks \
             -source ./interface/reporting/sqllite/order_by_id_handler.go OrderRowFetcher > ./interface/reporting/sqllite/mocks/order_row_fetcher.go
+	@mockgen -package mocks \
+            -source ./interface/reporting/sqllite/match_orders_handler.go OrderRowsFetcher > ./interface/reporting/sqllite/mocks/order_rows_fetcher.go
 
 .PHONY: generate-mocks-usecase-marketplace-command
 generate-mocks-usecase-marketplace-command: tools
@@ -33,12 +35,6 @@ generate-mocks-usecase-marketplace-command: tools
             -source ./usecase/marketplace/command/create_bid_order_handler.go CreateBidOrderStorage > ./usecase/marketplace/command/mocks/create_bid_order_storage.go
 	@mockgen -package mocks \
             -source ./usecase/marketplace/command/create_ask_order_handler.go CreateAskOrderStorage > ./usecase/marketplace/command/mocks/create_ask_order_storage.go
-
- .PHONY: generate-mocks-usecase-marketplace-query
-generate-mocks-usecase-marketplace-query: tools
-	@mkdir  -p ./usecase/marketplace/query/mocks
-	@mockgen -package mocks \
-            -source ./usecase/marketplace/query/get_orders_handler.go OrderBySpecStorage > ./usecase/marketplace/query/mocks/order_by_spec_storage.go
 
 .PHONY: generate-mocks-usecase-intf
 generate-mocks-usecase-intf: tools
