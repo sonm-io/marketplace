@@ -27,15 +27,15 @@ import (
 	"github.com/sonm-io/marketplace/infra/cqrs"
 	"github.com/sonm-io/marketplace/infra/grpc"
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
-	engine "github.com/sonm-io/marketplace/infra/storage/sqllite"
+	infraStorage "github.com/sonm-io/marketplace/infra/storage/sqllite"
 	"github.com/sonm-io/marketplace/infra/util"
 
 	"github.com/sonm-io/marketplace/interface/adaptor"
 	"github.com/sonm-io/marketplace/interface/grpc/srv"
 	"github.com/sonm-io/marketplace/interface/storage/sqllite"
 
+	report "github.com/sonm-io/marketplace/interface/reporting/sqllite"
 	"github.com/sonm-io/marketplace/usecase/marketplace/command"
-	"github.com/sonm-io/marketplace/usecase/marketplace/query"
 )
 
 // App application root.
@@ -74,10 +74,11 @@ func (a *App) Init() error {
 		return err
 	}
 
-	repo := sqllite.NewOrderStorage(engine.NewOrderStorage(a.db))
+	db := infraStorage.NewStorage(a.db)
+	repo := sqllite.NewOrderStorage(db)
 
-	getOrderHandler := query.NewGetOrderHandler(repo)
-	getOrdersHandler := query.NewGetOrdersHandler(repo)
+	getOrderHandler := report.NewOrderByIDHandler(db)
+	getOrdersHandler := report.NewMatchOrdersHandler(db)
 
 	createBidOrderHandler := command.NewCreateBidOrderHandler(repo)
 	createAskOrderHandler := command.NewCreateAskOrderHandler(repo)
@@ -88,11 +89,8 @@ func (a *App) Init() error {
 	commandBus.RegisterHandler("CreateAskOrder", adaptor.FromDomain(createAskOrderHandler))
 	commandBus.RegisterHandler("CancelOrder", adaptor.FromDomain(cancelOrderHandler))
 
-	if err := a.initServer(
-		srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler)); err != nil {
-		return err
-	}
-	return nil
+	return a.initServer(
+		srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler))
 }
 
 func (a *App) initConfig() error {

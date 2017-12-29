@@ -11,6 +11,7 @@ bin/*
 
 /mocks/*
 interface/storage/inmemory/mocks/*
+interface/reporting/sqllite/mocks/
 usecase/intf/mocks/*
 usecase/marketplace/query/mocks/*
 usecase/marketplace/command/mocks/*

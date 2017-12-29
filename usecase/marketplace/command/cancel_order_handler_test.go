@@ -15,8 +15,8 @@ func TestCancelOrderHandlerHandle_ExistingIDGiven_OrderCanceled(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	storage := mocks.NewMockCancelOrderStorage(ctrl)
-	storage.EXPECT().Remove("test_order").Times(1).Return(nil)
+	storage := mocks.NewMockOrderCanceler(ctrl)
+	storage.EXPECT().Cancel("test_order").Times(1).Return(nil)
 
 	h := NewCancelOrderHandler(storage)
 
@@ -32,7 +32,7 @@ func TestCancelOrderHandlerHandle_IncorrectCommandGivenErrorReturned(t *testing.
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	storage := mocks.NewMockCancelOrderStorage(ctrl)
+	storage := mocks.NewMockOrderCanceler(ctrl)
 	h := NewCancelOrderHandler(storage)
 
 	// act
