@@ -12,9 +12,9 @@ type Config struct {
 	CfgPath string
 
 	ListenAddr string `yaml:"address"`
-	DataDir    string `yaml:"data_dir" required:"true" default: "./data"`
+	DataDir    string `yaml:"data_dir" required:"true" default:"./data"`
 
-	EthCfg accounts.EthConfig `required:"true" yaml:"ethereum"`
+	EthCfg accounts.EthConfig `yaml:"ethereum" required:"true"`
 }
 
 // Option is a configuration parameter.

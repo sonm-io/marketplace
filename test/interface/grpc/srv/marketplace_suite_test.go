@@ -52,7 +52,6 @@ func (s *MarketplaceTestSuite) TearDownTest() {
 // All methods that begin with "Test" are run as tests within a
 // suite.
 func (s *MarketplaceTestSuite) TestMarketPlace() {
-
 	s.T().Run("CreateOrder", func(t *testing.T) {
 		s.createBidOrder(t)
 		s.createAskOrder(t)
@@ -72,7 +71,6 @@ func (s *MarketplaceTestSuite) TestMarketPlace() {
 	s.T().Run("CancelOrder", func(t *testing.T) {
 		s.CancelOrder(t)
 	})
-
 }
 
 func NewGRPCClient(creds credentials.TransportCredentials) (*grpc.ClientConn, error) {
