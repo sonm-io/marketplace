@@ -5,12 +5,6 @@ import (
 	"testing"
 )
 
-type unknownQuery struct{}
-
-func (c unknownQuery) QueryID() string {
-	return "UnknownQuery"
-}
-
 func TestGetOrder_QueryID(t *testing.T) {
 	assert.Equal(t, "GetOrder", GetOrder{}.QueryID())
 }

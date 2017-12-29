@@ -1,8 +1,9 @@
 package sqllite
 
 import (
-	"database/sql"
 	"fmt"
+
+	"github.com/gocraft/dbr"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
@@ -14,7 +15,7 @@ import (
 
 // OrderRowFetcher fetches order row from storage.
 type OrderRowFetcher interface {
-	FetchRow(ID string, row *sds.OrderRow) error
+	FetchRow(row interface{}, query string, value ...interface{}) error
 }
 
 // OrderByIDHandler returns an Order by its ID.
@@ -42,9 +43,19 @@ func (h *OrderByIDHandler) Handle(req intf.Query, result interface{}) error {
 		return fmt.Errorf("invalid result %v given", result)
 	}
 
+	stmt, err := GetOrderByIDStmt(q.ID)
+	if err != nil {
+		return err
+	}
+
+	sql, args, err := ToSQL(stmt)
+	if err != nil {
+		return err
+	}
+
 	var row sds.OrderRow
-	if err := h.rf.FetchRow(q.ID, &row); err != nil {
-		if err == sql.ErrNoRows {
+	if err := h.rf.FetchRow(&row, sql, args...); err != nil {
+		if err == dbr.ErrNotFound {
 			return fmt.Errorf("order %s is not found", q.ID)
 		}
 		return fmt.Errorf("an error occured: %v", err)

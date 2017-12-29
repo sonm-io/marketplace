@@ -71,23 +71,28 @@ func TestMatchOrdersHandlerHandle_ValidQueryGiven_OrdersReturned(t *testing.T) {
 		orderRows = append(orderRows, orderRow)
 	}
 
+	stmt, err := MatchOrdersStmt(q.Order, q.Limit)
+	require.NoError(t, err)
+
+	sql, args, err := ToSQL(stmt)
+	require.NoError(t, err)
+
+	var rows sds.OrderRows
 	storage := mocks.NewMockOrderRowsFetcher(ctrl)
-	storage.EXPECT().FetchAll().
-		Return(orderRows, nil)
+	storage.EXPECT().FetchRows(&rows, sql, args...).
+		SetArg(0, orderRows).
+		Return(nil)
 
 	h := NewMatchOrdersHandler(storage)
 
 	// act
 	var obtained report.GetOrdersReport
-
-	err := h.Handle(q, &obtained)
+	err = h.Handle(q, &obtained)
 
 	// assert
 	require.NoError(t, err)
 	assert.Equal(t, expected, obtained)
 }
-
-//
 
 func TestMatchOrdersHandlerHandle_BuyerIDGiven_OrdersReturned(t *testing.T) {
 	// arrange
@@ -136,15 +141,23 @@ func TestMatchOrdersHandlerHandle_BuyerIDGiven_OrdersReturned(t *testing.T) {
 		orderRows = append(orderRows, orderRow)
 	}
 
+	stmt, err := MatchOrdersStmt(q.Order, q.Limit)
+	require.NoError(t, err)
+
+	sql, args, err := ToSQL(stmt)
+	require.NoError(t, err)
+
+	var rows sds.OrderRows
 	storage := mocks.NewMockOrderRowsFetcher(ctrl)
-	storage.EXPECT().FetchAll().
-		Return(orderRows, nil)
+	storage.EXPECT().FetchRows(&rows, sql, args...).
+		SetArg(0, orderRows).
+		Return(nil)
 
 	h := NewMatchOrdersHandler(storage)
 
 	// act
 	var obtained report.GetOrdersReport
-	err := h.Handle(q, &obtained)
+	err = h.Handle(q, &obtained)
 
 	// assert
 	require.NoError(t, err)

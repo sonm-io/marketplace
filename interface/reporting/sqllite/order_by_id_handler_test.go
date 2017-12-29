@@ -1,12 +1,13 @@
 package sqllite
 
 import (
-	"database/sql"
 	"fmt"
 	"testing"
 
+	"github.com/gocraft/dbr"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
@@ -48,16 +49,23 @@ func TestOrderByIDHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 	orderToRow(&expected.Order, &orderRow)
 	orderRow.Status = Active
 
+	stmt, err := GetOrderByIDStmt("test_order")
+	require.NoError(t, err)
+
+	sql, args, err := ToSQL(stmt)
+	require.NoError(t, err)
+
+	var row sds.OrderRow
 	storage := mocks.NewMockOrderRowFetcher(ctrl)
-	storage.EXPECT().FetchRow("test_order", &sds.OrderRow{}).
-		SetArg(1, orderRow).
+	storage.EXPECT().FetchRow(&row, sql, args...).
+		SetArg(0, orderRow).
 		Return(nil)
 
 	h := NewOrderByIDHandler(storage)
 
 	// act
 	var obtained report.GetOrderReport
-	err := h.Handle(query.GetOrder{ID: "test_order"}, &obtained)
+	err = h.Handle(query.GetOrder{ID: "test_order"}, &obtained)
 
 	// assert
 	assert.NoError(t, err)
@@ -69,15 +77,22 @@ func TestOrderByIDHandlerHandle_InExistentOrderIDGiven_ErrorReturned(t *testing.
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	stmt, err := GetOrderByIDStmt("test_order")
+	require.NoError(t, err)
+
+	sql, args, err := ToSQL(stmt)
+	require.NoError(t, err)
+
+	var row sds.OrderRow
 	storage := mocks.NewMockOrderRowFetcher(ctrl)
-	storage.EXPECT().FetchRow("test_order", &sds.OrderRow{}).
-		Return(sql.ErrNoRows)
+	storage.EXPECT().FetchRow(&row, sql, args...).
+		Return(dbr.ErrNotFound)
 
 	h := NewOrderByIDHandler(storage)
 
 	// act
 	var obtained report.GetOrderReport
-	err := h.Handle(query.GetOrder{ID: "test_order"}, &obtained)
+	err = h.Handle(query.GetOrder{ID: "test_order"}, &obtained)
 
 	// assert
 	assert.EqualError(t, err, "order test_order is not found")
@@ -88,15 +103,22 @@ func TestOrderByIDHandlerHandle_StorageErrorOccurred_ErrorReturned(t *testing.T)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	stmt, err := GetOrderByIDStmt("test_order")
+	require.NoError(t, err)
+
+	sql, args, err := ToSQL(stmt)
+	require.NoError(t, err)
+
+	var row sds.OrderRow
 	storage := mocks.NewMockOrderRowFetcher(ctrl)
-	storage.EXPECT().FetchRow("test_order", &sds.OrderRow{}).
+	storage.EXPECT().FetchRow(&row, sql, args...).
 		Return(fmt.Errorf("sql: some error"))
 
 	h := NewOrderByIDHandler(storage)
 
 	// act
 	var obtained report.GetOrderReport
-	err := h.Handle(query.GetOrder{ID: "test_order"}, &obtained)
+	err = h.Handle(query.GetOrder{ID: "test_order"}, &obtained)
 
 	// assert
 	assert.EqualError(t, err, "an error occured: sql: some error")
@@ -110,16 +132,23 @@ func TestOrderByIDHandlerHandle_InactiveOrderIDGiven_ErrorReturned(t *testing.T)
 	var orderRow sds.OrderRow
 	orderRow.Status = uint8(InActive)
 
+	stmt, err := GetOrderByIDStmt("inactive_order")
+	require.NoError(t, err)
+
+	sql, args, err := ToSQL(stmt)
+	require.NoError(t, err)
+
+	var row sds.OrderRow
 	storage := mocks.NewMockOrderRowFetcher(ctrl)
-	storage.EXPECT().FetchRow("inactive_order", &sds.OrderRow{}).
-		SetArg(1, orderRow).
+	storage.EXPECT().FetchRow(&row, sql, args...).
+		SetArg(0, orderRow).
 		Return(nil)
 
 	h := NewOrderByIDHandler(storage)
 
 	// act
 	var obtained report.GetOrderReport
-	err := h.Handle(query.GetOrder{ID: "inactive_order"}, &obtained)
+	err = h.Handle(query.GetOrder{ID: "inactive_order"}, &obtained)
 
 	// assert
 	assert.EqualError(t, err, "order inactive_order is inactive")
