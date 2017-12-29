@@ -6,7 +6,8 @@ import (
 	"github.com/gocraft/dbr"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
-	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
+	"github.com/sonm-io/marketplace/interface/mapper"
+	sds "github.com/sonm-io/marketplace/interface/mapper/datastruct"
 
 	"github.com/sonm-io/marketplace/usecase/intf"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
@@ -66,7 +67,7 @@ func (h *OrderByIDHandler) Handle(req intf.Query, result interface{}) error {
 	}
 
 	order := ds.Order{}
-	orderFromRow(&order, &row)
+	mapper.OrderFromRow(&order, &row)
 
 	(*r).Order = order
 

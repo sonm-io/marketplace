@@ -1,11 +1,11 @@
-package sqllite
+package mapper
 
 import (
 	ds "github.com/sonm-io/marketplace/datastruct"
-	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
+	sds "github.com/sonm-io/marketplace/interface/mapper/datastruct"
 )
 
-func orderToRow(order *ds.Order, row *sds.OrderRow) {
+func OrderToRow(order *ds.Order, row *sds.OrderRow) {
 	row.ID = order.ID
 	row.Type = int32(order.OrderType)
 	row.BuyerID = order.BuyerID
@@ -32,7 +32,7 @@ func orderToRow(order *ds.Order, row *sds.OrderRow) {
 	row.Properties = sds.Properties(order.Slot.Resources.Properties)
 }
 
-func orderFromRow(order *ds.Order, row *sds.OrderRow) {
+func OrderFromRow(order *ds.Order, row *sds.OrderRow) {
 	if order == nil {
 		return
 	}

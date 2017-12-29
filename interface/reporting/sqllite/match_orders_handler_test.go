@@ -9,8 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
-	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
+	sds "github.com/sonm-io/marketplace/interface/mapper/datastruct"
 
+	"github.com/sonm-io/marketplace/interface/mapper"
 	"github.com/sonm-io/marketplace/interface/reporting/sqllite/mocks"
 
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
@@ -67,7 +68,7 @@ func TestMatchOrdersHandlerHandle_ValidQueryGiven_OrdersReturned(t *testing.T) {
 
 	for idx := range orders {
 		orderRow = sds.OrderRow{}
-		orderToRow(&orders[idx], &orderRow)
+		mapper.OrderToRow(&orders[idx], &orderRow)
 		orderRows = append(orderRows, orderRow)
 	}
 
@@ -137,7 +138,7 @@ func TestMatchOrdersHandlerHandle_BuyerIDGiven_OrdersReturned(t *testing.T) {
 
 	for idx := range orders {
 		orderRow = sds.OrderRow{}
-		orderToRow(&orders[idx], &orderRow)
+		mapper.OrderToRow(&orders[idx], &orderRow)
 		orderRows = append(orderRows, orderRow)
 	}
 

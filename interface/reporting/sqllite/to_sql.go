@@ -7,7 +7,7 @@ import (
 	"github.com/gocraft/dbr/dialect"
 )
 
-func ToSQL(stmt *dbr.SelectStmt) (string, []interface{}, error) {
+func ToSQL(stmt dbr.Builder) (string, []interface{}, error) {
 	if stmt == nil {
 		return "", nil, fmt.Errorf("cannot build sql: stmt is nil")
 	}

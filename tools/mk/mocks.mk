@@ -24,7 +24,7 @@ generate-mocks-intf-reporting: tools
 generate-mocks-usecase-marketplace-command: tools
 	@mkdir  -p ./usecase/marketplace/command/mocks
 	@mockgen -package mocks \
-            -source ./usecase/marketplace/command/cancel_order_handler.go CancelOrderStorage > ./usecase/marketplace/command/mocks/cancel_order_storage.go
+            -source ./usecase/marketplace/command/cancel_order_handler.go OrderCanceler > ./usecase/marketplace/command/mocks/order_canceler.go
 	@mockgen -package mocks \
             -source ./usecase/marketplace/command/create_bid_order_handler.go CreateBidOrderStorage > ./usecase/marketplace/command/mocks/create_bid_order_storage.go
 	@mockgen -package mocks \

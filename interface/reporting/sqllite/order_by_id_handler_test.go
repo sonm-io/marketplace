@@ -10,8 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
-	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
+	sds "github.com/sonm-io/marketplace/interface/mapper/datastruct"
 
+	"github.com/sonm-io/marketplace/interface/mapper"
 	"github.com/sonm-io/marketplace/interface/reporting/sqllite/mocks"
 
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
@@ -46,7 +47,7 @@ func TestOrderByIDHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 	}
 
 	var orderRow sds.OrderRow
-	orderToRow(&expected.Order, &orderRow)
+	mapper.OrderToRow(&expected.Order, &orderRow)
 	orderRow.Status = Active
 
 	stmt, err := GetOrderByIDStmt("test_order")

@@ -74,7 +74,7 @@ func (a *App) Init() error {
 		return err
 	}
 
-	db := infraStorage.NewOrderStorage(a.db)
+	db := infraStorage.NewStorage(a.db)
 	repo := sqllite.NewOrderStorage(db)
 
 	getOrderHandler := report.NewOrderByIDHandler(db)

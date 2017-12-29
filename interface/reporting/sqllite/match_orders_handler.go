@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
-	sds "github.com/sonm-io/marketplace/infra/storage/sqllite/datastruct"
+	"github.com/sonm-io/marketplace/interface/mapper"
+	sds "github.com/sonm-io/marketplace/interface/mapper/datastruct"
 
 	"github.com/sonm-io/marketplace/usecase/intf"
 	"github.com/sonm-io/marketplace/usecase/marketplace/query"
@@ -59,7 +60,7 @@ func (h *MatchOrdersHandler) Handle(req intf.Query, result interface{}) error {
 	var order ds.Order
 	for idx := range rows {
 		order = ds.Order{}
-		orderFromRow(&order, &rows[idx])
+		mapper.OrderFromRow(&order, &rows[idx])
 		*r = append(*r, report.GetOrderReport{Order: order})
 	}
 
