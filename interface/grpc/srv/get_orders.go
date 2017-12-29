@@ -24,13 +24,14 @@ func (m *Marketplace) GetOrders(ctx context.Context, req *pb.GetOrdersRequest) (
 	logger := ctx_zap.Extract(ctx)
 	logger.Info("Getting orders", zap.Any("req", req))
 
+	q := query.GetOrders{}
+	bindGetOrdersQuery(req, &q)
+
 	limit := req.GetCount()
 	if limit == 0 {
 		limit = defaultResultsCount
 	}
-
-	q := query.GetOrders{}
-	bindGetOrdersQuery(req, &q)
+	q.Limit = limit
 
 	orders := report.GetOrdersReport{}
 	if err := m.ordersBySpec.Handle(q, &orders); err != nil {

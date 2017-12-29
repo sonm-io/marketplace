@@ -8,8 +8,10 @@ import (
 	sds "github.com/sonm-io/marketplace/interface/mapper/datastruct"
 )
 
+// Status order Status
 type Status uint8
 
+// List of available order statuses.
 const (
 	InActive Status = 0
 	Active          = 1

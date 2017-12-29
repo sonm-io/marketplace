@@ -89,11 +89,8 @@ func (a *App) Init() error {
 	commandBus.RegisterHandler("CreateAskOrder", adaptor.FromDomain(createAskOrderHandler))
 	commandBus.RegisterHandler("CancelOrder", adaptor.FromDomain(cancelOrderHandler))
 
-	if err := a.initServer(
-		srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler)); err != nil {
-		return err
-	}
-	return nil
+	return a.initServer(
+		srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler))
 }
 
 func (a *App) initConfig() error {
