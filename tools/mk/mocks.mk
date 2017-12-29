@@ -10,14 +10,8 @@ rm-mocks:
 	rm -rf mocks.go
 
 .PHONY: generate-mocks
-generate-mocks: generate-mocks-intf-storage generate-mocks-intf-reporting generate-mocks-usecase-intf generate-mocks-usecase-marketplace-command clean-mocks
+generate-mocks: generate-mocks-intf-reporting generate-mocks-usecase-intf generate-mocks-usecase-marketplace-command clean-mocks
 	@echo "Generating mocks"
-
-.PHONY: generate-mocks-intf-storage
-generate-mocks-intf-storage: tools
-	@mkdir  -p ./interface/storage/inmemory/mocks
-	@mockgen -package mocks \
-            -source ./interface/storage/inmemory/engine.go Engine > ./interface/storage/inmemory/mocks/engine.go
 
 generate-mocks-intf-reporting: tools
 	@mkdir  -p ./interface/reporting/sqllite/mocks
