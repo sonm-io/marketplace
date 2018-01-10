@@ -42,7 +42,7 @@ func (h *MatchOrdersHandler) Handle(req intf.Query, result interface{}) error {
 		return fmt.Errorf("invalid result %v given", result)
 	}
 
-	stmt, err := MatchOrdersStmt(q.Order, q.Limit)
+	stmt, err := MatchOrdersStmt(q.Order, q.Limit, OrderTTL)
 	if err != nil {
 		return err
 	}
