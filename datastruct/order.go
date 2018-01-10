@@ -8,8 +8,8 @@ type Order struct {
 	BuyerID string
 	// Supplier's is EthereumID (Bid).
 	SupplierID string
-	// Order price
-	Price string
+	// PricePerSecond specifies order price for ordered resources per second.
+	PricePerSecond string
 	// Order type (Bid or Ask)
 	OrderType OrderType
 	// Slot describes resource requirements

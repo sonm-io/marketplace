@@ -14,11 +14,15 @@ import (
 func (s *MarketplaceTestSuite) createBidOrder(t *testing.T) {
 	// arrange
 	buyerID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
+
+	pricePerSecond, err := pb.NewBigIntFromString("777")
+	require.NoError(t, err)
+
 	order := &pb.Order{
-		Id:        "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
-		OrderType: pb.OrderType_BID,
-		Price:     "777",
-		ByuerID:   buyerID,
+		Id:             "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
+		OrderType:      pb.OrderType_BID,
+		PricePerSecond: pricePerSecond,
+		ByuerID:        buyerID,
 
 		Slot: &pb.Slot{
 			Duration:       900,
@@ -51,11 +55,15 @@ func (s *MarketplaceTestSuite) createBidOrder(t *testing.T) {
 func (s *MarketplaceTestSuite) createAskOrder(t *testing.T) {
 	// arrange
 	supplierID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
+
+	pricePerSecond, err := pb.NewBigIntFromString("777")
+	require.NoError(t, err)
+
 	order := &pb.Order{
-		Id:         "fc018acd-d9a9-4b8a-a45f-f90456a469c1",
-		OrderType:  pb.OrderType_ASK,
-		Price:      "777",
-		SupplierID: supplierID,
+		Id:             "fc018acd-d9a9-4b8a-a45f-f90456a469c1",
+		OrderType:      pb.OrderType_ASK,
+		PricePerSecond: pricePerSecond,
+		SupplierID:     supplierID,
 
 		Slot: &pb.Slot{
 			Duration:       600,

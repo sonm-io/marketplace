@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	ds "github.com/sonm-io/marketplace/datastruct"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
@@ -20,12 +21,15 @@ func TestMarketplaceGetOrdersByID_BuyerIDGiven_CorrespondentOrdersReturned(t *te
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	pricePerSecond, err := pb.NewBigIntFromString("100")
+	require.NoError(t, err)
+
 	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.GetOrdersRequest{
 		Order: &pb.Order{
 			ByuerID: buyerID,
 		},
-		Count:100,
+		Count: 100,
 	}
 
 	q := query.GetOrders{}
@@ -34,9 +38,9 @@ func TestMarketplaceGetOrdersByID_BuyerIDGiven_CorrespondentOrdersReturned(t *te
 	expected := &pb.GetOrdersReply{
 		Orders: []*pb.Order{
 			{
-				Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-				ByuerID: buyerID,
-				Price:   "100",
+				Id:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+				ByuerID:        buyerID,
+				PricePerSecond: pricePerSecond,
 				Slot: &pb.Slot{
 					Duration: 900,
 					Resources: &pb.Resources{
@@ -51,9 +55,9 @@ func TestMarketplaceGetOrdersByID_BuyerIDGiven_CorrespondentOrdersReturned(t *te
 	ordersReport := []report.GetOrderReport{
 		{
 			Order: ds.Order{
-				ID:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-				BuyerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-				Price:   "100",
+				ID:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+				BuyerID:        "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+				PricePerSecond: "100",
 				Slot: &ds.Slot{
 					Duration: 900,
 					Resources: ds.Resources{
@@ -83,6 +87,9 @@ func TestMarketplaceGetOrdersByID_SlotGiven_CorrespondentOrdersReturned(t *testi
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	pricePerSecond, err := pb.NewBigIntFromString("100")
+	require.NoError(t, err)
+
 	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.GetOrdersRequest{
 		Order: &pb.Order{
@@ -94,7 +101,7 @@ func TestMarketplaceGetOrdersByID_SlotGiven_CorrespondentOrdersReturned(t *testi
 				},
 			},
 		},
-		Count:100,
+		Count: 100,
 	}
 
 	q := query.GetOrders{}
@@ -103,9 +110,9 @@ func TestMarketplaceGetOrdersByID_SlotGiven_CorrespondentOrdersReturned(t *testi
 	expected := &pb.GetOrdersReply{
 		Orders: []*pb.Order{
 			{
-				Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-				ByuerID: buyerID,
-				Price:   "100",
+				Id:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+				ByuerID:        buyerID,
+				PricePerSecond: pricePerSecond,
 				Slot: &pb.Slot{
 					Duration: 900,
 					Resources: &pb.Resources{
@@ -120,9 +127,9 @@ func TestMarketplaceGetOrdersByID_SlotGiven_CorrespondentOrdersReturned(t *testi
 	ordersReport := []report.GetOrderReport{
 		{
 			Order: ds.Order{
-				ID:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-				BuyerID: "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-				Price:   "100",
+				ID:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+				BuyerID:        "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+				PricePerSecond: "100",
 				Slot: &ds.Slot{
 					Duration: 900,
 					Resources: ds.Resources{

@@ -26,10 +26,10 @@ func TestOrderByIDHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 
 	expected := report.GetOrderReport{
 		Order: ds.Order{
-			ID:        "test_order",
-			BuyerID:   "TestBuyer",
-			OrderType: ds.Ask,
-			Price:     "555",
+			ID:             "test_order",
+			BuyerID:        "TestBuyer",
+			OrderType:      ds.Ask,
+			PricePerSecond: "555",
 			Slot: &ds.Slot{
 				BuyerRating:    444,
 				SupplierRating: 0,

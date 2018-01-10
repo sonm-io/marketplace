@@ -71,9 +71,13 @@ func bindCreateBidOrderCommand(req *pb.Order, cmd *command.CreateBidOrder) {
 	}
 
 	cmd.ID = ID
-	cmd.Price = req.GetPrice()
 	cmd.BuyerID = req.GetByuerID()
 	cmd.SupplierID = req.GetSupplierID()
+
+	reqPricePerSecond := req.GetPricePerSecond()
+	if reqPricePerSecond != nil {
+		cmd.Price = reqPricePerSecond.Unwrap().String()
+	}
 
 	bindSlot(req.Slot, &cmd.Slot)
 }
@@ -85,9 +89,13 @@ func bindCreateAskOrderCommand(req *pb.Order, cmd *command.CreateAskOrder) {
 		ID = IDGenerator()
 	}
 	cmd.ID = ID
-	cmd.Price = req.GetPrice()
 	cmd.SupplierID = req.GetSupplierID()
 	cmd.BuyerID = req.GetByuerID()
+
+	reqPricePerSecond := req.GetPricePerSecond()
+	if reqPricePerSecond != nil {
+		cmd.Price = reqPricePerSecond.Unwrap().String()
+	}
 
 	bindSlot(req.Slot, &cmd.Slot)
 }

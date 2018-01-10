@@ -10,7 +10,7 @@ func OrderToRow(order *ds.Order, row *sds.OrderRow) {
 	row.Type = int32(order.OrderType)
 	row.BuyerID = order.BuyerID
 	row.SupplierID = order.SupplierID
-	row.Price = order.Price
+	row.Price = order.PricePerSecond
 
 	if order.Slot == nil {
 		order.Slot = &ds.Slot{}
@@ -39,7 +39,7 @@ func OrderFromRow(order *ds.Order, row *sds.OrderRow) {
 
 	order.ID = row.ID
 	order.OrderType = ds.OrderType(row.Type)
-	order.Price = row.Price
+	order.PricePerSecond = row.Price
 
 	order.BuyerID = row.BuyerID
 	order.SupplierID = row.SupplierID
