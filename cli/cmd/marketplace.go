@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/xlab/closer"
+
 	"github.com/sonm-io/marketplace/cli"
 )
 
@@ -43,17 +45,13 @@ func main() {
 		return
 	}
 
-	log.Println("Starting SONM Marketplace service")
 	app := cli.NewApp(cli.WithConfigPath(*configPath))
 	if err := app.Init(); err != nil {
 		log.Fatalf("Cannot initialize SONM Marketplace service: %s\r\n", err)
 	}
 
-	defer app.Stop()
-
-	if err := app.Run(); err != nil {
-		log.Fatalf("Cannot start SONM Marketplace service: %s\r\n", err)
-	}
+	closer.Bind(app.Stop)
+	closer.Checked(app.Run, true)
 }
 
 func fillBuildInfo() {

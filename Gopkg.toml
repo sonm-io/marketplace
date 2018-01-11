@@ -74,6 +74,10 @@
   version = "1.1.4"
 
 [[constraint]]
+  name = "github.com/xlab/closer"
+  branch = "master"
+
+[[constraint]]
   name = "go.uber.org/zap"
   version = "1.7.1"
 
