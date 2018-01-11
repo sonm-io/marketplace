@@ -25,6 +25,7 @@ func TestMarketplaceGetOrdersByID_BuyerIDGiven_CorrespondentOrdersReturned(t *te
 		Order: &pb.Order{
 			ByuerID: buyerID,
 		},
+		Count: 100,
 	}
 
 	q := query.GetOrders{}
@@ -93,6 +94,7 @@ func TestMarketplaceGetOrdersByID_SlotGiven_CorrespondentOrdersReturned(t *testi
 				},
 			},
 		},
+		Count: 100,
 	}
 
 	q := query.GetOrders{}

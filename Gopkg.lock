@@ -37,6 +37,12 @@
   version = "v1.7.0"
 
 [[projects]]
+  name = "github.com/gocraft/dbr"
+  packages = [".","dialect"]
+  revision = "b2f0ffcef2a64c0729d5818e103bc019caed7b22"
+  version = "v2.1"
+
+[[projects]]
   name = "github.com/golang/mock"
   packages = ["gomock"]
   revision = "13f360950a79f5864a972c786a10a50e44b69541"
@@ -136,7 +142,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["pbkdf2","scrypt","ssh/terminal"]
-  revision = "d585fd2cc9195196078f516b69daff6744ef5e84"
+  revision = "95a4943f35d008beabde8c11e5075a1b714e6419"
 
 [[projects]]
   branch = "master"
@@ -154,7 +160,7 @@
   branch = "master"
   name = "golang.org/x/text"
   packages = ["collate","collate/build","internal/colltab","internal/gen","internal/tag","internal/triegen","internal/ucd","language","secure/bidirule","transform","unicode/bidi","unicode/cldr","unicode/norm","unicode/rangetable"]
-  revision = "eb22672bea55af56d225d4e35405f4d2e9f062a0"
+  revision = "e19ae1496984b1c655b8044a65c0300a3c878dd3"
 
 [[projects]]
   branch = "master"
@@ -195,6 +201,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9ca2738a0621b1968abaf884385c8a10a8b292038e2a3123b34a3cf25f94d49a"
+  inputs-digest = "2ef6e6d9444d49e1129ee91d6fdc719f6a84c3ef052a5199c8cd2be6871dcc5f"
   solver-name = "gps-cdcl"
   solver-version = 1

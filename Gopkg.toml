@@ -31,6 +31,10 @@
 #  version = "1.7.3"
 
 [[constraint]]
+  name = "github.com/gocraft/dbr"
+  version = "2.1.0"
+
+[[constraint]]
   name = "github.com/golang/mock"
   version = "1.0.0"
 
