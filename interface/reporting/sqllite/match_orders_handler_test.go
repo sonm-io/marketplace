@@ -72,7 +72,7 @@ func TestMatchOrdersHandlerHandle_ValidQueryGiven_OrdersReturned(t *testing.T) {
 		orderRows = append(orderRows, orderRow)
 	}
 
-	stmt, err := MatchOrdersStmt(q.Order, q.Limit, OrderTTL)
+	stmt, err := MatchOrdersStmt(q.Order, q.Limit)
 	require.NoError(t, err)
 
 	sql, args, err := ToSQL(stmt)
@@ -142,7 +142,7 @@ func TestMatchOrdersHandlerHandle_BuyerIDGiven_OrdersReturned(t *testing.T) {
 		orderRows = append(orderRows, orderRow)
 	}
 
-	stmt, err := MatchOrdersStmt(q.Order, q.Limit, OrderTTL)
+	stmt, err := MatchOrdersStmt(q.Order, q.Limit)
 	require.NoError(t, err)
 
 	sql, args, err := ToSQL(stmt)

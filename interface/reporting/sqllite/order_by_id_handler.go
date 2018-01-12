@@ -44,7 +44,7 @@ func (h *OrderByIDHandler) Handle(req intf.Query, result interface{}) error {
 		return fmt.Errorf("invalid result %v given", result)
 	}
 
-	stmt, err := GetOrderByIDStmt(q.ID, OrderTTL)
+	stmt, err := GetOrderByIDStmt(q.ID)
 	if err != nil {
 		return err
 	}

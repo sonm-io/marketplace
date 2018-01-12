@@ -2,6 +2,9 @@ address: "0.0.0.0:9095"
 
 data_dir: "/etc/sonm"
 
+orders_ttl: "5m"
+orders_cleanup_period: "1m"
+
 # blockchain-specific settings.
 ethereum:
   # path to keystore

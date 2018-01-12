@@ -50,7 +50,7 @@ func TestOrderByIDHandlerHandle_ExistingIDGiven_OrderReturned(t *testing.T) {
 	mapper.OrderToRow(&expected.Order, &orderRow)
 	orderRow.Status = Active
 
-	stmt, err := GetOrderByIDStmt("test_order", OrderTTL)
+	stmt, err := GetOrderByIDStmt("test_order")
 	require.NoError(t, err)
 
 	sql, args, err := ToSQL(stmt)
@@ -78,7 +78,7 @@ func TestOrderByIDHandlerHandle_InExistentOrderIDGiven_ErrorReturned(t *testing.
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	stmt, err := GetOrderByIDStmt("test_order", OrderTTL)
+	stmt, err := GetOrderByIDStmt("test_order")
 	require.NoError(t, err)
 
 	sql, args, err := ToSQL(stmt)
@@ -104,7 +104,7 @@ func TestOrderByIDHandlerHandle_StorageErrorOccurred_ErrorReturned(t *testing.T)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	stmt, err := GetOrderByIDStmt("test_order", OrderTTL)
+	stmt, err := GetOrderByIDStmt("test_order")
 	require.NoError(t, err)
 
 	sql, args, err := ToSQL(stmt)
@@ -133,7 +133,7 @@ func TestOrderByIDHandlerHandle_InactiveOrderIDGiven_ErrorReturned(t *testing.T)
 	var orderRow sds.OrderRow
 	orderRow.Status = uint8(InActive)
 
-	stmt, err := GetOrderByIDStmt("inactive_order", OrderTTL)
+	stmt, err := GetOrderByIDStmt("inactive_order")
 	require.NoError(t, err)
 
 	sql, args, err := ToSQL(stmt)

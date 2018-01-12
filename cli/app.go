@@ -50,6 +50,8 @@ type App struct {
 	server     *gRPC.Server
 	creds      credentials.TransportCredentials
 	rotator    util.HitlessCertRotator
+
+	schedulerQuitCh chan bool
 }
 
 // NewApp creates a new App instance.
@@ -245,6 +247,8 @@ func (a *App) Run() error {
 	}
 	a.RUnlock()
 
+	a.runScheduler()
+
 	lis, err := net.Listen("tcp", a.conf.ListenAddr)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %v", err)
@@ -260,21 +264,11 @@ func (a *App) Stop() {
 	a.RLock()
 	defer a.RUnlock()
 
-	if a.server != nil {
-		a.server.GracefulStop()
-	}
-
-	if a.rotator != nil {
-		a.rotator.Close()
-	}
-
-	if a.db != nil {
-		a.db.Close()
-	}
-
-	if a.logger != nil {
-		a.logger.Sync() // nolint
-	}
+	a.server.GracefulStop()
+	a.rotator.Close()
+	a.stopScheduler()
+	a.db.Close()
+	a.logger.Sync() // nolint
 }
 
 // Creds a kludge to ease integration testing.

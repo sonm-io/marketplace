@@ -3,7 +3,7 @@ package sqllite
 import "github.com/gocraft/dbr"
 
 // GetOrderByIDStmt is a factory method that builds a statement to get order by ID.
-func GetOrderByIDStmt(ID string, TTL uint64) (*dbr.SelectStmt, error) {
+func GetOrderByIDStmt(ID string) (*dbr.SelectStmt, error) {
 	stmt := dbr.Select("id", "type", "supplier_id", "buyer_id", "price",
 		"slot_duration", "slot_buyer_rating", "slot_supplier_rating",
 		"resources_cpu_cores", "resources_ram_bytes", "resources_gpu_count", "resources_storage",
@@ -11,7 +11,7 @@ func GetOrderByIDStmt(ID string, TTL uint64) (*dbr.SelectStmt, error) {
 		"status").
 		From("orders").
 		Where("id = ?", ID).
-		Where(dbr.Expr("(strftime('%s', 'now') - strftime('%s', created_at)) < ?", TTL))
+		Where("status != ?", Expired)
 
 	return stmt, nil
 }
