@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
 
@@ -26,12 +27,15 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	pricePerSecond, err := pb.NewBigIntFromString("100")
+	require.NoError(t, err)
+
 	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.Order{
-		Id:        "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-		OrderType: pb.OrderType_BID,
-		ByuerID:   buyerID,
-		Price:     "100",
+		Id:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+		OrderType:      pb.OrderType_BID,
+		ByuerID:        buyerID,
+		PricePerSecond: pricePerSecond,
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
 				CpuCores: 4,
@@ -45,9 +49,9 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 	}
 
 	expected := &pb.Order{
-		Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-		ByuerID: buyerID,
-		Price:   "100",
+		Id:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+		ByuerID:        buyerID,
+		PricePerSecond: pricePerSecond,
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
 				CpuCores: 4,
@@ -58,9 +62,9 @@ func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 
 	orderReport := report.GetOrderReport{
 		Order: ds.Order{
-			ID:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-			BuyerID: buyerID,
-			Price:   "100",
+			ID:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+			BuyerID:        buyerID,
+			PricePerSecond: pricePerSecond.Unwrap().String(),
 			Slot: &ds.Slot{
 				Resources: ds.Resources{
 					CPUCores: 4,
@@ -102,11 +106,14 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	pricePerSecond, err := pb.NewBigIntFromString("100")
+	require.NoError(t, err)
+
 	supplierID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.Order{
-		OrderType:  pb.OrderType_ASK,
-		SupplierID: supplierID,
-		Price:      "100",
+		OrderType:      pb.OrderType_ASK,
+		SupplierID:     supplierID,
+		PricePerSecond: pricePerSecond,
 		Slot: &pb.Slot{
 			SupplierRating: 555,
 		},
@@ -122,9 +129,9 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 	}
 
 	expected := &pb.Order{
-		Id:         expectedID,
-		SupplierID: supplierID,
-		Price:      "100",
+		Id:             expectedID,
+		SupplierID:     supplierID,
+		PricePerSecond: pricePerSecond,
 		Slot: &pb.Slot{
 			SupplierRating: 555,
 			Resources:      &pb.Resources{},
@@ -133,9 +140,9 @@ func TestMarketplaceCreateOrder_ValidAskOrderWithNoResourcesGiven_ValidResponse(
 
 	orderReport := report.GetOrderReport{
 		Order: ds.Order{
-			ID:         expectedID,
-			SupplierID: supplierID,
-			Price:      "100",
+			ID:             expectedID,
+			SupplierID:     supplierID,
+			PricePerSecond: pricePerSecond.Unwrap().String(),
 			Slot: &ds.Slot{
 				SupplierRating: 555,
 			},
