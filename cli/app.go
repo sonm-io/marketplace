@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -260,6 +261,15 @@ func (a *App) Stop() {
 	a.RLock()
 	defer a.RUnlock()
 
+	time.AfterFunc(a.shutDownTimeOut(), func() {
+		fmt.Printf("Application killed after timeout %s", a.shutDownTimeOut().String())
+		os.Exit(2)
+	})
+
+	if a.logger != nil {
+		a.logger.Info("Application stopping...")
+	}
+
 	if a.server != nil {
 		a.server.GracefulStop()
 	}
@@ -268,13 +278,17 @@ func (a *App) Stop() {
 		a.rotator.Close()
 	}
 
-	if a.db != nil {
-		a.db.Close()
-	}
-
 	if a.logger != nil {
 		a.logger.Sync() // nolint
 	}
+
+	a.logger.Info("Done")
+}
+
+// shutDownTimeOut the application will be terminated forcefully after time is up
+// used during application termination.
+func (a *App) shutDownTimeOut() time.Duration {
+	return 15 * time.Second
 }
 
 // Creds a kludge to ease integration testing.

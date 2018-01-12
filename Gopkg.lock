@@ -122,6 +122,12 @@
   version = "v1.1.4"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/xlab/closer"
+  packages = ["."]
+  revision = "89cd22812c4fd5188746092cd10992caeffc75ab"
+
+[[projects]]
   name = "go.uber.org/atomic"
   packages = ["."]
   revision = "8474b86a5a6f79c443ce4b2992817ff32cf208b8"
@@ -202,6 +208,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2ef6e6d9444d49e1129ee91d6fdc719f6a84c3ef052a5199c8cd2be6871dcc5f"
+  inputs-digest = "5b7863f0cada73a408f121c846db2c4973ecac069621dd12aef7fed340743552"
   solver-name = "gps-cdcl"
   solver-version = 1
