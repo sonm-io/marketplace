@@ -276,9 +276,9 @@ func (a *App) Stop() {
 	a.rotator.Close()
 	a.stopScheduler()
 	a.db.Close()
-	a.logger.Sync() // nolint
 
 	a.logger.Info("Done")
+	a.logger.Sync() // nolint
 }
 
 // shutDownTimeOut the application will be terminated forcefully after time is up

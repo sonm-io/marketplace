@@ -52,6 +52,7 @@ func main() {
 
 	closer.Bind(app.Stop)
 	closer.Checked(app.Run, true)
+	closer.Hold()
 }
 
 func fillBuildInfo() {
