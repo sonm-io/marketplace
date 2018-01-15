@@ -25,19 +25,19 @@ func TestMatchOrdersHandlerHandle_ValidQueryGiven_OrdersReturned(t *testing.T) {
 
 	orders := []ds.Order{
 		{
-			ID:         "test_order_101",
-			OrderType:  ds.Ask,
-			Price:      "101",
-			SupplierID: "TestSupplier",
+			ID:             "test_order_101",
+			OrderType:      ds.Ask,
+			PricePerSecond: "101",
+			SupplierID:     "TestSupplier",
 			Slot: &ds.Slot{
 				Duration: 900,
 			},
 		},
 		{
-			ID:         "test_order_105",
-			OrderType:  ds.Ask,
-			Price:      "105",
-			SupplierID: "TestSupplier2",
+			ID:             "test_order_105",
+			OrderType:      ds.Ask,
+			PricePerSecond: "105",
+			SupplierID:     "TestSupplier2",
 			Slot: &ds.Slot{
 				Duration: 600,
 			},
@@ -111,10 +111,10 @@ func TestMatchOrdersHandlerHandle_BuyerIDGiven_OrdersReturned(t *testing.T) {
 
 	orders := []ds.Order{
 		{
-			ID:        "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-			BuyerID:   "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
-			OrderType: ds.Bid,
-			Price:     "100",
+			ID:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+			BuyerID:        "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db",
+			OrderType:      ds.Bid,
+			PricePerSecond: "100",
 			Slot: &ds.Slot{
 				Duration: 900,
 				Resources: ds.Resources{

@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -50,6 +51,8 @@ type App struct {
 	server     *gRPC.Server
 	creds      credentials.TransportCredentials
 	rotator    util.HitlessCertRotator
+
+	schedulerQuitCh chan bool
 }
 
 // NewApp creates a new App instance.
@@ -245,6 +248,8 @@ func (a *App) Run() error {
 	}
 	a.RUnlock()
 
+	a.runScheduler()
+
 	lis, err := net.Listen("tcp", a.conf.ListenAddr)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %v", err)
@@ -260,21 +265,26 @@ func (a *App) Stop() {
 	a.RLock()
 	defer a.RUnlock()
 
-	if a.server != nil {
-		a.server.GracefulStop()
-	}
+	a.logger.Info("Application stopping...")
 
-	if a.rotator != nil {
-		a.rotator.Close()
-	}
+	time.AfterFunc(a.shutDownTimeOut(), func() {
+		fmt.Printf("Application killed after timeout %s", a.shutDownTimeOut().String())
+		os.Exit(2)
+	})
 
-	if a.db != nil {
-		a.db.Close()
-	}
+	a.server.GracefulStop()
+	a.rotator.Close()
+	a.stopScheduler()
+	a.db.Close()
 
-	if a.logger != nil {
-		a.logger.Sync() // nolint
-	}
+	a.logger.Info("Done")
+	a.logger.Sync() // nolint
+}
+
+// shutDownTimeOut the application will be terminated forcefully after time is up
+// used during application termination.
+func (a *App) shutDownTimeOut() time.Duration {
+	return 15 * time.Second
 }
 
 // Creds a kludge to ease integration testing.

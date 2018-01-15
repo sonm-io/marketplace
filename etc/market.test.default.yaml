@@ -3,6 +3,9 @@ address: "127.0.0.1:5095"
 # path to data dir, default ./data
 data_dir: "<DATA_DIR>"
 
+orders_ttl: "5m"
+orders_cleanup_period: "1m"
+
 # blockchain-specific settings.
 ethereum:
   # path to keystore, default ./etc/keys

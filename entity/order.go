@@ -20,12 +20,12 @@ var (
 func NewAskOrder(ID, supplierID, buyerID, price string, slot ds.Slot) (*Order, error) {
 	o := &Order{
 		Order: ds.Order{
-			ID:         ID,
-			SupplierID: supplierID,
-			BuyerID:    buyerID,
-			Price:      price,
-			OrderType:  ds.Ask,
-			Slot:       &slot,
+			ID:             ID,
+			SupplierID:     supplierID,
+			BuyerID:        buyerID,
+			PricePerSecond: price,
+			OrderType:      ds.Ask,
+			Slot:           &slot,
 		},
 	}
 
@@ -33,7 +33,7 @@ func NewAskOrder(ID, supplierID, buyerID, price string, slot ds.Slot) (*Order, e
 		return nil, errSupplierIsRequired
 	}
 
-	if o.Price == "" {
+	if o.PricePerSecond == "" {
 		return nil, errPriceIsZero
 	}
 
@@ -44,16 +44,16 @@ func NewAskOrder(ID, supplierID, buyerID, price string, slot ds.Slot) (*Order, e
 func NewBidOrder(ID, buyerID, supplierID, price string, slot ds.Slot) (*Order, error) {
 	o := &Order{
 		Order: ds.Order{
-			ID:         ID,
-			BuyerID:    buyerID,
-			SupplierID: supplierID,
-			Price:      price,
-			OrderType:  ds.Bid,
-			Slot:       &slot,
+			ID:             ID,
+			BuyerID:        buyerID,
+			SupplierID:     supplierID,
+			PricePerSecond: price,
+			OrderType:      ds.Bid,
+			Slot:           &slot,
 		},
 	}
 
-	if o.Price == "" {
+	if o.PricePerSecond == "" {
 		return nil, errPriceIsZero
 	}
 

@@ -38,8 +38,12 @@ func bindGetOrderReport(r *report.GetOrderReport, pbOrder *pb.Order) {
 	pbOrder.Id = r.ID
 	pbOrder.ByuerID = r.BuyerID
 	pbOrder.SupplierID = r.SupplierID
-	pbOrder.Price = r.Price
 	pbOrder.OrderType = pb.OrderType(r.OrderType)
+
+	pricePerSecond, err := pb.NewBigIntFromString(r.PricePerSecond)
+	if err == nil {
+		pbOrder.PricePerSecond = pricePerSecond
+	}
 
 	if r.Slot == nil {
 		return

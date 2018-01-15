@@ -12,10 +12,14 @@ import (
 )
 
 func (s *MarketplaceTestSuite) getBidOrdersByBuyerID(t *testing.T) {
+	// arrange
+
 	// e.g 0x9B27D3C3571731deDb23EaFEa34a3a6E05daE159
 	buyerID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
 
-	// arrange
+	pricePerSecond, err := pb.NewBigIntFromString("777")
+	require.NoError(t, err)
+
 	req := &pb.GetOrdersRequest{
 		Order: &pb.Order{
 			ByuerID:   buyerID,
@@ -27,10 +31,10 @@ func (s *MarketplaceTestSuite) getBidOrdersByBuyerID(t *testing.T) {
 	expected := &pb.GetOrdersReply{
 		Orders: []*pb.Order{
 			{
-				Id:        "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
-				OrderType: pb.OrderType_BID,
-				Price:     "777",
-				ByuerID:   buyerID,
+				Id:             "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
+				OrderType:      pb.OrderType_BID,
+				PricePerSecond: pricePerSecond,
+				ByuerID:        buyerID,
 
 				Slot: &pb.Slot{
 					Duration:       900,
@@ -82,13 +86,16 @@ func (s *MarketplaceTestSuite) getBidOrders(t *testing.T) {
 	// smth like "0x9B27D3C3571731deDb23EaFEa34a3a6E05daE159"
 	buyerID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
 
+	pricePerSecond, err := pb.NewBigIntFromString("777")
+	require.NoError(t, err)
+
 	expected := &pb.GetOrdersReply{
 		Orders: []*pb.Order{
 			{
-				Id:        "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
-				OrderType: pb.OrderType_BID,
-				Price:     "777",
-				ByuerID:   buyerID,
+				Id:             "1b5dfa00-af3c-4e2d-b64b-c5d62e89430b",
+				OrderType:      pb.OrderType_BID,
+				PricePerSecond: pricePerSecond,
+				ByuerID:        buyerID,
 
 				Slot: &pb.Slot{
 					Duration:       900,
@@ -147,13 +154,16 @@ func (s *MarketplaceTestSuite) getAskOrders(t *testing.T) {
 	// smth like "0x8125721C2413d99a33E351e1F6Bb4e56b6b633FD"
 	supplierID := util.PubKeyToAddr(s.App.PublicKey()).Hex()
 
+	pricePerSecond, err := pb.NewBigIntFromString("777")
+	require.NoError(t, err)
+
 	expected := &pb.GetOrdersReply{
 		Orders: []*pb.Order{
 			{
-				Id:         "fc018acd-d9a9-4b8a-a45f-f90456a469c1",
-				OrderType:  pb.OrderType_ASK,
-				Price:      "777",
-				SupplierID: supplierID,
+				Id:             "fc018acd-d9a9-4b8a-a45f-f90456a469c1",
+				OrderType:      pb.OrderType_ASK,
+				PricePerSecond: pricePerSecond,
+				SupplierID:     supplierID,
 
 				Slot: &pb.Slot{
 					Duration:       600,
