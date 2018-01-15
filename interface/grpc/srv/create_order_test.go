@@ -181,12 +181,15 @@ func TestMarketplaceCreateOrder_InValidRequest_ErrorReturned(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	pricePerSecond, err := pb.NewBigIntFromString("100")
+	require.NoError(t, err)
+
 	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.Order{
-		Id:        "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-		OrderType: pb.OrderType_BID,
-		ByuerID:   buyerID,
-		Price:     "100",
+		Id:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+		OrderType:      pb.OrderType_BID,
+		ByuerID:        buyerID,
+		PricePerSecond: pricePerSecond,
 		Slot: &pb.Slot{
 			Resources: &pb.Resources{
 				CpuCores: 4,
@@ -212,7 +215,7 @@ func TestMarketplaceCreateOrder_InValidRequest_ErrorReturned(t *testing.T) {
 	ctx := interceptor.EthAddrToContext(context.Background(), common.HexToAddress(buyerID))
 
 	// act
-	_, err := m.CreateOrder(ctx, req)
+	_, err = m.CreateOrder(ctx, req)
 
 	// assert
 	assert.EqualError(t, err, "rpc error: code = Internal desc = Cannot create order: an error occurred")
@@ -223,18 +226,21 @@ func TestMarketplaceCreateOrder_InvalidOrderTypeGiven_ErrorReturned(t *testing.T
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	pricePerSecond, err := pb.NewBigIntFromString("100")
+	require.NoError(t, err)
+
 	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	req := &pb.Order{
-		Id:      "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
-		ByuerID: buyerID,
-		Price:   "100",
+		Id:             "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7",
+		ByuerID:        buyerID,
+		PricePerSecond: pricePerSecond,
 	}
 
 	m := NewMarketplace(nil, nil, nil)
 	ctx := interceptor.EthAddrToContext(context.Background(), common.HexToAddress(buyerID))
 
 	// act
-	_, err := m.CreateOrder(ctx, req)
+	_, err = m.CreateOrder(ctx, req)
 
 	// assert
 	assert.EqualError(t, err,

@@ -86,11 +86,13 @@ func (a *App) Init() error {
 	createBidOrderHandler := command.NewCreateBidOrderHandler(repo)
 	createAskOrderHandler := command.NewCreateAskOrderHandler(repo)
 	cancelOrderHandler := command.NewCancelOrderHandler(repo)
+	touchOrdersHandler := command.NewTouchOrdersHandler(repo)
 
 	commandBus := cqrs.NewCommandBus()
 	commandBus.RegisterHandler("CreateBidOrder", adaptor.FromDomain(createBidOrderHandler))
 	commandBus.RegisterHandler("CreateAskOrder", adaptor.FromDomain(createAskOrderHandler))
 	commandBus.RegisterHandler("CancelOrder", adaptor.FromDomain(cancelOrderHandler))
+	commandBus.RegisterHandler("TouchOrders", adaptor.FromDomain(touchOrdersHandler))
 
 	return a.initServer(
 		srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler))
