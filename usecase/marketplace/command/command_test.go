@@ -22,3 +22,7 @@ func TestCreateBidOrder_CommandID(t *testing.T) {
 func TestCreateAskOrder_CommandID(t *testing.T) {
 	assert.Equal(t, "CreateAskOrder", CreateAskOrder{}.CommandID())
 }
+
+func TestTouchOrders_CommandID(t *testing.T) {
+	assert.Equal(t, "TouchOrders", TouchOrders{}.CommandID())
+}
