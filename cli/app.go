@@ -51,6 +51,8 @@ type App struct {
 	server     *gRPC.Server
 	creds      credentials.TransportCredentials
 	rotator    util.HitlessCertRotator
+
+	schedulerQuitCh chan bool
 }
 
 // NewApp creates a new App instance.
@@ -246,6 +248,8 @@ func (a *App) Run() error {
 	}
 	a.RUnlock()
 
+	a.runScheduler()
+
 	lis, err := net.Listen("tcp", a.conf.ListenAddr)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %v", err)
@@ -261,26 +265,18 @@ func (a *App) Stop() {
 	a.RLock()
 	defer a.RUnlock()
 
+	a.logger.Info("Application stopping...")
+
 	time.AfterFunc(a.shutDownTimeOut(), func() {
 		fmt.Printf("Application killed after timeout %s", a.shutDownTimeOut().String())
 		os.Exit(2)
 	})
 
-	if a.logger != nil {
-		a.logger.Info("Application stopping...")
-	}
-
-	if a.server != nil {
-		a.server.GracefulStop()
-	}
-
-	if a.rotator != nil {
-		a.rotator.Close()
-	}
-
-	if a.logger != nil {
-		a.logger.Sync() // nolint
-	}
+	a.server.GracefulStop()
+	a.rotator.Close()
+	a.stopScheduler()
+	a.db.Close()
+	a.logger.Sync() // nolint
 
 	a.logger.Info("Done")
 }

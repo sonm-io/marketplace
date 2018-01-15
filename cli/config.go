@@ -15,6 +15,9 @@ type Config struct {
 	DataDir    string `yaml:"data_dir" required:"true" default:"./data"`
 
 	EthCfg accounts.EthConfig `yaml:"ethereum" required:"true"`
+
+	OrdersCleanUpPeriod string `yaml:"orders_cleanup_period" required:"true" default:"1m"`
+	OrdersTTL           string `yaml:"orders_ttl" required:"true" default:"5m"`
 }
 
 // Option is a configuration parameter.

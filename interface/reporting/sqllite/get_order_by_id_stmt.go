@@ -10,7 +10,8 @@ func GetOrderByIDStmt(ID string) (*dbr.SelectStmt, error) {
 		"resources_net_inbound", "resources_net_outbound", "resources_net_type", "resources_properties",
 		"status").
 		From("orders").
-		Where("id = ?", ID)
+		Where("id = ?", ID).
+		Where("status != ?", Expired)
 
 	return stmt, nil
 }

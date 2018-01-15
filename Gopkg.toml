@@ -27,7 +27,8 @@
 
 [[constraint]]
   name = "github.com/ethereum/go-ethereum"
-  version = "1.7.3"
+  revision = "18a7d313386194be39e733ac3043988690f42464"
+#  version = "1.7.3"
 
 [[constraint]]
   name = "github.com/gocraft/dbr"
@@ -51,11 +52,15 @@
 
 [[constraint]]
   branch = "master"
+  name = "github.com/jasonlvhit/gocron"
+
+[[constraint]]
+  branch = "master"
   name = "github.com/jinzhu/configor"
 
 [[constraint]]
   name = "github.com/mattn/go-sqlite3"
-  version = "1.4.0"
+  version = "1.6.0"
 
 [[constraint]]
   branch = "master"
@@ -71,11 +76,11 @@
 
 [[constraint]]
   name = "github.com/stretchr/testify"
-  version = "1.1.4"
+  version = "1.2.0"
 
 [[constraint]]
-  name = "github.com/xlab/closer"
   branch = "master"
+  name = "github.com/xlab/closer"
 
 [[constraint]]
   name = "go.uber.org/zap"
@@ -87,7 +92,7 @@
 
 [[constraint]]
   name = "google.golang.org/grpc"
-  version = "1.8.2"
+  version = "1.9.1"
 
 [[constraint]]
   branch = "v2"

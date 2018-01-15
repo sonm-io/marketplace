@@ -17,7 +17,17 @@ CREATE TABLE IF NOT EXISTS orders
   resources_net_outbound INTEGER DEFAULT 0 NOT NULL,
   resources_net_type INTEGER DEFAULT 0 NOT NULL,
   resources_properties TEXT,
-  status INTEGER NOT NULL DEFAULT 1
+  status INTEGER NOT NULL DEFAULT 1,
+  created_at INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS orders_id_uindex on orders (id);
+
+CREATE TRIGGER IF NOT EXISTS [UpdateUpdatedAt]
+AFTER UPDATE ON orders FOR EACH ROW
+WHEN NEW.updated_at <= OLD.updated_at
+BEGIN
+  UPDATE orders SET updated_at=CURRENT_TIMESTAMP
+  WHERE idx=OLD.idx;
+END;
