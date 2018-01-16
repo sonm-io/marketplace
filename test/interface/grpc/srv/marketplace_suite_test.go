@@ -68,6 +68,10 @@ func (s *MarketplaceTestSuite) TestMarketPlace() {
 		s.getAskOrders(t)
 	})
 
+	s.T().Run("TouchOrders", func(t *testing.T) {
+		s.TouchOrders(t)
+	})
+
 	s.T().Run("CancelOrder", func(t *testing.T) {
 		s.CancelOrder(t)
 	})
