@@ -1,3 +1,6 @@
+package cli
+
+const sqlLiteSchema = `
 CREATE TABLE IF NOT EXISTS orders
 (
   idx INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,3 +34,4 @@ BEGIN
   UPDATE orders SET updated_at=CURRENT_TIMESTAMP
   WHERE idx=OLD.idx;
 END;
+`

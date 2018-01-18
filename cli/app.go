@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -177,24 +176,21 @@ func (a *App) initStorage() error {
 		return fmt.Errorf("cannot get absolute path of database directory: %v", err)
 	}
 	a.conf.DataDir = dataDir
-	a.logger.Info("Data dir", zap.String("path", a.conf.DataDir))
 
-	a.logger.Info("Importing database schema", zap.String("schema", a.conf.DataDir+"/schema.sql"))
-	schema, err := ioutil.ReadFile(a.conf.DataDir + "/schema.sql")
-	if err != nil {
-		return fmt.Errorf("cannot read database schema file: %v", err)
-	}
-	a.logger.Info("Database schema successfully imported")
+	a.logger.Info("Data dir", zap.String("path", a.conf.DataDir))
+	a.logger.Info("Importing database schema")
 
 	db, err := sql.Open("sqlite3", a.conf.DataDir+"/data.db")
 	if err != nil {
 		return fmt.Errorf("cannot open database: %v", err)
 	}
 
-	_, err = db.Exec(string(schema))
+	_, err = db.Exec(sqlLiteSchema)
 	if err != nil {
 		return fmt.Errorf("cannot import database schema: %v", err)
 	}
+
+	a.logger.Info("Database schema successfully imported")
 	a.db = db
 
 	return nil
