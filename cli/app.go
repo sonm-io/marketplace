@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -146,8 +145,12 @@ func (a *App) initLogger() error {
 		atom,
 	))
 
-	// TODO: (screwyprof) Read log level from settings file.
-	atom.SetLevel(zap.DebugLevel)
+	var level zapcore.Level
+	if err := level.UnmarshalText([]byte(a.conf.LogLevel)); err != nil {
+		fmt.Errorf("cannot init logger: unsupported log_level provided: %q", a.conf.LogLevel)
+	}
+
+	atom.SetLevel(level)
 
 	// grpclog will only log messages if zap log level is DebugLevel.
 	// it's needed to avoid grpclog flood at Info level.
@@ -163,38 +166,34 @@ func (a *App) initLogger() error {
 }
 
 func (a *App) initStorage() error {
-	dataDirExists, err := a.pathExists(a.conf.DataDir)
-	if err != nil {
-		return fmt.Errorf("cannot check if data dir exists: %v", err)
-	}
-
-	if !dataDirExists {
+	if a.conf.DataDir == "" {
 		a.conf.DataDir = filepath.Dir(os.Args[0]) + "/data"
 	}
 
-	dataDir, err := filepath.Abs(a.conf.DataDir)
-	if err != nil {
-		return fmt.Errorf("cannot get absolute path of database directory: %v", err)
-	}
-	a.conf.DataDir = dataDir
 	a.logger.Info("Data dir", zap.String("path", a.conf.DataDir))
-
-	a.logger.Info("Importing database schema", zap.String("schema", a.conf.DataDir+"/schema.sql"))
-	schema, err := ioutil.ReadFile(a.conf.DataDir + "/schema.sql")
-	if err != nil {
-		return fmt.Errorf("cannot read database schema file: %v", err)
+	if err := os.MkdirAll(a.conf.DataDir, 0700); err != nil {
+		return fmt.Errorf("cannot create data dir: %v", err)
 	}
-	a.logger.Info("Database schema successfully imported")
+
+	dbPreExisted, err := a.pathExists(a.conf.DataDir+"/data.db")
+	if err != nil {
+		return fmt.Errorf("cannot check if database exists: %v", err)
+	}
 
 	db, err := sql.Open("sqlite3", a.conf.DataDir+"/data.db")
 	if err != nil {
 		return fmt.Errorf("cannot open database: %v", err)
 	}
 
-	_, err = db.Exec(string(schema))
-	if err != nil {
-		return fmt.Errorf("cannot import database schema: %v", err)
+	if !dbPreExisted {
+		a.logger.Info("Importing database schema")
+		_, err = db.Exec(sqlLiteSchema)
+		if err != nil {
+			return fmt.Errorf("cannot import database schema: %v", err)
+		}
+		a.logger.Info("Database schema successfully imported")
 	}
+
 	a.db = db
 
 	return nil
