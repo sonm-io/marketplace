@@ -1,6 +1,8 @@
 address: "0.0.0.0:9095"
 
 data_dir: "/etc/sonm"
+# Possible values are: DEBUG, INFO, WARN, ERROR, FATAL, default is DEBUG
+log_level: "INFO"
 
 orders_ttl: "5m"
 orders_cleanup_period: "1m"

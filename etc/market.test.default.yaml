@@ -2,6 +2,7 @@ address: "127.0.0.1:5095"
 
 # path to data dir, default ./data
 data_dir: "<DATA_DIR>"
+log_level: "DEBUG"
 
 orders_ttl: "5m"
 orders_cleanup_period: "1m"
