@@ -167,14 +167,8 @@ func (a *App) initStorage() error {
 	}
 
 	a.logger.Info("Data dir", zap.String("path", a.conf.DataDir))
-
-	dataDirExists, err := a.pathExists(a.conf.DataDir)
-	if err != nil {
-		return fmt.Errorf("cannot check if data dir exists: %v", err)
-	}
-
-	if !dataDirExists {
-		os.MkdirAll(a.conf.DataDir, 0700)
+	if err := os.MkdirAll(a.conf.DataDir, 0700); err != nil {
+		return fmt.Errorf("cannot create data dir: %v", err)
 	}
 
 	dbPreExisted, err := a.pathExists(a.conf.DataDir+"/data.db")
