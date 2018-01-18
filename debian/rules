@@ -14,7 +14,6 @@ override_dh_auto_install:
 	cp $(GOPATH)/bin/marketplace ./sonmmarketplace
 	install -d $(DEB_DESTDIR)etc/sonm/
 	install -m644 ./etc/market.yaml $(DEB_DESTDIR)etc/sonm/marketplace-default.yaml
-	install -m644 ./data/schema.sql $(DEB_DESTDIR)etc/sonm/schema.sql
 override_dh_systemd_start:
 	@echo "Not running dh_systemd_start"
 
