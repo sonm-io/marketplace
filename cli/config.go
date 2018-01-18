@@ -14,6 +14,8 @@ type Config struct {
 	ListenAddr string `yaml:"address"`
 	DataDir    string `yaml:"data_dir" required:"true" default:"./data"`
 
+	LogLevel string `yaml:"log_level" required:"true" default:"DEBUG"`
+
 	EthCfg accounts.EthConfig `yaml:"ethereum" required:"true"`
 
 	OrdersCleanUpPeriod string `yaml:"orders_cleanup_period" required:"true" default:"1m"`

@@ -145,8 +145,12 @@ func (a *App) initLogger() error {
 		atom,
 	))
 
-	// TODO: (screwyprof) Read log level from settings file.
-	atom.SetLevel(zap.DebugLevel)
+	var level zapcore.Level
+	if err := level.UnmarshalText([]byte(a.conf.LogLevel)); err != nil {
+		fmt.Errorf("cannot init logger: unsupported log_level provided: %q", a.conf.LogLevel)
+	}
+
+	atom.SetLevel(level)
 
 	// grpclog will only log messages if zap log level is DebugLevel.
 	// it's needed to avoid grpclog flood at Info level.
