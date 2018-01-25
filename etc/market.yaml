@@ -1,4 +1,4 @@
-address: "0.0.0.0:9095"
+address: "0.0.0.0:15021"
 
 data_dir: "/etc/sonm"
 # Possible values are: DEBUG, INFO, WARN, ERROR, FATAL, default is DEBUG
