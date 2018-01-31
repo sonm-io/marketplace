@@ -175,7 +175,7 @@ func (a *App) initStorage() error {
 		return fmt.Errorf("cannot create data dir: %v", err)
 	}
 
-	dbPreExisted, err := a.pathExists(a.conf.DataDir+"/data.db")
+	dbPreExisted, err := a.pathExists(a.conf.DataDir + "/data.db")
 	if err != nil {
 		return fmt.Errorf("cannot check if database exists: %v", err)
 	}

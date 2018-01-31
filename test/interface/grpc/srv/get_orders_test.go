@@ -42,7 +42,7 @@ func (s *MarketplaceTestSuite) getBidOrdersByBuyerID(t *testing.T) {
 					SupplierRating: 666,
 					Resources: &pb.Resources{
 						CpuCores: 1,
-						GpuCount: pb.GPUCount_SINGLE_GPU,
+						GpuCount: pb.GPUCount_MULTIPLE_GPU,
 						RamBytes: 100000000,
 						Storage:  1000000000,
 
@@ -74,7 +74,7 @@ func (s *MarketplaceTestSuite) getBidOrders(t *testing.T) {
 			Slot: &pb.Slot{
 				Resources: &pb.Resources{
 					CpuCores:     4,
-					GpuCount:     pb.GPUCount_SINGLE_GPU,
+					GpuCount:     pb.GPUCount_MULTIPLE_GPU,
 					NetworkType:  pb.NetworkType_INCOMING,
 					NetTrafficIn: 500000,
 				},
@@ -103,7 +103,7 @@ func (s *MarketplaceTestSuite) getBidOrders(t *testing.T) {
 					SupplierRating: 666,
 					Resources: &pb.Resources{
 						CpuCores: 1,
-						GpuCount: pb.GPUCount_SINGLE_GPU,
+						GpuCount: pb.GPUCount_MULTIPLE_GPU,
 						RamBytes: 100000000,
 						Storage:  1000000000,
 
