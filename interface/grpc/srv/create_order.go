@@ -22,6 +22,10 @@ func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order
 		return nil, err
 	}
 
+	if err := m.validate(req); err != nil {
+		return nil, err
+	}
+
 	var (
 		cmd intf.Command
 		ID  string
@@ -49,6 +53,18 @@ func (m *Marketplace) CreateOrder(ctx context.Context, req *pb.Order) (*pb.Order
 	}
 
 	return m.GetOrderByID(ctx, &pb.ID{Id: ID})
+}
+
+func (m *Marketplace) validate(req *pb.Order) error {
+	if req == nil || req.Slot == nil || req.Slot.Resources == nil {
+		return nil
+	}
+
+	if req.Slot.Resources.GpuCount == pb.GPUCount_SINGLE_GPU {
+		return fmt.Errorf("SINGLE_GPU has been deprecated, only NO_GPU and MULTIPLE_GPU are allowed")
+	}
+
+	return nil
 }
 
 func (m *Marketplace) createOrder(ctx context.Context, cmd intf.Command) error {
