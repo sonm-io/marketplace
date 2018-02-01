@@ -58,9 +58,14 @@ func (h *MatchOrdersHandler) Handle(req intf.Query, result interface{}) error {
 	}
 
 	var order ds.Order
+	propertiesSpec := NewPropertiesSpec(q)
 	for idx := range rows {
 		order = ds.Order{}
 		mapper.OrderFromRow(&order, &rows[idx])
+
+		if !propertiesSpec.IsSatisfiedBy(order) {
+			continue
+		}
 		*r = append(*r, report.GetOrderReport{Order: order})
 	}
 

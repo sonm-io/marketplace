@@ -64,6 +64,8 @@ func (s *MarketplaceTestSuite) TestMarketPlace() {
 
 	s.T().Run("GetOrders", func(t *testing.T) {
 		s.getBidOrdersByBuyerID(t)
+		s.getBidOrdersWithInExistentProperties(t)
+		s.getAskOrdersMatchingProperties(t)
 		s.getBidOrders(t)
 		s.getAskOrders(t)
 	})
