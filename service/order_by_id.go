@@ -18,10 +18,7 @@ func (ms *MarketService) OrderByID(ID string, result interface{}) error {
 		return fmt.Errorf("invalid result %v given", result)
 	}
 
-	sql, args, err := ToSQL(OrderByIDStmt(ID))
-	if err != nil {
-		return err
-	}
+	sql, args, _ := ToSQL(OrderByIDStmt(ID))
 
 	var row mds.OrderRow
 	if err := ms.s.FetchRow(&row, sql, args...); err != nil {

@@ -25,16 +25,19 @@ func (ms *MarketService) MatchOrders(req *pb.Order, limit uint64, result interfa
 		return err
 	}
 
-	sql, args, err := ToSQL(stmt)
-	if err != nil {
-		return err
-	}
+	sql, args, _ := ToSQL(stmt)
 
 	var rows mds.OrderRows
 	if err := ms.s.FetchRows(&rows, sql, args...); err != nil {
-		return err
+		return fmt.Errorf("cannot match orders: %v", err)
 	}
 
+	ms.filterOrders(req, rows, res)
+
+	return nil
+}
+
+func (ms *MarketService) filterOrders(req *pb.Order, rows mds.OrderRows, res *pb.GetOrdersReply) {
 	var order ds.Order
 	propertiesSpec := NewPropertiesSpec(req)
 	for idx := range rows {
@@ -46,6 +49,4 @@ func (ms *MarketService) MatchOrders(req *pb.Order, limit uint64, result interfa
 		}
 		(*res).Orders = append((*res).Orders, order.Order)
 	}
-
-	return nil
 }

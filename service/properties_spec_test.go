@@ -24,6 +24,20 @@ func TestPropertiesSpecIsSatisfiedBy_RequestWithPropertiesOrderWithNoPropertiesG
 	assert.False(t, obtained)
 }
 
+func TestPropertiesSpecIsSatisfiedBy_RequestWithNoPropertiesGiven_TrueReturned(t *testing.T) {
+	// assert
+	req := makeGetOrdersReq(pb.OrderType_BID, nil)
+
+	spec := NewPropertiesSpec(req)
+	order := ds.Order{}
+
+	// act
+	obtained := spec.IsSatisfiedBy(order)
+
+	// assert
+	assert.True(t, obtained)
+}
+
 func TestPropertiesSpecIsSatisfiedBy_RequestMatchingBidOrderGiven_TrueReturned(t *testing.T) {
 	// assert
 	req := makeGetOrdersReq(pb.OrderType_BID, map[string]float64{
