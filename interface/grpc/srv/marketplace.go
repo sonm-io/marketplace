@@ -1,19 +1,27 @@
 package srv
 
-import "github.com/sonm-io/marketplace/usecase/intf"
+import (
+	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+)
+
+type MarketService interface {
+	CreateAskOrder(o pb.Order) error
+	CreateBidOrder(o pb.Order) error
+	TouchOrders(IDs []string) error
+	CancelOrder(ID string) error
+
+	OrderByID(ID string, result interface{}) error
+	MatchOrders(req *pb.Order, limit uint64, result interface{}) error
+}
 
 // Marketplace a GRPC Server implementing Marketplace API.
 type Marketplace struct {
-	commandBus   intf.CommandHandler
-	orderByID    intf.QueryHandler
-	ordersBySpec intf.QueryHandler
+	marketService MarketService
 }
 
 // NewMarketplace creates a new instance of Marketplace.
-func NewMarketplace(c intf.CommandHandler, orderByID intf.QueryHandler, ordersBySpec intf.QueryHandler) *Marketplace {
+func NewMarketplace(marketService MarketService) *Marketplace {
 	return &Marketplace{
-		commandBus:   c,
-		orderByID:    orderByID,
-		ordersBySpec: ordersBySpec,
+		marketService: marketService,
 	}
 }

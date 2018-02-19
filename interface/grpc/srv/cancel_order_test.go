@@ -10,14 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
-
-	ds "github.com/sonm-io/marketplace/datastruct"
 	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
-
-	"github.com/sonm-io/marketplace/usecase/intf/mocks"
-	"github.com/sonm-io/marketplace/usecase/marketplace/command"
-	"github.com/sonm-io/marketplace/usecase/marketplace/query"
-	"github.com/sonm-io/marketplace/usecase/marketplace/query/report"
+	"github.com/sonm-io/marketplace/interface/grpc/srv/mocks"
 )
 
 func TestMarketplaceCancelOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
@@ -28,24 +22,21 @@ func TestMarketplaceCancelOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
 	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	orderID := "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7"
 
-	q := query.GetOrder{ID: orderID}
-	orderReport := report.GetOrderReport{
-		Order: ds.Order{
-			ID:        orderID,
-			OrderType: ds.Bid,
-			BuyerID:   buyerID,
-		},
+	order := pb.Order{
+		Id:        orderID,
+		OrderType: pb.OrderType_BID,
+		ByuerID:   buyerID,
 	}
 
-	orderByIDMock := mocks.NewMockQueryHandler(ctrl)
-	orderByIDMock.EXPECT().Handle(q, &report.GetOrderReport{}).
-		SetArg(1, orderReport).
+	serviceMock := mocks.NewMockMarketService(ctrl)
+	serviceMock.EXPECT().OrderByID(orderID, &pb.Order{}).
+		SetArg(1, order).
 		Return(nil)
 
-	cancelOrderMock := mocks.NewMockCommandHandler(ctrl)
-	cancelOrderMock.EXPECT().Handle(command.CancelOrder{ID: orderID}).Return(nil)
+	serviceMock.EXPECT().CancelOrder(orderID).
+		Return(nil)
 
-	m := NewMarketplace(cancelOrderMock, orderByIDMock, nil)
+	m := NewMarketplace(serviceMock)
 	ctx := interceptor.EthAddrToContext(context.Background(), common.HexToAddress(buyerID))
 
 	// act
@@ -61,14 +52,13 @@ func TestMarketplaceCancelOrder_InExistentOrderGiven_ErrorReturned(t *testing.T)
 	defer ctrl.Finish()
 
 	orderID := "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7"
-	q := query.GetOrder{ID: orderID}
 
-	orderByIDMock := mocks.NewMockQueryHandler(ctrl)
+	orderByIDMock := mocks.NewMockMarketService(ctrl)
 	orderByIDMock.EXPECT().
-		Handle(q, &report.GetOrderReport{}).
+		OrderByID(orderID, &pb.Order{}).
 		Return(fmt.Errorf("order is not found"))
 
-	m := NewMarketplace(nil, orderByIDMock, nil)
+	m := NewMarketplace(orderByIDMock)
 
 	// act
 	_, err := m.CancelOrder(context.Background(), &pb.Order{Id: orderID})
@@ -86,26 +76,21 @@ func TestMarketplaceCancelOrder_AnErrorOccurredWhileCancelingOrder_ErrorReturned
 	buyerID := "0x9A8568CD389580B6737FF56b61BE4F4eE802E2Db"
 	orderID := "cfef34ae-58d3-4693-8c6c-d1b95e7ed7e7"
 
-	q := query.GetOrder{ID: orderID}
-	orderReport := report.GetOrderReport{
-		Order: ds.Order{
-			ID:        orderID,
-			OrderType: ds.Bid,
-			BuyerID:   buyerID,
-		},
+	order := pb.Order{
+		Id:        orderID,
+		OrderType: pb.OrderType_BID,
+		ByuerID:   buyerID,
 	}
 
-	orderByIDMock := mocks.NewMockQueryHandler(ctrl)
-	orderByIDMock.EXPECT().Handle(q, &report.GetOrderReport{}).
-		SetArg(1, orderReport).
+	serviceMock := mocks.NewMockMarketService(ctrl)
+	serviceMock.EXPECT().OrderByID(orderID, &pb.Order{}).
+		SetArg(1, order).
 		Return(nil)
 
-	cancelOrderMock := mocks.NewMockCommandHandler(ctrl)
-	cancelOrderMock.EXPECT().
-		Handle(command.CancelOrder{ID: orderID}).
+	serviceMock.EXPECT().CancelOrder(orderID).
 		Return(fmt.Errorf("cannot cancel order"))
 
-	m := NewMarketplace(cancelOrderMock, orderByIDMock, nil)
+	m := NewMarketplace(serviceMock)
 	ctx := interceptor.EthAddrToContext(context.Background(), common.HexToAddress(buyerID))
 
 	// act

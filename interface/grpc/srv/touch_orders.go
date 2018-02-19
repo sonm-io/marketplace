@@ -6,9 +6,10 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
 	"go.uber.org/zap"
 
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
-	"github.com/sonm-io/marketplace/usecase/marketplace/command"
+	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 )
 
 // CancelOrder removes the given order from the storage.
@@ -16,5 +17,9 @@ func (m *Marketplace) TouchOrders(ctx context.Context, req *pb.TouchOrdersReques
 	logger := ctx_zap.Extract(ctx)
 	logger.Info("Touching orders", zap.Strings("ids", req.GetIDs()))
 
-	return &pb.Empty{}, m.commandBus.Handle(command.TouchOrders{IDs: req.GetIDs()})
+	if err := m.marketService.TouchOrders(req.IDs); err != nil {
+		return nil, status.Errorf(codes.Internal, "cannot touch orders: %v", err)
+	}
+
+	return &pb.Empty{}, nil
 }
