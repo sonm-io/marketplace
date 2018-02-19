@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 )
 
 // PropertiesSpec encapsulates the specification to match properties depending on OrderType.

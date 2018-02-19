@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/handler/proto"
 	mds "github.com/sonm-io/marketplace/mapper/datastruct"
+	pb "github.com/sonm-io/marketplace/proto"
 
 	"github.com/sonm-io/marketplace/mapper"
 	"github.com/sonm-io/marketplace/service/mocks"

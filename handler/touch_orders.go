@@ -1,4 +1,4 @@
-package srv
+package handler
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 )
 
 // CancelOrder removes the given order from the storage.

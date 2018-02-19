@@ -23,4 +23,4 @@ generate-mocks-service: tools
 generate-mocks-handler: tools
 	@mkdir  -p ./handler/srv/mocks
 	@mockgen -package mocks \
-            -source ./handler/srv/marketplace.go MarketService > ./handler/srv/mocks/market_service.go
+            -source ./handler/marketplace.go MarketService > ./handler/mocks/market_service.go

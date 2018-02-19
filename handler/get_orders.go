@@ -1,4 +1,4 @@
-package srv
+package handler
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/tags/zap"
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 )
 
 const (

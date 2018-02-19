@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/jasonlvhit/gocron"
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 	"go.uber.org/zap"
 )
 

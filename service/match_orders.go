@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 
 	"github.com/sonm-io/marketplace/mapper"
 	mds "github.com/sonm-io/marketplace/mapper/datastruct"

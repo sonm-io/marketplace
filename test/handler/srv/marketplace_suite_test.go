@@ -13,7 +13,7 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 	"github.com/sonm-io/marketplace/test/cli"
 )
 

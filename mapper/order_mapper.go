@@ -2,8 +2,8 @@ package mapper
 
 import (
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/handler/proto"
 	sds "github.com/sonm-io/marketplace/mapper/datastruct"
+	pb "github.com/sonm-io/marketplace/proto"
 )
 
 func OrderToRow(order *ds.Order, row *sds.OrderRow) {

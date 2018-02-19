@@ -1,7 +1,7 @@
-package srv
+package handler
 
 import (
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 )
 
 type MarketService interface {

@@ -9,7 +9,7 @@ bin/*
 /etc/keys/
 /etc/market.test.yaml
 
-handler/srv/mocks/*
+handler/mocks/*
 service/mocks/*
 !/mocks/stub.go
 mocks.go

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 
 	"github.com/stretchr/testify/require"
 )

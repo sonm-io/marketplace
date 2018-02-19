@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	pb "github.com/sonm-io/marketplace/handler/proto"
 	"github.com/sonm-io/marketplace/infra/util"
+	pb "github.com/sonm-io/marketplace/proto"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

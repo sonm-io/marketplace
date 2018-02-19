@@ -1,4 +1,4 @@
-package srv
+package handler
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/sonm-io/marketplace/handler/proto"
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
+	pb "github.com/sonm-io/marketplace/proto"
 )
 
 // CheckPermissions checks that the request is authorized and the sender has the proper permissions.

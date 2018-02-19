@@ -1,4 +1,4 @@
-package srv
+package handler
 
 import (
 	"github.com/pborman/uuid"

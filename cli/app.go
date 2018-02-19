@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zapgrpc"
 
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 	gRPC "google.golang.org/grpc"
 
 	"google.golang.org/grpc/credentials"
@@ -29,7 +29,7 @@ import (
 	"github.com/sonm-io/marketplace/infra/storage/sqllite"
 	"github.com/sonm-io/marketplace/infra/util"
 
-	"github.com/sonm-io/marketplace/handler/srv"
+	"github.com/sonm-io/marketplace/handler"
 	"github.com/sonm-io/marketplace/service"
 )
 
@@ -73,7 +73,7 @@ func (a *App) Init() error {
 
 	marketService := service.NewMarketService(sqllite.NewStorage(a.db))
 
-	return a.initServer(srv.NewMarketplace(marketService))
+	return a.initServer(handler.NewMarketplace(marketService))
 }
 
 func (a *App) initConfig() error {
@@ -178,7 +178,7 @@ func (a *App) initStorage() error {
 	return nil
 }
 
-func (a *App) initServer(mp *srv.Marketplace) error {
+func (a *App) initServer(mp *handler.Marketplace) error {
 	a.RLock()
 	logger := a.logger
 	key := a.privateKey

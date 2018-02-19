@@ -1,4 +1,4 @@
-package srv
+package handler
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	pb "github.com/sonm-io/marketplace/handler/proto"
-	"github.com/sonm-io/marketplace/handler/srv/mocks"
+	"github.com/sonm-io/marketplace/handler/mocks"
+	pb "github.com/sonm-io/marketplace/proto"
 )
 
 //

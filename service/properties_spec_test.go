@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/handler/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 )
 
 func TestPropertiesSpecIsSatisfiedBy_RequestWithPropertiesOrderWithNoPropertiesGiven_FalseReturned(t *testing.T) {

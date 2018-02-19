@@ -1,4 +1,4 @@
-package srv
+package handler
 
 import (
 	"context"
@@ -13,8 +13,8 @@ import (
 
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
 
-	pb "github.com/sonm-io/marketplace/handler/proto"
-	"github.com/sonm-io/marketplace/handler/srv/mocks"
+	"github.com/sonm-io/marketplace/handler/mocks"
+	pb "github.com/sonm-io/marketplace/proto"
 )
 
 func TestMarketplaceCreateOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {
