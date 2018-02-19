@@ -21,6 +21,6 @@ generate-mocks-service: tools
 
 .PHONY: generate-mocks-handler
 generate-mocks-handler: tools
-	@mkdir  -p ./handler/srv/mocks
+	@mkdir  -p ./handler/mocks
 	@mockgen -package mocks \
             -source ./handler/marketplace.go MarketService > ./handler/mocks/market_service.go
