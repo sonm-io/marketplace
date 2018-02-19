@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
-	"github.com/sonm-io/marketplace/interface/grpc/srv/mocks"
+	pb "github.com/sonm-io/marketplace/handler/proto"
+	"github.com/sonm-io/marketplace/handler/srv/mocks"
 )
 
 //

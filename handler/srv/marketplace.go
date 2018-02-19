@@ -1,7 +1,7 @@
 package srv
 
 import (
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 )
 
 type MarketService interface {

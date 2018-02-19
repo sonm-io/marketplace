@@ -1,11 +1,11 @@
-package srv_test
+package srv
 
 import (
 	"context"
 	"testing"
 
+	pb "github.com/sonm-io/marketplace/handler/proto"
 	"github.com/sonm-io/marketplace/infra/util"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

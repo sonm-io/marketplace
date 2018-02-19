@@ -8,8 +8,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
-	"github.com/sonm-io/marketplace/interface/grpc/srv/mocks"
+	pb "github.com/sonm-io/marketplace/handler/proto"
+	"github.com/sonm-io/marketplace/handler/srv/mocks"
 )
 
 func TestMarketplace_GetOrderByID_ValidIDGiven_ValidResponse(t *testing.T) {

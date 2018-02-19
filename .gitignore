@@ -9,7 +9,7 @@ bin/*
 /etc/keys/
 /etc/market.test.yaml
 
-interface/grpc/srv/mocks/*
+handler/srv/mocks/*
 service/mocks/*
 !/mocks/stub.go
 mocks.go

@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 )
 
 // CancelOrder removes the given order from the storage.

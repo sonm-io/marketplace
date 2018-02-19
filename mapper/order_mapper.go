@@ -2,7 +2,7 @@ package mapper
 
 import (
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 	sds "github.com/sonm-io/marketplace/mapper/datastruct"
 )
 

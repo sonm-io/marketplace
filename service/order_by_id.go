@@ -5,7 +5,7 @@ import (
 
 	"github.com/gocraft/dbr"
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 
 	"github.com/sonm-io/marketplace/mapper"
 	mds "github.com/sonm-io/marketplace/mapper/datastruct"

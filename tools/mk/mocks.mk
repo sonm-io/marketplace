@@ -21,6 +21,6 @@ generate-mocks-service: tools
 
 .PHONY: generate-mocks-handler
 generate-mocks-handler: tools
-	@mkdir  -p ./interface/grpc/srv/mocks
+	@mkdir  -p ./handler/srv/mocks
 	@mockgen -package mocks \
-            -source ./interface/grpc/srv/marketplace.go MarketService > ./interface/grpc/srv/mocks/market_service.go
+            -source ./handler/srv/marketplace.go MarketService > ./handler/srv/mocks/market_service.go

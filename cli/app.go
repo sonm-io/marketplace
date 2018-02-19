@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zapgrpc"
 
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 	gRPC "google.golang.org/grpc"
 
 	"google.golang.org/grpc/credentials"
@@ -29,7 +29,7 @@ import (
 	"github.com/sonm-io/marketplace/infra/storage/sqllite"
 	"github.com/sonm-io/marketplace/infra/util"
 
-	"github.com/sonm-io/marketplace/interface/grpc/srv"
+	"github.com/sonm-io/marketplace/handler/srv"
 	"github.com/sonm-io/marketplace/service"
 )
 

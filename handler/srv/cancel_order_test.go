@@ -9,9 +9,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
+	pb "github.com/sonm-io/marketplace/handler/proto"
+	"github.com/sonm-io/marketplace/handler/srv/mocks"
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
-	"github.com/sonm-io/marketplace/interface/grpc/srv/mocks"
 )
 
 func TestMarketplaceCancelOrder_ValidBidOrderGiven_ValidResponse(t *testing.T) {

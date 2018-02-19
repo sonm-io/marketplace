@@ -1,4 +1,4 @@
-package srv_test
+package srv
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 	"github.com/sonm-io/marketplace/test/cli"
 )
 

@@ -5,7 +5,7 @@ import (
 	"github.com/gocraft/dbr"
 
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 )
 
 // Operator is used to indicate how to filter different values.

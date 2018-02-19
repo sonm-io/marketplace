@@ -7,8 +7,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/stretchr/testify/assert"
 
+	pb "github.com/sonm-io/marketplace/handler/proto"
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
 )
 
 func TestCheckPermissions_EmptyContextGiven_ErrorReturned(t *testing.T) {

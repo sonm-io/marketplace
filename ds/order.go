@@ -2,7 +2,7 @@ package ds
 
 import (
 	"errors"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 )
 
 // Order represents a safe order wrapper.

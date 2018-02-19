@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 )
 
 // CreateBidOrder creates the given bid order.

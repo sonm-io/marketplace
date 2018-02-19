@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 	mds "github.com/sonm-io/marketplace/mapper/datastruct"
 
 	"github.com/sonm-io/marketplace/mapper"

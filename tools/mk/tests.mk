@@ -1,5 +1,5 @@
 # Find packages with tests, excluding vendor
-ROOT_PACKAGE                           := "github.com/sonm-io"
+ROOT_PACKAGE                           := github.com/sonm-io
 FIND_UNIT_TEST_PACKAGES                := find . -name '*_test.go' -not -path '*/vendor*' -not -path '*/test*' -exec dirname '{}' ';' | sort -u
 UNIT_TEST_PACKAGES                     := ${FIND_UNIT_TEST_PACKAGES} | sed -e 's/^\./github.com\/sonm-io\/marketplace/'
 UNIT_TEST_PACKAGES_FOR_COVERAGE        := ${FIND_UNIT_TEST_PACKAGES} | sed -e 's/^\.\///'
@@ -100,15 +100,16 @@ $(INTEGRATION_TEST_COVERAGE_TARGETS): test-setup test-results race-integration-t
 # Tests are tee'ed for further parsing in Jenkins.
 	@coverpkg=`${GO} list -f '{{.TestImports}}' ./$($@_package) \
 	| grep -o -E 'marketplace/[^ ]+' | grep -v '^marketplace/test' | grep -v '/vendor/' \
-	| tr '\n' ',' | sed 's/,$$//'`; \
+	| sed 's#marketplace#${ROOT_PACKAGE}/marketplace#' | tr '\n' ',' | sed 's/,$$//'`; \
 	${GO} test -i ${ROOT_PACKAGE}/marketplace/$($@_package); \
 if [ -z $${coverpkg} ]; then \
 	echo "Testing package ${ROOT_PACKAGE}/marketplace/$($@_package)"; \
 	set -o pipefail; ${GO} test -test.v -timeout 2m ${ROOT_PACKAGE}/marketplace/$($@_package) 2>&1 \
        | tee test-results/output/integration_$($@_coverprofile); \
 else \
+    echo "Testing package ${ROOT_PACKAGE}/marketplace/$($@_package)"; \
 	set -o pipefail; ${GO} test -test.v -timeout 2m -coverprofile test-results/cover/$($@_coverprofile).out \
-	  -coverpkg=${ROOT_PACKAGE}/$${coverpkg} ${ROOT_PACKAGE}/marketplace/$($@_package) 2>&1 \
+	  -coverpkg=$${coverpkg} ${ROOT_PACKAGE}/marketplace/$($@_package) 2>&1 \
 	  | tee test-results/output/integration_$($@_coverprofile); \
 	sed '1d' "test-results/cover/$($@_coverprofile).out" >> test-results/cover_report.out || true; \
 fi

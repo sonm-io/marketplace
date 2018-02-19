@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/sonm-io/marketplace/ds"
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/handler/proto"
 )
 
 // CreateAskOrder creates the given ask order.
