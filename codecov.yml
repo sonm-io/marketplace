@@ -1,4 +1,3 @@
 ignore:
   - "infra"  # ignore folders and all its contents
-  - "handler/proto/*pb.go"       # wildcards accepted
-  - "service/storage.go"
+  - "proto/*.go"       # wildcards accepted

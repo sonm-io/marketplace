@@ -13,10 +13,7 @@ func (ms *MarketService) createOrder(order *ds.Order) error {
 	row.Status = mds.Active
 
 	stmt := InsertOrderStmt(row)
-	query, args, err := ToSQL(stmt)
-	if err != nil {
-		return err
-	}
+	query, args, _ := ToSQL(stmt)
 
 	if err := ms.s.InsertRow(query, args...); err != nil {
 		return fmt.Errorf("cannot create a new order: %v", err)
