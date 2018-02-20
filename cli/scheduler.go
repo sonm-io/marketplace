@@ -5,9 +5,8 @@ import (
 	"time"
 
 	"github.com/jasonlvhit/gocron"
+	pb "github.com/sonm-io/marketplace/proto"
 	"go.uber.org/zap"
-
-	ds "github.com/sonm-io/marketplace/datastruct"
 )
 
 func (a *App) runScheduler() error {
@@ -48,7 +47,7 @@ func (a *App) cleanExpiredAskOrders(TTL time.Duration) func() {
 					AND status != 3
 					AND (strftime('%s', 'now') - strftime('%s', updated_at)) > ?`
 
-		res, err := a.db.Exec(sql, 3, ds.Ask, uint64(TTL.Seconds()))
+		res, err := a.db.Exec(sql, 3, pb.OrderType_ASK, uint64(TTL.Seconds()))
 		if err != nil {
 			a.logger.Warn("Cannot clean expired orders", zap.Error(err))
 		}

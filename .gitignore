@@ -9,12 +9,8 @@ bin/*
 /etc/keys/
 /etc/market.test.yaml
 
-/mocks/*
-interface/storage/inmemory/mocks/*
-interface/reporting/sqllite/mocks/
-usecase/intf/mocks/*
-usecase/marketplace/query/mocks/*
-usecase/marketplace/command/mocks/*
+handler/mocks/*
+service/mocks/*
 !/mocks/stub.go
 mocks.go
 

@@ -1,3 +1,3 @@
 ignore:
   - "infra"  # ignore folders and all its contents
-  - "interface/grpc/proto/*pb.go"       # wildcards accepted
+  - "proto/*.go"       # wildcards accepted

@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zapgrpc"
 
-	pb "github.com/sonm-io/marketplace/interface/grpc/proto"
+	pb "github.com/sonm-io/marketplace/proto"
 	gRPC "google.golang.org/grpc"
 
 	"google.golang.org/grpc/credentials"
@@ -24,18 +24,13 @@ import (
 	// register sqlite3 driver
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/sonm-io/marketplace/infra/cqrs"
 	"github.com/sonm-io/marketplace/infra/grpc"
 	"github.com/sonm-io/marketplace/infra/grpc/interceptor"
-	infraStorage "github.com/sonm-io/marketplace/infra/storage/sqllite"
+	"github.com/sonm-io/marketplace/infra/storage/sqllite"
 	"github.com/sonm-io/marketplace/infra/util"
 
-	"github.com/sonm-io/marketplace/interface/adaptor"
-	"github.com/sonm-io/marketplace/interface/grpc/srv"
-	"github.com/sonm-io/marketplace/interface/storage/sqllite"
-
-	report "github.com/sonm-io/marketplace/interface/reporting/sqllite"
-	"github.com/sonm-io/marketplace/usecase/marketplace/command"
+	"github.com/sonm-io/marketplace/handler"
+	"github.com/sonm-io/marketplace/service"
 )
 
 // App application root.
@@ -76,25 +71,9 @@ func (a *App) Init() error {
 		return err
 	}
 
-	db := infraStorage.NewStorage(a.db)
-	repo := sqllite.NewOrderStorage(db)
+	marketService := service.NewMarketService(sqllite.NewStorage(a.db))
 
-	getOrderHandler := report.NewOrderByIDHandler(db)
-	getOrdersHandler := report.NewMatchOrdersHandler(db)
-
-	createBidOrderHandler := command.NewCreateBidOrderHandler(repo)
-	createAskOrderHandler := command.NewCreateAskOrderHandler(repo)
-	cancelOrderHandler := command.NewCancelOrderHandler(repo)
-	touchOrdersHandler := command.NewTouchOrdersHandler(repo)
-
-	commandBus := cqrs.NewCommandBus()
-	commandBus.RegisterHandler("CreateBidOrder", adaptor.FromDomain(createBidOrderHandler))
-	commandBus.RegisterHandler("CreateAskOrder", adaptor.FromDomain(createAskOrderHandler))
-	commandBus.RegisterHandler("CancelOrder", adaptor.FromDomain(cancelOrderHandler))
-	commandBus.RegisterHandler("TouchOrders", adaptor.FromDomain(touchOrdersHandler))
-
-	return a.initServer(
-		srv.NewMarketplace(adaptor.ToDomain(commandBus), getOrderHandler, getOrdersHandler))
+	return a.initServer(handler.NewMarketplace(marketService))
 }
 
 func (a *App) initConfig() error {
@@ -199,7 +178,7 @@ func (a *App) initStorage() error {
 	return nil
 }
 
-func (a *App) initServer(mp *srv.Marketplace) error {
+func (a *App) initServer(mp *handler.Marketplace) error {
 	a.RLock()
 	logger := a.logger
 	key := a.privateKey
